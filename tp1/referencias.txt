@@ -1,0 +1,6 @@
+referencias:
+http://www.cplusplus.com/
+
+// creating a new google code proyect
+http://www.oss-watch.ac.uk/resources/googlecode.xml
+http://svnbook.red-bean.com/ 
