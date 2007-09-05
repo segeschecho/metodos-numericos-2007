@@ -192,7 +192,7 @@ void mostrarD(double *x)
 
 void mostrarLD(long double *x)
 {
-    
+
     unsigned char c0 = *((char*)x + 9);
     unsigned char c1 = *((char*)x + 8);
     unsigned char c2 = *((char*)x + 7);
@@ -277,11 +277,11 @@ void mostrarLD(long double *x)
         todo[i] = '0' + (c9 / pot) % 2;
         pot /= 2;
     }
-    
-    
+
+
     todo[80] = 0;
-    
-    
+
+
     char signo = todo[0];
     char exponente[15];
     char mantisa[63];
@@ -333,7 +333,7 @@ VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 	VLFloat x(precision);
 
 	x = valor;
-	
+
 	while (n > 0){
 		res = res + (x^n)/factorial(n);
 		n--;
@@ -347,7 +347,7 @@ VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precis
 	VLFloat x(precision);
 
 	x = valor;
-	
+
 	unsigned int i = 1;
 
 	while (i < n){
@@ -381,7 +381,7 @@ int main()
 
 	cout << "Ingresar x: ";
 	cin >> valor;
-	
+
 	cout << "\n\n";
 
 	VLFloat resultado1(p);
@@ -389,7 +389,6 @@ int main()
 	resultado1 = taylorMayorAMenor(valor, orden, p);
 	resultado2 = taylorMenorAMayor(valor, orden, p);
 
-	cout.setf(ios_base::fixed);
 	cout.precision(60);
 	cout << "Resultado con taylor de mayor a menor: " << resultado1 << endl;
 	cout << "Resultado con taylor de menor a mayor: " << resultado2 << endl;
