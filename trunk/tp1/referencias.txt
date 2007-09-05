@@ -1,6 +1,6 @@
 referencias:
 http://www.cplusplus.com/
 
-// creating a new google code proyect
-http://www.oss-watch.ac.uk/resources/googlecode.xml
-http://svnbook.red-bean.com/ 
+http://www.oss-watch.ac.uk/resources/googlecode.xml	// creating a new google code proyect
+http://svnbook.red-bean.com/ 		//manual de svn
+pcmap.unizar.es/~pilar/latex.pdf	//introduccion a latex
