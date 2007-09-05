@@ -95,12 +95,6 @@ void redondear(VLFloat* c)
 
 	unsigned char* ch = ((unsigned char*)&(c->numero) + bytes - 1);
 
-	if(c->numero != 1){
-		cout.setf(ios_base::fixed);
-		cout.precision(60);
-		cout << (c->numero) << endl;
-		cout << (c->numero) << endl;
-	}
 	*ch += ( 1 << (7 - (c->prec % 8)) ); //con esto le sumamos 5 al digito a partir del cual vamos a truncar
 	*ch &= (255 << (8 - (c->prec % 8)) ); //255 = 1111 1111
 
