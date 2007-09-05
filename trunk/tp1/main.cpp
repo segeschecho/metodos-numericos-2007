@@ -1,8 +1,17 @@
+///////////////////////////////////////////
+// INFORME DE LOS ARCHIVOS
+///////////////////////////////////////////
+// Redondear no se si esta redondeando bien, hay q testear mucho eso y arreglarlo
+///////////////////////////////////////////
+
 #include <iostream>
 #include <iomanip>
 #include "VLFloat.h"
 
 using namespace std;
+
+#define VALOR_REAL 2.718281828459045235360287471352662497757247093699959574966967627724
+#define ABS(a) (a < 0) ? -a : a
 
 void mostrarF(float *x)
 {
@@ -304,9 +313,9 @@ void mostrarLD(long double *x)
 //  printf( "%3.5f = %s \n", *x, todo );*/
 }
 
-unsigned int factorial(unsigned int n)
+unsigned long long int factorial(unsigned int n)
 {
-	unsigned int res = n;
+	unsigned long long int res = n;
 
 	if (n == 0)
 		return 1;
@@ -319,16 +328,31 @@ unsigned int factorial(unsigned int n)
 	return res;
 }
 
-VLFloat taylor(long double valor, unsigned int n, unsigned int precision){
+VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precision){
 	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	VLFloat x(precision);
 
 	x = valor;
-    cout.precision(50);   
 	
 	while (n > 0){
 		res = res + (x^n)/factorial(n);
 		n--;
+	}
+
+    return res;
+}
+
+VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precision){
+	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
+	VLFloat x(precision);
+
+	x = valor;
+	
+	unsigned int i = 1;
+
+	while (i < n){
+		res = res + (x^i)/factorial(i);
+		i++;
 	}
 
     return res;
@@ -360,7 +384,20 @@ int main()
 	
 	cout << "\n\n";
 
-	cout << "Resultado: " << taylor(valor, orden, p) << endl;
+	VLFloat resultado1(p);
+	VLFloat resultado2(p);
+	resultado1 = taylorMayorAMenor(valor, orden, p);
+	resultado2 = taylorMenorAMayor(valor, orden, p);
+
+	cout.setf(ios_base::fixed);
+	cout.precision(60);
+	cout << "Resultado con taylor de mayor a menor: " << resultado1 << endl;
+	cout << "Resultado con taylor de menor a mayor: " << resultado2 << endl;
+
+	cout << "Error Absoluto mayor a menor: " << (ABS(VALOR_REAL - resultado1.valor())) << endl;
+	cout << "Error Relativo mayor a menor: " << (ABS(VALOR_REAL - resultado1.valor()) / VALOR_REAL) << endl << endl;
+	cout << "Error Absoluto menor a mayor: " << (ABS(VALOR_REAL - resultado2.valor())) << endl;
+	cout << "Error Relativo menor a mayor: " << (ABS(VALOR_REAL - resultado2.valor()) / VALOR_REAL) << endl << endl;
 
 /*
 	long double d;
@@ -375,7 +412,7 @@ int main()
 	mostrarLD(&d);
 	cout << "\n\n\n";
 
-	p = truncar(5, &d);
+	p = redondear(5, &d);
 	cout << "valor long double :" << setprecision(25) << d << endl;
 	mostrarLD(&d);
 	cout << "\n\n\n";
