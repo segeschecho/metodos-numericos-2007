@@ -6,12 +6,12 @@
 
 #include <iostream>
 #include <iomanip>
+#include <math.h>
 #include "VLFloat.h"
 
 using namespace std;
 
 #define VALOR_REAL 2.718281828459045235360287471352662497757247093699959574966967627724
-#define ABS(a) (a < 0) ? -a : a
 
 void mostrarF(float *x)
 {
@@ -393,52 +393,10 @@ int main()
 	cout << "Resultado con taylor de mayor a menor: " << resultado1 << endl;
 	cout << "Resultado con taylor de menor a mayor: " << resultado2 << endl;
 
-	cout << "Error Absoluto mayor a menor: " << (ABS(VALOR_REAL - resultado1.valor())) << endl;
-	cout << "Error Relativo mayor a menor: " << (ABS(VALOR_REAL - resultado1.valor()) / VALOR_REAL) << endl << endl;
-	cout << "Error Absoluto menor a mayor: " << (ABS(VALOR_REAL - resultado2.valor())) << endl;
-	cout << "Error Relativo menor a mayor: " << (ABS(VALOR_REAL - resultado2.valor()) / VALOR_REAL) << endl << endl;
-
-/*
-	long double d;
-	long double p;
-   /*  pruebo el polinomio de taylor de 3 terminos en 0.1
-       p(0.1) =  1 + 0.1/2 + 0.1/6
-
-	d = 0.987654321;
-
-	cout.setf(ios::fixed, ios::floatfield);
-	cout << "valor long double :" << setprecision(25) << d << endl;
-	mostrarLD(&d);
-	cout << "\n\n\n";
-
-	p = redondear(5, &d);
-	cout << "valor long double :" << setprecision(25) << d << endl;
-	mostrarLD(&d);
-	cout << "\n\n\n";
-	cout << "valor long double de p :" << setprecision(25) << p << endl;
-/*
-	c = 0.264873;
-
-   unsigned char c0 = *((char*)&c + 7);
-
-	printf("valor double : %.25f\n", c);
-	mostrarD(&c);
-
-	redondear(30, &c);
-	printf("\n\nvalor double : %.25f\n", c);
-	mostrarD(&c);
-	b = c;
-	c = b;
-	printf("valor double : %.25f\n", c);
-	mostrarD(&c);
-	printf("valor float  : %.25f\n", b);
-	mostrarF(&b);
-
-
-	printf("entero : %d\n", sizeof(a));
-	printf("float : %d\n", sizeof(b));
-	printf("double : %d\n", sizeof(c));
-	printf("long double : %d\n", sizeof(d));*/
+	cout << "Error Absoluto mayor a menor: " << (fabs(VALOR_REAL - resultado1.valor())) << endl;
+	cout << "Error Relativo mayor a menor: " << (fabs(VALOR_REAL - resultado1.valor()) / VALOR_REAL) << endl << endl;
+	cout << "Error Absoluto menor a mayor: " << (fabs(VALOR_REAL - resultado2.valor())) << endl;
+	cout << "Error Relativo menor a mayor: " << (fabs(VALOR_REAL - resultado2.valor()) / VALOR_REAL) << endl << endl;
 
 	system("PAUSE");
 	return EXIT_SUCCESS;
