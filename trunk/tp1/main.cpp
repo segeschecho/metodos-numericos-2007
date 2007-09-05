@@ -321,7 +321,7 @@ unsigned long long int factorial(unsigned int n)
 		return 1;
 
 	while (n > 2){
-		res *= n - 1;
+		res *= (n - 1);
 		n--;
 	}
 
@@ -339,7 +339,7 @@ VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 		n--;
 	}
 
-    return res;
+	return res;
 }
 
 VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precision){
@@ -374,7 +374,7 @@ int main()
 
 	cout << "\n\n";
 
-	cout << "Ingresar orden con el cual quiere aproximar a e^(-x): ";
+	cout << "Ingresar orden con el cual quiere aproximar a e^(-x) (0~20 recomendado): ";
 	cin >> orden;
 
 	cout << "\n\n";
