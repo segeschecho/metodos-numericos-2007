@@ -64,6 +64,7 @@ VLFloat VLFloat :: operator^(int a){
 	VLFloat res(prec);
 
 	res = numero;
+	a--;
 
 	while (a > 0){
 		res.numero *= numero;
