@@ -62,6 +62,12 @@ VLFloat VLFloat :: operator/(long double a){
 
 VLFloat VLFloat :: operator^(int a){
 	VLFloat res(prec);
+	bool neg = 0;
+
+	if ( a < 0 ){
+		a = -a;
+		neg = 1;
+	}
 
 	res = numero;
 	a--;
@@ -71,6 +77,9 @@ VLFloat VLFloat :: operator^(int a){
 		redondear(&res);
 		a--;
 	}
+
+	if (neg)
+		res.numero = 1/res.numero;
 
 	return res;
 }
@@ -104,6 +113,7 @@ void redondear(VLFloat* c)
 }
 
 ostream& operator<<(ostream &os, const VLFloat &a){
-    os << setprecision(30) << a.numero << endl;
+	os.precision(40);
+   os << a.numero << endl;
 	return os;
 }
