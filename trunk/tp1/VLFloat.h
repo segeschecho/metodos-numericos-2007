@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <math.h>
 #include <iomanip>      //para setprecision
 
 using namespace std;

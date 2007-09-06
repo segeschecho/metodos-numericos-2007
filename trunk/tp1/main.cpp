@@ -317,7 +317,7 @@ VLFloat factorial(unsigned int n, unsigned int p)
 	VLFloat i(p, 2);
 
 	if (n == 0)
-		return 1;
+		return res;
 
 	while (i.valor() <= n)
 	{
@@ -357,10 +357,42 @@ VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precis
     return res;
 }
 
+VLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int precision){
+	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
+	VLFloat x(precision);
+	VLFloat neg(1, 1);
+
+	x = valor;
+
+	while (n > 0){
+		neg = pow(-1,n%2);
+		res = res + neg*((x^n)/factorial(n,precision));
+		n--;
+	}
+
+	return res;
+}
+
+VLFloat taylorMenorAMayorInv(long double valor, unsigned int n, unsigned int precision){
+	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
+	VLFloat x(precision);
+	VLFloat neg(1, 1);
+
+	x = valor;
+
+	unsigned int i = 1;
+
+	while (i < n){
+		neg = pow(-1,i%2);
+		res = res + neg*((x^i)/factorial(i, precision));
+		i++;
+	}
+
+    return res;
+}
+
 int main()
 {
-	cout << factorial(170, 63) << endl << endl;
-	/*
 	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
 
@@ -387,19 +419,35 @@ int main()
 
 	VLFloat resultado1(p);
 	VLFloat resultado2(p);
+
+	VLFloat resultado1Inv(p);
+	VLFloat resultado2Inv(p);
+
 	resultado1 = taylorMayorAMenor(valor, orden, p);
 	resultado2 = taylorMenorAMayor(valor, orden, p);
+	resultado1 = resultado1^(-1);
+	resultado2 = resultado2^(-1);
 
-//	cout.precision(60);
-	cout << setprecision(30) << fixed << "e: " << e << endl;
-	cout << setprecision(30) << fixed << "Resultado con taylor de mayor a menor: " << resultado1 << endl;
-	cout << setprecision(30) << fixed << "Resultado con taylor de menor a mayor: " << resultado2 << endl;
+	resultado1Inv = taylorMayorAMenorInv(valor, orden, p);
+	resultado2Inv = taylorMenorAMayorInv(valor, orden, p);
 
-	cout << setprecision(30) << fixed << "Error Absoluto mayor a menor: " << (fabs(e - resultado1.valor())) << endl;
-	cout << setprecision(30) << fixed << "Error Relativo mayor a menor: " << (fabs(e - resultado1.valor()) / e) << endl << endl;
-	cout << setprecision(30) << fixed << "Error Absoluto menor a mayor: " << (fabs(e - resultado2.valor())) << endl;
-	cout << setprecision(30) << fixed << "Error Relativo menor a mayor: " << (fabs(e - resultado2.valor()) / e) << endl << endl;
-*/
+	cout.precision(40);
+	cout << "e^(-x): " << pow(e,-valor) << endl;
+	cout << "Resultado con taylor de mayor a menor 1/(e^x): " << resultado1 << endl;
+	cout << "Resultado con taylor de menor a mayor 1/(e^x): " << resultado2 << endl;
+	cout << "Resultado con taylor de mayor a menor e^(-x) : " << resultado1Inv << endl;
+	cout << "Resultado con taylor de menor a mayor e^(-x) : " << resultado2Inv << endl;
+
+	cout << "Error Absoluto mayor a menor 1/(e^x): " << (fabs(pow(e,-valor) - resultado1.valor())) << endl;
+	cout << "Error Relativo mayor a menor 1/(e^x): " << (fabs(pow(e,-valor) - resultado1.valor()) / pow(e,-valor)) << endl << endl;
+	cout << "Error Absoluto menor a mayor 1/(e^x): " << (fabs(pow(e,-valor) - resultado2.valor())) << endl;
+	cout << "Error Relativo menor a mayor 1/(e^x): " << (fabs(pow(e,-valor) - resultado2.valor()) / pow(e,-valor)) << endl << endl << endl;
+
+	cout << "Error Absoluto mayor a menor e^(-x): " << (fabs(pow(e,-valor) - resultado1Inv.valor())) << endl;
+	cout << "Error Relativo mayor a menor e^(-x): " << (fabs(pow(e,-valor) - resultado1Inv.valor()) / pow(e,-valor)) << endl << endl;
+	cout << "Error Absoluto menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor())) << endl;
+	cout << "Error Relativo menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor()) / pow(e,-valor)) << endl << endl << endl;
+
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
