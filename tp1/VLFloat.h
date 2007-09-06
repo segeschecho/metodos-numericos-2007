@@ -27,7 +27,7 @@ class VLFloat{
         void 		operator=	(const VLFloat &a);
         void 		operator=	(long double a);
 
-        ~VLFloat();
+        ~VLFloat(){};
     private:
         int prec;
         long double numero;

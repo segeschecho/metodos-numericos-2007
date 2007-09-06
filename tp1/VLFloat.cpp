@@ -103,10 +103,7 @@ void redondear(VLFloat* c)
 	memset(&(c->numero), 0, bytes - 1);
 }
 
-ostream& operator << (ostream &os, const VLFloat &a){
-    os << setprecision(a.prec) << a.numero << endl;
+ostream& operator<<(ostream &os, const VLFloat &a){
+    os << setprecision(30) << a.numero << endl;
 	return os;
-}
-
-VLFloat :: ~VLFloat(){
 }
