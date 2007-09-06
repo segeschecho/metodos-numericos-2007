@@ -1,315 +1,9 @@
-///////////////////////////////////////////
-// INFORME DE LOS ARCHIVOS
-///////////////////////////////////////////
-// Redondear no se si esta redondeando bien, hay q testear mucho eso y arreglarlo
-///////////////////////////////////////////
-
 #include <iostream>
 #include <iomanip>
 #include <math.h>
 #include "VLFloat.h"
 
 using namespace std;
-
-void mostrarF(float *x)
-{
-    unsigned char c0 = *((char*)x + 3);
-    unsigned char c1 = *((char*)x + 2);
-    unsigned char c2 = *((char*)x + 1);
-    unsigned char c3 = *((char*)x);
-
-    char todo[33];
-
-    unsigned char pot = 128;
-    for(int i=0; i<8; ++i)
-    {
-        todo[i] = '0' + (c0 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=8; i<16; ++i)
-    {
-        todo[i] = '0' + (c1 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=16; i<24; ++i)
-    {
-        todo[i] = '0' + (c2 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=24; i<32; ++i)
-    {
-        todo[i] = '0' + (c3 / pot) % 2;
-        pot /= 2;
-    }
-
-    todo[32] = 0;
-
-    char signo = todo[0];
-    char exponente[9];
-    char mantisa[24];
-
-    int _exponente = 0;
-    float _mantisa = 1.0;
-
-    for(int i=0, pot=128; i<8; ++i)
-    {
-        exponente[i] = todo[i+1];
-        _exponente += (exponente[i] - '0') * pot;
-        pot /= 2;
-    }
-
-    float _pot = 0.5;
-    for(int i=0; i<23; ++i)
-    {
-        mantisa[i] = todo[i+9];
-        _mantisa += (mantisa[i] - '0') * _pot;
-        _pot /= 2;
-    }
-
-    exponente[8] = 0;
-    mantisa[23] = 0;
-
-    printf( "signo = %c, ", signo );
-    printf( "exp = %s (%d), ", exponente, _exponente );
-    printf( "    mant = 1.%s \n", mantisa );
-//  printf( "%3.5f = %s \n", *x, todo );
-}
-
-/********************/
-/*  mostrar double  */
-/********************/
-void mostrarD(double *x)
-{
-    unsigned char c0 = *((char*)x + 7);
-    unsigned char c1 = *((char*)x + 6);
-    unsigned char c2 = *((char*)x + 5);
-    unsigned char c3 = *((char*)x + 4);
-    unsigned char c4 = *((char*)x + 3);
-    unsigned char c5 = *((char*)x + 2);
-    unsigned char c6 = *((char*)x + 1);
-    unsigned char c7 = *((char*)x);
-
-
-    char todo[64];
-
-    unsigned char pot = 128;
-    for(int i=0; i<8; ++i)
-    {
-        todo[i] = '0' + (c0 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=8; i<16; ++i)
-    {
-        todo[i] = '0' + (c1 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=16; i<24; ++i)
-    {
-        todo[i] = '0' + (c2 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=24; i<32; ++i)
-    {
-        todo[i] = '0' + (c3 / pot) % 2;
-        pot /= 2;
-    }
-
-    /* ultimos 4 bytes  */
-    pot = 128;
-    for(int i=32; i<40; ++i)
-    {
-        todo[i] = '0' + (c4 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=40; i<48; ++i)
-    {
-        todo[i] = '0' + (c5 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=48; i<56; ++i)
-    {
-        todo[i] = '0' + (c6 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=56; i<64; ++i)
-    {
-        todo[i] = '0' + (c7 / pot) % 2;
-        pot /= 2;
-    }
-
-    todo[64] = 0;
-
-    char signo = todo[0];
-    char exponente[11];
-    char mantisa[52];
-
-    int _exponente = 0;
-    double _mantisa = 1.0;
-
-    for(int i=0, pot=1024; i<11; ++i)
-    {
-        exponente[i] = todo[i+1];
-        _exponente += (exponente[i] - '0') * pot;
-        pot /= 2;
-    }
-
-    double _pot = 0.5;
-    for(int i=0; i<53; ++i)
-    {
-        mantisa[i] = todo[i+12];
-        _mantisa += (mantisa[i] - '0') * _pot;
-        _pot /= 2;
-    }
-
-    exponente[12] = 0;
-    mantisa[52] = 0;
-
-    printf( "signo = %c, ", signo );
-    printf( "exp = %s (%d), ", exponente, _exponente );
-    printf( "mant = 1.%s \n", mantisa );
-//  printf( "%3.5f = %s \n", *x, todo );
-}
-
-void mostrarLD(long double *x)
-{
-
-    unsigned char c0 = *((char*)x + 9);
-    unsigned char c1 = *((char*)x + 8);
-    unsigned char c2 = *((char*)x + 7);
-    unsigned char c3 = *((char*)x + 6);
-    unsigned char c4 = *((char*)x + 5);
-    unsigned char c5 = *((char*)x + 4);
-    unsigned char c6 = *((char*)x + 3);
-    unsigned char c7 = *((char*)x + 2);
-    unsigned char c8 = *((char*)x + 1);
-    unsigned char c9 = *((char*)x);
-
-
-    char todo[96];
-
-    unsigned char pot = 128;
-    for(int i=0; i<8; ++i)
-    {
-        todo[i] = '0' + (c0 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=8; i<16; ++i)
-    {
-        todo[i] = '0' + (c1 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=16; i<24; ++i)
-    {
-        todo[i] = '0' + (c2 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=24; i<32; ++i)
-    {
-        todo[i] = '0' + (c3 / pot) % 2;
-        pot /= 2;
-    }
-
-    /* ultimos 4 bytes  */
-    pot = 128;
-    for(int i=32; i<40; ++i)
-    {
-        todo[i] = '0' + (c4 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=40; i<48; ++i)
-    {
-        todo[i] = '0' + (c5 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=48; i<56; ++i)
-    {
-        todo[i] = '0' + (c6 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=56; i<64; ++i)
-    {
-        todo[i] = '0' + (c7 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=64; i<72; ++i)
-    {
-        todo[i] = '0' + (c8 / pot) % 2;
-        pot /= 2;
-    }
-
-    pot = 128;
-    for(int i=72; i<80; ++i)
-    {
-        todo[i] = '0' + (c9 / pot) % 2;
-        pot /= 2;
-    }
-
-
-    todo[80] = 0;
-
-
-    char signo = todo[0];
-    char exponente[15];
-    char mantisa[63];
-
-    int _exponente = 0;
-    double _mantisa = 1.0;
-
-    for(int i=0, pot=1024; i<15; ++i)
-    {
-        exponente[i] = todo[i+1];
-        _exponente += (exponente[i] - '0') * pot;
-        pot /= 2;
-    }
-
-    double _pot = 0.5;
-    for(int i=0; i<64; ++i)
-    {
-        mantisa[i] = todo[i+16];
-        _mantisa += (mantisa[i] - '0') * _pot;
-        _pot /= 2;
-    }
-
-    exponente[15] = 0;
-    mantisa[63] = 0;
-/*
-    printf( "signo = %c, ", signo );
-    printf( "exp = %s (%d), ", exponente, _exponente );
-    printf( "mant = 1.%s \n", mantisa );
-//  printf( "%3.5f = %s \n", *x, todo );*/
-}
 
 VLFloat factorial(unsigned int n, unsigned int p)
 {
@@ -327,6 +21,9 @@ VLFloat factorial(unsigned int n, unsigned int p)
 	return res;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//Aproximacion de 1/(e^x) con taylor, sumando desde el mayor termino al menor
+/////////////////////////////////////////////////////////////////////////////
 VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precision){
 	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	VLFloat x(precision);
@@ -341,6 +38,9 @@ VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 	return res;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//Aproximacion de 1/(e^x) con taylor, sumando desde el menor termino al mayor
+/////////////////////////////////////////////////////////////////////////////
 VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precision){
 	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	VLFloat x(precision);
@@ -357,6 +57,10 @@ VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precis
     return res;
 }
 
+
+////////////////////////////////////////////////////////////////////////////
+//Aproximacion de e^(-x) con taylor, sumando desde el mayor termino al menor
+////////////////////////////////////////////////////////////////////////////
 VLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int precision){
 	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	VLFloat x(precision);
@@ -373,6 +77,9 @@ VLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int pre
 	return res;
 }
 
+////////////////////////////////////////////////////////////////////////////
+//Aproximacion de e^(-x) con taylor, sumando desde el menor termino al mayor
+////////////////////////////////////////////////////////////////////////////
 VLFloat taylorMenorAMayorInv(long double valor, unsigned int n, unsigned int precision){
 	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	VLFloat x(precision);
