@@ -5,7 +5,174 @@
 #include "VLFloat.h"
 
 using namespace std;
+/*
+void mostrar(short int *x)
+{
+    unsigned char c0 = *((char*)x + 1);
+    unsigned char c1 = *((char*)x);
 
+    unsigned char pot = 128;
+    for(int i=0; i<8; ++i)
+    {
+        cout << (char)('0' + (c0 / pot) % 2);
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=8; i<16; ++i)
+    {
+        cout << (char)('0' + (c1 / pot) % 2);
+        pot /= 2;
+    }
+
+    cout << endl;
+}
+
+void mostrar(long double *x)
+{
+    unsigned char c0 = *((char*)x + 9);
+    unsigned char c1 = *((char*)x + 8);
+    unsigned char c2 = *((char*)x + 7);
+    unsigned char c3 = *((char*)x + 6);
+    unsigned char c4 = *((char*)x + 5);
+    unsigned char c5 = *((char*)x + 4);
+    unsigned char c6 = *((char*)x + 3);
+    unsigned char c7 = *((char*)x + 2);
+    unsigned char c8 = *((char*)x + 1);
+    unsigned char c9 = *((char*)x);
+
+    char todo[81];
+
+    unsigned char pot = 128;
+    for(int i=0; i<8; ++i)
+    {
+        todo[i] = '0' + (c0 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=8; i<16; ++i)
+    {
+        todo[i] = '0' + (c1 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=16; i<24; ++i)
+    {
+        todo[i] = '0' + (c2 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=24; i<32; ++i)
+    {
+        todo[i] = '0' + (c3 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=32; i<40; ++i)
+    {
+        todo[i] = '0' + (c4 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=40; i<48; ++i)
+    {
+        todo[i] = '0' + (c5 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=48; i<56; ++i)
+    {
+        todo[i] = '0' + (c6 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=56; i<64; ++i)
+    {
+        todo[i] = '0' + (c7 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=64; i<72; ++i)
+    {
+        todo[i] = '0' + (c8 / pot) % 2;
+        pot /= 2;
+    }
+
+    pot = 128;
+    for(int i=72; i<80; ++i)
+    {
+        todo[i] = '0' + (c9 / pot) % 2;
+        pot /= 2;
+    }
+
+    todo[80] = 0;
+
+    char signo = todo[0];
+    char exponente[16];
+    char mantisa[65];
+
+    int _exponente = 0;
+    float _mantisa = 1.0;
+
+    for(int i=0, pot=128; i<16; ++i)
+    {
+        exponente[i] = todo[i+1];
+        _exponente += (exponente[i] - '0') * pot;
+        pot /= 2;
+    }
+
+    float _pot = 0.5;
+    for(int i=0; i<65; ++i)
+    {
+        mantisa[i] = todo[i+16];
+        _mantisa += (mantisa[i] - '0') * _pot;
+        _pot /= 2;
+    }
+
+    exponente[15] = 0;
+    mantisa[64] = 0;
+
+    printf( "signo = %c, ", signo );
+    printf( "exp = %s (%d), ", exponente, _exponente );
+    printf( "mant = %s \n", mantisa);
+//  printf( "%3.5f = %s \n", *x, todo );
+}
+
+void redondear(long double c, int prec)
+{
+    //La variable bytes representara la cantidad de bytes que tenemos de mantisa
+	int bytes = 8;    //"ignoramos" los 2 bytes de exponente + signo al redondear
+                      //que estan en la posicion de memoria mas alta
+
+	bytes -= (int)(prec/8);
+	//esto representa la cantidad de bytes enteros que voy a eliminar desde el menos significativo
+
+	unsigned char* ch = ((unsigned char*)&c + bytes - 1);
+
+    cout << "mostrar(Precision = " << prec << ")" << endl;
+    mostrar(&c);
+    c += pow(2, -prec + 1); //con esto le sumamos 1 al primer bit que voy a truncar
+                        //con el fin de redondear
+    mostrar(&c);
+	*ch &= (255 << (8 - (prec % 8)) ); //255 = 1111 1111
+	//ahora borramos los bytes menos significativos
+	memset(&c, 0, bytes - 1);
+    mostrar(&c);
+    cout << c << endl;
+	ch = ((unsigned char*)&c + 7);
+    *ch += 128;
+    mostrar(&c);
+    cout << c << endl;
+}
+*/
 VLFloat factorial(unsigned int n, unsigned int p)
 {
 	VLFloat res(p, 1);
@@ -15,12 +182,9 @@ VLFloat factorial(unsigned int n, unsigned int p)
 	if (n == 0)
 		return res;
 
-	while (i.valor() <= n)
-	{
+	while (i.valor() <= n){
 		res = res*i;
-	    cout << "res = " << res << endl;
-	    cout << "res.precision() = " << res.precision() << endl;
-		i = i.valor() + 1;
+		i++;
 	}
 	return res;
 }
@@ -39,7 +203,7 @@ VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 		n--;
 	}
 
-	return res;
+	return res^(-1);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -58,7 +222,7 @@ VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precis
 		i++;
 	}
 
-    return res;
+    return res^(-1);
 }
 
 
@@ -120,7 +284,6 @@ void imprimirValores(ofstream& archivo)
     cout << "A = [ ";
     for(int i = 1; i < 64; i++){
         for(int j = 1; j <= 170; j++){
-            cout << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
             archivo << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
         }
     }
@@ -134,7 +297,6 @@ void imprimirValores(ofstream& archivo)
     for(int i = 1; i < 64; i++){
         for(int j = 1; j <= 170; j++){
             archivo << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
-            cout << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
         }
     }
 
@@ -143,7 +305,7 @@ void imprimirValores(ofstream& archivo)
 
     x = 5;
 
-/*    while( x < 20 )
+    while( x < 20 )
     {
         archivo << "x = " << x << endl;
         archivo << "~~~~~" << endl << endl;
@@ -158,7 +320,6 @@ void imprimirValores(ofstream& archivo)
         for(int i = 1; i < 64; i++){
             for(int j = 1; j <= 170; j++){
                 archivo << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
-                cout << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
             }
         }
 
@@ -173,7 +334,6 @@ void imprimirValores(ofstream& archivo)
         for(int i = 1; i < 64; i++){
             for(int j = 1; j <= 170; j++){
                 archivo << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
-                cout << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
             }
         }
 
@@ -203,7 +363,6 @@ void imprimirValores(ofstream& archivo)
     for(int i = 1; i < 64; i++){
         for(int j = 1; j < 170; j++){
             archivo << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
-            cout << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
         }
     }
 
@@ -218,7 +377,6 @@ void imprimirValores(ofstream& archivo)
     for(int i = 1; i < 64; i++){
         for(int j = 1; j < 170; j++){
             archivo << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
-            cout << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
         }
     }
 
@@ -242,7 +400,6 @@ void imprimirValores(ofstream& archivo)
         for(int i = 1; i < 64; i++){
             for(int j = 1; j < 170; j++){
                 archivo << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
-                cout << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
             }
         }
 
@@ -257,7 +414,6 @@ void imprimirValores(ofstream& archivo)
         for(int i = 1; i < 64; i++){
             for(int j = 1; j < 170; j++){
                 archivo << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
-                cout << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
             }
         }
 
@@ -265,15 +421,29 @@ void imprimirValores(ofstream& archivo)
         cout << " ]" << endl << endl;
         x += 5;
     }
-*/
+
     archivo.close();
 }
 
 int main()
 {
-//  ofstream a ("grafico.txt");
-//  imprimirValores(a);
-	unsigned int p, orden;
+/*    long double e = 2.718281828459045235360287471352662497757247093699959574966967627724;
+    short int i = 255;
+
+    mostrar(&i);
+    unsigned char *c1 = ((unsigned char*)&i);
+    i += pow(2,6);
+    mostrar(&i);
+
+    for(int i = 0; i < 64; i++){
+        redondear(e, i);
+        cout << endl << endl;
+        system("PAUSE");
+   }
+*/
+    ofstream a ("grafico.txt");
+    imprimirValores(a);
+/*	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
 
 	cout << "Aproximacion de e^(-x) con presicion y orden variable" << endl;
@@ -327,7 +497,7 @@ int main()
 	cout << "Error Relativo mayor a menor e^(-x): " << (fabs(pow(e,-valor) - resultado1Inv.valor()) / pow(e,-valor)) << endl << endl;
 	cout << "Error Absoluto menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor())) << endl;
 	cout << "Error Relativo menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor()) / pow(e,-valor)) << endl << endl << endl;
-
+*/
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
