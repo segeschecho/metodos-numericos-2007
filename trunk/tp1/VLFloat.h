@@ -21,6 +21,7 @@ class VLFloat{
         int 		precision	(void);
         long double	valor   	(void);
         VLFloat 	operator+	(const VLFloat &a);
+        void     	operator++	(int);
         VLFloat 	operator-	(const VLFloat &a);
         VLFloat 	operator*	(const VLFloat &a);
         VLFloat 	operator/	(const VLFloat &a);
