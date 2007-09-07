@@ -16,7 +16,7 @@ $$ \mbox{Departamento de Computación} $$
 
 {González Emiliano (XJesse\_JamesX@hotmail.com)}
 
-{Mariano (eltrencitomasverde@gmail.com)}
+{Ferro Mariano(eltrencitomasverde@gmail.com)}
 
 \medskip
 Palábras clave:
@@ -25,28 +25,28 @@ Resúmen:
 \medskip
 
 \pagebreak
-\leftline {\bf Introducción:}
-El análisis numérico básicamente se encarga de analizar, describir y crear algoritmos numéricos que permiten resolver problemas matemáticos. Estos algoritmos generalmente nos permiten obtener resultados aproximados, ya que contienen un número finito de pasos. El uso del análisis numérico toma gran
-importancia con el uso de las computadoras y el poder de calculo que ellas tienen. Por este medio, es posible resolver problemas mas complejos.
+\leftline{\bf Introducción:}
+
+
+El análisis numérico básicamente se encarga de analizar, describir y crear algoritmos numéricos que permiten resolver problemas matemáticos. Estos algoritmos generalmente nos permiten obtener resultados aproximados, ya que contienen un número finito de pasos. El uso del análisis numérico toma gran importancia con el uso de las computadoras y el poder de cálculo que ellas tienen. Por este medio, es posible resolver problemas más complejos.
 
 Pero el uso de computadoras para hacer cálculos complejos trae un problema con sigo, y surge el concepto de error. Este concepto nace debido a que las computadoras trabajan con un rango finito de números, y además cada uno de estos está representado de una forma también finita.
 
 
-Los errores están divididos en trés tipos: Errores en los datos de entrada, errores de redondeo y errores de truncamiento. Los errores en los datos de entrada no están causados por el algoritmo que resuelve el problema, sino por valores que inician el algoritmo, generalmente estos valores se refieren a mediciones o magnitudes físicas. Los errores de redondeo surgen cuando se utilizan operaciones que tienen una representación numerica finita, esto significa que tienen una precisión limitada con respecto al resultado que devuelven. Y los errores de truncamiento están relacionados con el algoritmo en si, esto quiere decir que dependen de la forma en que se resuelve el problema, en algunos casos el error de truncamiento se puede disminuir modificando o refinando el algoritmo, esto generalmente implica aumentar la cantidad de
+Los errores están divididos en tres tipos: Errores en los datos de entrada, errores de redondeo y errores de truncamiento. Los errores en los datos de entrada no están causados por el algoritmo que resuelve el problema, sino por valores que inician el algoritmo, generalmente estos valores se refieren a mediciones o magnitudes físicas. Los errores de redondeo surgen cuando se utilizan operaciones que tienen una representación numérica finita, esto significa que tienen una precisión limitada con respecto al resultado que devuelven. Y los errores de truncamiento están relacionados con el algoritmo en si, esto quiere decir que dependen de la forma en que se resuelve el problema, en algunos casos el error de truncamiento se puede disminuir modificando o refinando el algoritmo, esto generalmente implica aumentar la cantidad de
 operaciones a hacer y por lo tanto aumentar el error de redondeo y el tiempo para resolver el problema.
 
 
-El uso de computadoras en el cálculo numérico no solo conduce a errores de los antes mencionados, sino que, impulsado por alguno de los anteriores, aparece el error por resolver el probléma no como se ha formulado, sino a través de alguna aproximación. Este error es causado por reemplazar un infinito(sumatoria
-o integral por ejemplo) por una cantidad finita de términos La precisión finita que introduce algunos de los errores numéricos, es la que opera bajo el estándar de la IEEE (Institute of Electrical and Electronics Engineers) nro. 754, que normaliza la notación en bits de los numeros de punto flotante, la norma tiene cuatro grados de precisión: simple \(32 bits\), simple extendida(43 bits, no se utiliza habitualmente), doble (64) y doble extendida (implementada en 80 bits o más). Todas las normas cuentan con tres campos: signo, mantisa y exponente, los dos últimos varian su longitud según de cual se trate. En el caso de la doble extendida, se asigna un bit al signo (la parte más alta de la cadena), 64 a la mantisa (que se almacena en la parte baja de la cadena en notación sin signo) y 15 al exponente(entre las otras dos, se encuentra desplazado 2\^{}(14) ). El rango representado es [-10\^{}(4932), 10\^{}(4932)] aprox.
+El uso de computadoras en el cálculo numérico no solo conduce a errores de los antes mencionados, sino que, impulsado por alguno de los anteriores, aparece el error por resolver el problema no como se ha formulado, sino a través de alguna aproximación. Este error es causado por reemplazar un infinito(sumatoria
+o integral por ejemplo) por una cantidad finita de términos La precisión finita que introduce algunos de los errores numéricos, es la que opera bajo el estándar de la IEEE (Institute of Electrical and Electronics Engineers) nro. 754, que normaliza la notación en bits de los números de punto flotante, la norma tiene cuatro grados de precisión: simple \(32 bits\), simple extendida(43 bits, no se utiliza habitualmente), doble (64) y doble extendida (implementada en 80 bits o más). Todas las normas cuentan con tres campos: signo, mantisa y exponente, los dos últimos varían su longitud según de cual se trate. En el caso de la doble extendida, se asigna un bit al signo (la parte más alta de la cadena), 64 a la mantisa (que se almacena en la parte baja de la cadena en notación sin signo) y 15 al exponente(entre las otras dos, se encuentra desplazado 2\^{}(14) ). El rango representado es [-10\^{}(4932), 10\^{}(4932)] aprox.
 
-A su vez, existen varias maneras de cuantificar el error, de forma que su medición se torne algo más tangible y útil, entre ellas, el error relativo y el error absoluto son las que trataremos en este trabajo. Desde el punto de vista absoluto, el error surge de la diferencia que pudiera haber entre la magnitud real que se desea expresar, y la obtenida mediante cálculos computacionales. Por otra parte el error relativo tiene en cuenta no solo las magnitudes, sino el cociente entre la diferencia anterior y el valor absoluto de la magnitud
-medida. De esta forma se obtiene una real dimensión del error y no tan solo el valor absoluto del mismo. Por estos motivos, una de las tareas del análisis numerico se trata de buscar un algoritmo que lleve a la mejor solución posible de cada problema. De esta forma se pueden definir muchos algoritmos que lleguen a la solución, pero se seleccionará el que mejor aproxime a la solución del problema, es decir, el que mejor utilice las operaciones respecto de sus errores.
+A su vez, existen varias maneras de cuantificar el error, de forma que su medición se torne algo más tangible y útil, entre ellas, el error relativo y el error absoluto son las que trataremos en este trabajo. Desde el punto de vista absoluto, el error surge de la diferencia que pudiera haber entre la magnitud real que se desea expresar, y la obtenida mediante cálculos computacionales. Por otra parte el error relativo tiene en cuenta no solo las magnitudes, sino el cociente entre la diferencia anterior y el valor absoluto de la magnitud medida. De esta forma se obtiene una real dimensión del error y no tan solo el valor absoluto del mismo. Por estos motivos, una de las tareas del análisis numérico se trata de buscar un algoritmo que lleve a la mejor solución posible de cada problema. De esta forma se pueden definir muchos algoritmos que lleguen a la solución, pero se seleccionará el que mejor aproxime a la solución del problema, es decir, el que mejor utilice las operaciones respecto de sus errores.
 
-En este caso surge la noción de estabilidad numérica. La estabilidad numérica define cuan buena será la solución de nuestro problema usando métodos aproximados. Estos métodos pueden tener un resultado diferente al esperado, ya que tienen diferente estabilidad numerica, esto quiere decir que para ciertos
-valores de entrada, con sus respectivos errores, el método puede propagar el error por el algoritmo en mayor o menor medida. De esta forma, el algoritmo que mejor aproxime a la solución del problema, será aquel que tenga mejor estabilidad numerica.
+En este caso surge la noción de estabilidad numérica. La estabilidad numérica define cuan buena será la solución de nuestro problema usando métodos aproximados. Estos métodos pueden tener un resultado diferente al esperado, ya que tienen diferente estabilidad numérica, esto quiere decir que para ciertos
+valores de entrada, con sus respectivos errores, el método puede propagar el error por el algoritmo en mayor o menor medida. De esta forma, el algoritmo que mejor aproxime a la solución del problema, será aquel que tenga mejor estabilidad numérica.
 
 \medskip
-\leftline{\bf Desarrollo:}
+\leftline{\bf El problema:}
 
 El problema puntual abordado por este trabajo es obtener una aproximación de la función e\^{}(-x), mediante el polinomio de Taylor. El desarrollo de este algoritmo contempla dos variantes:
 
@@ -58,24 +58,48 @@ El problema puntual abordado por este trabajo es obtener una aproximación de la 
 
 \leftline{En cualquier caso, se incurre en varios tipos de error, a saber:}
 \begin{enumerate}
-\item Error debido a la implementación en aritmetica finita 
+\item Error debido a la implementación en aritmética finita 
 \item Error de truncamiento en cuanto a que el polinomio de Taylor es una serie, por tanto infinita, de términos, que se verá acotada a la cantidad que el usuario considere conveniente.
 \end{enumerate}
 
-Es condición para el trabajo realizar la aritmetica con precisión arbitraria (no por eso pierde su calidad de finita), determinada por el usuario. Entiéndase por precisión, el numero de bits de la mantisa en notación normalizada, esta cantidad esta acotada (en este trabajo) superiormente por 64.
+Es condición para el trabajo realizar la aritmética con precisión arbitraria (no por eso pierde su calidad de finita), determinada por el usuario. Entiéndase por precisión, el número de bits de la mantisa en notación normalizada, esta cantidad esta acotada (en este trabajo) superiormente por 64.
 
-El resultado de analizar las magnitudes y los comportamientos de los errores introducidos por el polinomio de Taylor para el calculo de la función serán abordados en este mismo trabajo, más adelante.
+El resultado de analizar las magnitudes y los comportamientos de los errores introducidos por el polinomio de Taylor para el cálculo de la función serán abordados en este mismo trabajo, más adelante.
 
 \medskip
 \leftline{\bf Detalles de implementación:}
 
-Como la condicion del trabajo es obtener el valor de la funcion e\^{}(-x) impementando una aritmetica de precision arbitraria, comenzamos pensando como es que realmente ibamos a implementarla. Luego de algunas reflexiones, llegamos a dilucidar dos formas diferentes. La primera, era diseñar e implementar desde cero, un aritmetica arbitraria adaptada al problema que se queria resolver. La segunda, utilizar la aritmetica fija que nos provee la PC como base y modificarla de alguna manera para que tenga la propiedad de ser arbitraria.
 
-Comenzamos planteando la primer opcion, buscando una manera de representar los datos. No hubo divergencia en cuanto a este tema, ya que solo una forma de representación nos vino a la mente, la de utilizar un arreglo de caracteres del tamaño que el usuario indicara para la cantidad de digitos en la mantisa, más los del exponente y el signo. Este arreglo contrendría ceros y unos, y codificaría cada numero a representar, ya sea por ingreso manual del dato o como resultado de alguna funcion del sistema a implementar.
+Como la condición del trabajo es obtener el valor de la función e\^{}(-x) implementando una aritmética de precisión arbitraria, comenzamos pensando cómo es que realmente íbamos a implementarla. Luego de algunas reflexiones, llegamos a concebir dos formas diferentes. La primera, diseñar e implementar desde cero, una aritmética arbitraria adaptada al problema que se quería resolver. La segunda, utilizar la aritmética fija que nos provee la PC como base y modificarla de alguna manera para que tenga la propiedad de ser arbitraria.
 
-El formato a utilizar para almacenar los datos dentro del arreglo iva a estar basado en el estandar IEEE numero 754. Es decir, que el arreglo tendria tres partes, una parte para el signo, otra para el exponente y otra para la mantisa. En principio, un problema que se nos planteo era el de saber o determinar cuantos "bits" tendria asignado el exponente, por el signo y la mantisa no tendrian ningun inconveniente, ya que tendrian un bit y la cantidad ingresada por el usuario respectivamente. Como nuestra idea era conseguir una mejor presicion a la hora de resolver el problema, decidimos asignarle la misma cantidad de bits que usa el estandar IEEE numero 754 en su version extendida, ya que consideramos esa cantidad ni muy pobre ni muy exesiva a la hora de hacer los calculos.
+Comenzamos planteando la primera opción, buscando una manera de representar los datos. No hubo divergencia en cuanto a este tema, ya que solo una forma de representación nos vino a la mente, la de utilizar un arreglo de caracteres del tamaño que el usuario indicara para la cantidad de dígitos en la mantisa, más los del exponente y el signo. Este arreglo contendría ceros y unos, y codificaría cada número a representar, ya sea por ingreso manual del dato o como resultado de alguna función del sistema a implementar.
 
-Finalmente, consideramos muy complicado implementar esta opcion, por lo que decistimos de utilizarla.
+El formato a utilizar para almacenar los datos dentro del arreglo iba a estar basado en el estándar IEEE numero 754. Es decir, que el arreglo tendría tres partes, una parte para el signo, otra para el exponente y otra para la mantisa. En principio, un problema que se nos planteo era el de saber o determinar cuantos "bits" tendría asignado el exponente, el signo y la mantisa no tendrían ningún inconveniente, ya que tendrían un bit y la cantidad ingresada por el usuario respectivamente. Como nuestra idea era conseguir una mejor precisión a la hora de resolver el problema, decidimos asignarle la misma cantidad de bits que usa el estándar IEEE numero 754 en su versión extendida, ya que consideramos esa cantidad ni muy pobre ni muy excesiva a la hora de hacer los cálculos.
 
-Planteamos la segunda opcion, y de inmediato nos percatamos de que era relativamente mas facil de implementar que la opcion uno, pero con el inconveniente de que la cantidad de bits en la mantisa estaba limitada superiormente. Esto nos permitio saber que ivamos a tener una cota con respecto a la presicion que iva a requerir el usuario. De todas formas, a pesar del inconveniente comentado, nos parecio mas seguro con respecto a los calculos, trabajar con una representacion que ya estaba acentada y por lo tanto funcionando.
+Finalmente, dada la envergadura de la implementación que esta opción requríria, la consideramos demasiado compleja, por lo que desistimos de utilizarla.
+
+Planteamos la segunda opción, y de inmediato nos percatamos de que era relativamente mas fácil de implementar que la anterior, pero acarreaba el inconveniente de que la cantidad de bits en la mantisa estaba limitada superiormente. Esto nos permitió saber que íbamos a tener una cota con respecto a la precisión que podría requerir el usuario. De todas formas, a pesar del inconveniente mencionado, nos pareció mas seguro con respecto a los cálculos, trabajar con una representación que ya estaba asentada y por lo tanto funcionando.
+
+
+Teniendo en cuenta estas consideraciónes sobre la complejidad de implementación y confiabilidad de la aritmética nos decidimos finalmente por la segunda opción.
+
+Utilizando el tipo de dato long double (que tiene un formato de 80 bits significativos, con las caracteristicas del IEEE 754 doble extendido mencionados más arriba) de C++  como base, creamos una clase que cuenta con dos atributos: el valor real, almacenado en un long double, y un entero que nos indica la presición con la que se van a enmascarar los datos. El nombre de la clase es Vlfloat (variable longitud float).
+
+\leftline{La clase funciona de la siguiente manera:}
+
+\begin{enumerate}
+\item Se crea un vlfloat con una precisión y un valor decididos por el usuario. El valor, inicialemente long double, se redondea para acordarse con la precisión. Los valores por defecto, en el caso que el usuario no ingrese un parametro, son:  cero para el valor (formato IEEE 754 doble extendido) y 63 de precisión.
+
+
+\item Cada operación se efectua en precisión doble extendida, y se redondea para mantener la precisión. Las operaciones disponibles son: suma, resta, multiplicación, dvisión y potenciación. En el caso particular de la división se incluyó por comodidad la división contra un long double, para todo el resto de las operaciónes los operandos son siempre vlifloat.
+
+
+\item Toda operación aritmetica se realiza con precisión doble extendida y finaliza con un llamado a la función "redondear", ésta se encarga de acotar la precisión del resultado obtenido mediante la manipulación en 80 bits de los operandos a la requerida por el usuario. El método que sigue esta función consiste en reservar los bits más significativos hasta completar la precisión requerida, sumar al bit siguiente un uno (método de redondeo) y colocar ceros a partir de éste. Tras efectuar el redondeo, tanto el signo como el exponente conservan su valor.
+\end{enumerate}
+
+
+Habiendonos decidido en cuanto a la representación de los valores que debiamos manejar, pasamos a trasladar el algoritmo de la serie de Taylor a la PC  en las condiciones antes mencionadas.
+
+Esta implementación no revistió mayores dificultades, razón por la cual decidimos agregar dos versiones más a las ya requeridas, teniendo en total cuatro versiones del algoritmo que implementa el polinomio de Taylor. Las dos primeras son las mencionadas en el enunciado y reproducen fielmente la serie de Taylor, definida matématicamente, hasta una cantidad de terminos decidida por el usuario. Las otras dos, alteran la sucesión de los terminos de manera que la suma de los mismos se efecuta de manera inversa, llendo desde los terminos más pequeños hacia los más grandes.
+
 \end{document}
