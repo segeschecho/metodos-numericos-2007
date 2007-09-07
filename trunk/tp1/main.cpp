@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <math.h>
 #include "VLFloat.h"
@@ -9,6 +10,7 @@ VLFloat factorial(unsigned int n, unsigned int p)
 {
 	VLFloat res(p, 1);
 	VLFloat i(p, 2);
+	//i lo hice VLFloat por la linea: res = res*i; que viene luego
 
 	if (n == 0)
 		return res;
@@ -16,6 +18,8 @@ VLFloat factorial(unsigned int n, unsigned int p)
 	while (i.valor() <= n)
 	{
 		res = res*i;
+	    cout << "res = " << res << endl;
+	    cout << "res.precision() = " << res.precision() << endl;
 		i = i.valor() + 1;
 	}
 	return res;
@@ -98,8 +102,177 @@ VLFloat taylorMenorAMayorInv(long double valor, unsigned int n, unsigned int pre
     return res;
 }
 
+void imprimirValores(ofstream& archivo)
+{
+
+    archivo << "TAYLOR MENOR A MAYOR" << endl;
+    archivo << "~~~~~~~~~~~~~~~~~~~~\n\n" << endl;
+    cout << "TAYLOR MENOR A MAYOR" << endl;
+    cout << "~~~~~~~~~~~~~~~~~~~~\n\n" << endl;
+    int x = 1;
+
+    archivo << "x = 1" << endl;
+    archivo << "~~~~~" << endl << endl;
+    archivo << "A = [ ";
+
+    cout << "x = 1" << endl;
+    cout << "~~~~~" << endl << endl;
+    cout << "A = [ ";
+    for(int i = 1; i < 64; i++){
+        for(int j = 1; j <= 170; j++){
+            cout << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
+            archivo << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
+        }
+    }
+
+    archivo << " ]" << endl << endl;
+    cout << " ]" << endl << endl;
+
+    archivo << "B = [ ";
+    cout << "B = [ ";
+
+    for(int i = 1; i < 64; i++){
+        for(int j = 1; j <= 170; j++){
+            archivo << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
+            cout << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
+        }
+    }
+
+    archivo << " ]" << endl << endl;
+    cout << " ]" << endl << endl;
+
+    x = 5;
+
+/*    while( x < 20 )
+    {
+        archivo << "x = " << x << endl;
+        archivo << "~~~~~" << endl << endl;
+
+        archivo << "A = [ ";
+
+        cout << "x = " << x << endl;
+        cout << "~~~~~" << endl << endl;
+
+        cout << "A = [ ";
+
+        for(int i = 1; i < 64; i++){
+            for(int j = 1; j <= 170; j++){
+                archivo << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
+                cout << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
+            }
+        }
+
+        archivo << " ]" << endl << endl;
+
+        archivo << "B = [ ";
+
+        cout << " ]" << endl << endl;
+
+        cout << "B = [ ";
+
+        for(int i = 1; i < 64; i++){
+            for(int j = 1; j <= 170; j++){
+                archivo << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
+                cout << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
+            }
+        }
+
+        archivo << " ]" << endl << endl;
+        cout << " ]" << endl << endl;
+        x += 5;
+    }
+
+    archivo << "\n\n\n\n";
+
+    archivo << "TAYLOR MAYOR A MENOR" << endl;
+    archivo << "~~~~~~~~~~~~~~~~~~~~\n\n" << endl;
+    cout << "\n\n\n\n";
+
+    cout << "TAYLOR MAYOR A MENOR" << endl;
+    cout << "~~~~~~~~~~~~~~~~~~~~\n\n" << endl;
+    x = 1;
+
+    archivo << "x = 1" << endl;
+    archivo << "~~~~~" << endl << endl;
+    archivo << "A = [ ";
+
+    cout << "x = 1" << endl;
+    cout << "~~~~~" << endl << endl;
+    cout << "A = [ ";
+
+    for(int i = 1; i < 64; i++){
+        for(int j = 1; j < 170; j++){
+            archivo << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
+            cout << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
+        }
+    }
+
+    archivo << " ]" << endl << endl;
+
+    archivo << "B = [ ";
+
+    cout << " ]" << endl << endl;
+
+    cout << "B = [ ";
+
+    for(int i = 1; i < 64; i++){
+        for(int j = 1; j < 170; j++){
+            archivo << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
+            cout << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
+        }
+    }
+
+    archivo << " ]" << endl << endl;
+    cout << " ]" << endl << endl;
+
+    x = 5;
+
+    while( x < 20 )
+    {
+        archivo << "x = " << x << endl;
+        archivo << "~~~~~" << endl << endl;
+
+        archivo << "A = [ ";
+
+        cout << "x = " << x << endl;
+        cout << "~~~~~" << endl << endl;
+
+        cout << "A = [ ";
+
+        for(int i = 1; i < 64; i++){
+            for(int j = 1; j < 170; j++){
+                archivo << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
+                cout << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
+            }
+        }
+
+        archivo << " ]" << endl << endl;
+
+        archivo << "B = [ ";
+
+        cout << " ]" << endl << endl;
+
+        cout << "B = [ ";
+
+        for(int i = 1; i < 64; i++){
+            for(int j = 1; j < 170; j++){
+                archivo << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
+                cout << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
+            }
+        }
+
+        archivo << " ]" << endl << endl;
+        cout << " ]" << endl << endl;
+        x += 5;
+    }
+*/
+    archivo.close();
+}
+
 int main()
 {
+//  ofstream a ("grafico.txt");
+//  imprimirValores(a);
 	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
 
@@ -114,7 +287,7 @@ int main()
 
 	cout << "\n\n";
 
-	cout << "Ingresar orden con el cual quiere aproximar a e^(-x) (0~20 recomendado): ";
+	cout << "Ingresar orden con el cual quiere aproximar a e^(-x) (1~170): ";
 	cin >> orden;
 
 	cout << "\n\n";

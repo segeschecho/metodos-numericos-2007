@@ -15,7 +15,8 @@ class VLFloat{
 
     public:
 
-        VLFloat(int = 64, long double = 0);	//presicion predefinida: 64 bits
+        VLFloat(int = 63, long double = 0);	//precision predefinida: 63 bits
+                                            //valor predefinido: 0
 
         int 		precision	(void);
         long double	valor   	(void);
