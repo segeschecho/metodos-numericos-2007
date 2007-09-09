@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <math.h>
 #include <time.h>
-#include "VLFloat.h"
+#include "DLFloat.h"
 
 using namespace std;
 /*
@@ -174,11 +174,11 @@ void redondear(long double c, int prec)
     cout << c << endl;
 }
 */
-VLFloat factorial(unsigned int n, unsigned int p)
+DLFloat factorial(unsigned int n, unsigned int p)
 {
-	VLFloat res(p, 1);
-	VLFloat i(p, 2);
-	//i lo hice VLFloat por la linea: res = res*i; que viene luego
+	DLFloat res(p, 1);
+	DLFloat i(p, 2);
+	//i lo hice DLFloat por la linea: res = res*i; que viene luego
 
 	if (n == 0)
 		return res;
@@ -193,9 +193,9 @@ VLFloat factorial(unsigned int n, unsigned int p)
 /////////////////////////////////////////////////////////////////////////////
 //Aproximacion de 1/(e^x) con taylor, sumando desde el mayor termino al menor
 /////////////////////////////////////////////////////////////////////////////
-VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precision){
-	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
-	VLFloat x(precision);
+DLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precision){
+	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
+	DLFloat x(precision);
 
 	x = valor;
 
@@ -210,9 +210,9 @@ VLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 /////////////////////////////////////////////////////////////////////////////
 //Aproximacion de 1/(e^x) con taylor, sumando desde el menor termino al mayor
 /////////////////////////////////////////////////////////////////////////////
-VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precision){
-	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
-	VLFloat x(precision);
+DLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precision){
+	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
+	DLFloat x(precision);
 
 	x = valor;
 
@@ -230,10 +230,10 @@ VLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precis
 ////////////////////////////////////////////////////////////////////////////
 //Aproximacion de e^(-x) con taylor, sumando desde el mayor termino al menor
 ////////////////////////////////////////////////////////////////////////////
-VLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int precision){
-	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
-	VLFloat x(precision);
-	VLFloat neg(1, 1);
+DLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int precision){
+	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
+	DLFloat x(precision);
+	DLFloat neg(1, 1);
 
 	x = valor;
 
@@ -249,10 +249,10 @@ VLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int pre
 ////////////////////////////////////////////////////////////////////////////
 //Aproximacion de e^(-x) con taylor, sumando desde el menor termino al mayor
 ////////////////////////////////////////////////////////////////////////////
-VLFloat taylorMenorAMayorInv(long double valor, unsigned int n, unsigned int precision){
-	VLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
-	VLFloat x(precision);
-	VLFloat neg(1, 1);
+DLFloat taylorMenorAMayorInv(long double valor, unsigned int n, unsigned int precision){
+	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
+	DLFloat x(precision);
+	DLFloat neg(1, 1);
 
 	x = valor;
 
@@ -445,9 +445,8 @@ int main()
 	 unsigned int comienzo = time(NULL);
     ofstream a ("grafico.txt");
     imprimirValores(a);
-	 unsigned int fin = time(NULL);
 
-	 cout << "\n\nEl algoritmo tardo: " << fin - comienzo << "segundos\n\n";
+	 cout << "\n\nEl algoritmo tardo: " << time(NULL) - comienzo << " segundos.\n\n";
 
 /*	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
@@ -473,11 +472,11 @@ int main()
 
 	cout << "\n\n";
 
-	VLFloat resultado1(p);
-	VLFloat resultado2(p);
+	DLFloat resultado1(p);
+	DLFloat resultado2(p);
 
-	VLFloat resultado1Inv(p);
-	VLFloat resultado2Inv(p);
+	DLFloat resultado1Inv(p);
+	DLFloat resultado2Inv(p);
 
 	resultado1 = taylorMayorAMenor(valor, orden, p);
 	resultado2 = taylorMenorAMayor(valor, orden, p);

@@ -1,24 +1,24 @@
-#include "VLFloat.h"
+#include "DLFloat.h"
 
 #define MAX(a, b) (a > b) ? a : b
 
-VLFloat :: VLFloat(int precision, long double valor){
+DLFloat :: DLFloat(int precision, long double valor){
     assert((precision < 64) && (precision > 0));
     prec = precision;
     numero = valor;
 	truncar(this);
 }
 
-int VLFloat :: precision(void){
+int DLFloat :: precision(void){
     return prec;
 }
 
-long double VLFloat :: valor(void){
+long double DLFloat :: valor(void){
     return numero;
 }
 
-VLFloat VLFloat :: operator+(const VLFloat &a){
-	VLFloat res(MAX(a.prec, prec));
+DLFloat DLFloat :: operator+(const DLFloat &a){
+	DLFloat res(MAX(a.prec, prec));
 
 	res.numero = numero + a.numero;
 	truncar(&res);
@@ -26,12 +26,12 @@ VLFloat VLFloat :: operator+(const VLFloat &a){
 	return res;
 }
 
-void VLFloat :: operator++(int a){
+void DLFloat :: operator++(int a){
     numero++;
 }
 
-VLFloat VLFloat :: operator-(const VLFloat &a){
-	VLFloat res(MAX(a.prec, prec));
+DLFloat DLFloat :: operator-(const DLFloat &a){
+	DLFloat res(MAX(a.prec, prec));
 
 	res.numero = numero - a.numero;
 	truncar(&res);
@@ -39,8 +39,8 @@ VLFloat VLFloat :: operator-(const VLFloat &a){
 	return res;
 }
 
-VLFloat VLFloat :: operator*(const VLFloat &a){
-	VLFloat res(MAX(a.prec, prec));
+DLFloat DLFloat :: operator*(const DLFloat &a){
+	DLFloat res(MAX(a.prec, prec));
 
 	res.numero = numero * a.numero;
 	truncar(&res);
@@ -48,8 +48,8 @@ VLFloat VLFloat :: operator*(const VLFloat &a){
 	return res;
 }
 
-VLFloat VLFloat :: operator/(const VLFloat &a){
-	VLFloat res(MAX(a.prec, prec));
+DLFloat DLFloat :: operator/(const DLFloat &a){
+	DLFloat res(MAX(a.prec, prec));
 
 	res.numero = numero / a.numero;
 	truncar(&res);
@@ -57,8 +57,8 @@ VLFloat VLFloat :: operator/(const VLFloat &a){
 	return res;
 }
 
-VLFloat VLFloat :: operator/(long double a){
-	VLFloat res(prec);
+DLFloat DLFloat :: operator/(long double a){
+	DLFloat res(prec);
 
 	res.numero = numero / a;
 	truncar(&res);
@@ -66,8 +66,8 @@ VLFloat VLFloat :: operator/(long double a){
 	return res;
 }
 
-VLFloat VLFloat :: operator^(int a){
-	VLFloat res(prec);
+DLFloat DLFloat :: operator^(int a){
+	DLFloat res(prec);
 	bool neg = 0;
 
 	if ( a < 0 ){
@@ -90,17 +90,17 @@ VLFloat VLFloat :: operator^(int a){
 	return res;
 }
 
-void VLFloat :: operator=(const VLFloat &a){
+void DLFloat :: operator=(const DLFloat &a){
     numero = a.numero;
     truncar(this);
 }
 
-void VLFloat :: operator=(long double a){
+void DLFloat :: operator=(long double a){
     numero = a;
     truncar(this);
 }
 
-void truncar(VLFloat* c)
+void truncar(DLFloat* c)
 {
     //La variable bytes representara la cantidad de bytes que tenemos de mantisa
 	int bytes = 8;    //"ignoramos" los 2 bytes de exponente + signo al truncar
@@ -118,7 +118,7 @@ void truncar(VLFloat* c)
 	memset(&(c->numero), 0, bytes - 1);
 }
 
-ostream& operator<<(ostream &os, const VLFloat &a){
+ostream& operator<<(ostream &os, const DLFloat &a){
     os << a.numero;
 	return os;
 }
