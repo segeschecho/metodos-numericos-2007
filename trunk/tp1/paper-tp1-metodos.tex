@@ -30,7 +30,7 @@ Resúmen:
 
 El análisis numérico básicamente se encarga de analizar, describir y crear algoritmos numéricos que permiten resolver problemas matemáticos. Estos algoritmos generalmente nos permiten obtener resultados aproximados, ya que contienen un número finito de pasos. El uso del análisis numérico toma gran importancia con el uso de las computadoras y el poder de cálculo que ellas tienen. Por este medio, es posible resolver problemas más complejos.
 
-Pero el uso de computadoras para hacer cálculos complejos trae un problema con sigo, y surge el concepto de error. Este concepto nace debido a que las computadoras trabajan con un rango finito de números, y además cada uno de estos está representado de una forma también finita.
+Pero el uso de computadoras para hacer cálculos complejos trae un problema consigo, y surge el concepto de error. Este concepto nace debido a que las computadoras trabajan con un rango finito de números, y además cada uno de estos está representado de una forma también finita.
 
 
 Los errores están divididos en tres tipos: Errores en los datos de entrada, errores de redondeo y errores de truncamiento. Los errores en los datos de entrada no están causados por el algoritmo que resuelve el problema, sino por valores que inician el algoritmo, generalmente estos valores se refieren a mediciones o magnitudes físicas. Los errores de redondeo surgen cuando se utilizan operaciones que tienen una representación numérica finita, esto significa que tienen una precisión limitada con respecto al resultado que devuelven. Y los errores de truncamiento están relacionados con el algoritmo en si, esto quiere decir que dependen de la forma en que se resuelve el problema, en algunos casos el error de truncamiento se puede disminuir modificando o refinando el algoritmo, esto generalmente implica aumentar la cantidad de
@@ -83,23 +83,27 @@ Planteamos la segunda opción, y de inmediato nos percatamos de que era relativam
 
 Teniendo en cuenta estas consideraciónes sobre la complejidad de implementación y confiabilidad de la aritmética nos decidimos finalmente por la segunda opción.
 
-Utilizando el tipo de dato long double (que tiene un formato de 80 bits significativos, con las caracteristicas del IEEE 754 doble extendido mencionados más arriba) de C++  como base, creamos una clase que cuenta con dos atributos: el valor real, almacenado en un long double, y un entero que nos indica la presición con la que se van a enmascarar los datos. El nombre de la clase es VLFloat (Variable Lenght Float).
+Utilizando el tipo de dato long double (que tiene un formato de 80 bits significativos, con las caracteristicas del IEEE 754 doble extendido mencionados más arriba) de C++  como base, creamos una clase que cuenta con dos atributos: el valor real, almacenado en un long double, y un entero que nos indica la presición con la que se van a enmascarar los datos. El nombre de la clase es DLFloat (Defined Longitude Float).
 
 \leftline{La clase funciona de la siguiente manera:}
 
 \begin{enumerate}
-\item Se crea un vlfloat con una precisión y un valor decididos por el usuario. El valor, inicialemente long double, se redondea para acordarse con la precisión. Los valores por defecto, en el caso que el usuario no ingrese un parametro, son:  cero para el valor (formato IEEE 754 doble extendido) y 63 de precisión.
+\item Se crea un DLFloat con una precisión y un valor decididos por el usuario. El valor, inicialmente long double, se trunca para acordarse con la precisión. Los valores por defecto, en el caso que el usuario no ingrese un parametro, son: cero para el valor (formato IEEE 754 doble extendido) y 63 de precisión. Caso contrario, la precision debe ser mayor a 0 y menor que 64.
 
 
-\item Cada operación se efectua en precisión doble extendida, y se redondea para mantener la precisión. Las operaciones disponibles son: suma, resta, multiplicación, dvisión y potenciación. En el caso particular de la división se incluyó por comodidad la división contra un long double, para todo el resto de las operaciónes los operandos son siempre vlifloat.
+\item Cada operación se efectua en precisión doble extendida, y se trunca para mantener la precisión. Las operaciones disponibles son: suma, resta, multiplicación, dvisión y potenciación. En el caso particular de la división se incluyó por comodidad la división contra un long double, para todo el resto de las operaciónes los operandos son siempre DLFloat.
 
 
-\item Toda operación aritmetica se realiza con precisión doble extendida y finaliza con un llamado a la función "redondear", ésta se encarga de acotar la precisión del resultado obtenido mediante la manipulación en 80 bits de los operandos a la requerida por el usuario. El método que sigue esta función consiste en reservar los bits más significativos hasta completar la precisión requerida, sumar al bit siguiente un uno (método de redondeo) y colocar ceros a partir de éste. Tras efectuar el redondeo, tanto el signo como el exponente conservan su valor.
+\item Toda operación aritmetica se realiza con precisión doble extendida y finaliza con un llamado a la función "truncar", ésta se encarga de acotar la precisión del resultado obtenido mediante la manipulación en 80 bits de los operandos a la requerida por el usuario. El método que sigue esta función consiste en reservar los bits más significativos hasta completar la precisión requerida, y colocar ceros en los bits que sobrepasan la precision pedida. Tras efectuar el truncamiento, tanto el signo como el exponente conservan su valor.
 \end{enumerate}
 
 
 Habiendonos decidido en cuanto a la representación de los valores que debiamos manejar, pasamos a trasladar el algoritmo de la serie de Taylor a la PC  en las condiciones antes mencionadas.
 
 Esta implementación no revistió mayores dificultades, razón por la cual decidimos agregar dos versiones más a las ya requeridas, teniendo en total cuatro versiones del algoritmo que implementa el polinomio de Taylor. Las dos primeras son las mencionadas en el enunciado y reproducen fielmente la serie de Taylor, definida matématicamente, hasta una cantidad de terminos decidida por el usuario. Las otras dos, alteran la sucesión de los terminos de manera que la suma de los mismos se efecuta de manera inversa, llendo desde los terminos más pequeños hacia los más grandes.
+
+\leftline{\bf Resultados:}
+\leftline{Orden vs Precision:}
+
 
 \end{document}
