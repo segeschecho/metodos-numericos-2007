@@ -442,64 +442,70 @@ int main()
         system("PAUSE");
    }
 */
-	 unsigned int comienzo = time(NULL);
+/*	 unsigned int comienzo = time(NULL);
     ofstream a ("grafico.txt");
     imprimirValores(a);
-	 cout << "\n\nEl algoritmo tardo: " << time(NULL) - comienzo << " segundos.\n\n";
-/*
+	 cout << "\n\nEl algoritmo tardo: " << time(NULL) - comienzo << " segundos.\n\n";*/
+
 	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
+    char hacerPrueba = 's';
 
-	cout << "Aproximacion de e^(-x) con presicion y orden variable" << endl;
-	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+    while(hacerPrueba == 's')
+    {
+        cout << "Aproximacion de e^(-x) con presicion y orden variable" << endl;
+        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 
-	cout << "\n\n\n\nsizeof(long double) = " << sizeof(long double) << " bytes";
-	cout << "\n\n";
+        cout << "\n\n\n\nsizeof(long double) = " << sizeof(long double) << " bytes";
+        cout << "\n\n";
 
-	cout << "Ingresar precision con el cual quiere trabajar el punto flotante: ";
-	cin >> p;
+        cout << "Ingresar precision con el cual quiere trabajar el punto flotante: ";
+        cin >> p;
 
-	cout << "\n\n";
+        cout << "\n\n";
 
-	cout << "Ingresar orden con el cual quiere aproximar a e^(-x) (1~170): ";
-	cin >> orden;
+        cout << "Ingresar orden con el cual quiere aproximar a e^(-x) (1~170): ";
+        cin >> orden;
 
-	cout << "\n\n";
+        cout << "\n\n";
 
-	cout << "Ingresar x: ";
-	cin >> valor;
+        cout << "Ingresar x: ";
+        cin >> valor;
 
-	cout << "\n\n";
+        cout << "\n\n";
 
-	DLFloat resultado1(p);
-	DLFloat resultado2(p);
+        DLFloat resultado1(p);
+        DLFloat resultado2(p);
 
-	DLFloat resultado1Inv(p);
-	DLFloat resultado2Inv(p);
+        DLFloat resultado1Inv(p);
+        DLFloat resultado2Inv(p);
 
-	resultado1 = taylorMayorAMenor(valor, orden, p);
-	resultado2 = taylorMenorAMayor(valor, orden, p);
+        resultado1 = taylorMayorAMenor(valor, orden, p);
+        resultado2 = taylorMenorAMayor(valor, orden, p);
 
-	resultado1Inv = taylorMayorAMenorInv(valor, orden, p);
-	resultado2Inv = taylorMenorAMayorInv(valor, orden, p);
+        resultado1Inv = taylorMayorAMenorInv(valor, orden, p);
+        resultado2Inv = taylorMenorAMayorInv(valor, orden, p);
 
-	cout.precision(40);
-	cout << "e^(-x): " << pow(e,-valor) << endl;
-	cout << "Resultado con taylor de mayor a menor 1/(e^x): " << resultado1 << endl;
-	cout << "Resultado con taylor de menor a mayor 1/(e^x): " << resultado2 << endl;
-	cout << "Resultado con taylor de mayor a menor e^(-x) : " << resultado1Inv << endl;
-	cout << "Resultado con taylor de menor a mayor e^(-x) : " << resultado2Inv << endl;
+        cout.precision(40);
+        cout << "e^(-x): " << pow(e,-valor) << endl;
+        cout << "Resultado con taylor de mayor a menor 1/(e^x): " << resultado1 << endl;
+        cout << "Resultado con taylor de menor a mayor 1/(e^x): " << resultado2 << endl;
+        cout << "Resultado con taylor de mayor a menor e^(-x) : " << resultado1Inv << endl;
+        cout << "Resultado con taylor de menor a mayor e^(-x) : " << resultado2Inv << endl << endl;
 
-	cout << "Error Absoluto mayor a menor 1/(e^x): " << (fabs(pow(e,-valor) - resultado1.valor())) << endl;
-	cout << "Error Relativo mayor a menor 1/(e^x): " << (fabs(pow(e,-valor) - resultado1.valor()) / pow(e,-valor)) << endl << endl;
-	cout << "Error Absoluto menor a mayor 1/(e^x): " << (fabs(pow(e,-valor) - resultado2.valor())) << endl;
-	cout << "Error Relativo menor a mayor 1/(e^x): " << (fabs(pow(e,-valor) - resultado2.valor()) / pow(e,-valor)) << endl << endl << endl;
+        cout << "Error Absoluto mayor a menor 1/(e^x): " << (fabs(pow(e,-valor) - resultado1.valor())) << endl;
+        cout << "Error Relativo mayor a menor 1/(e^x): " << (fabs(pow(e,-valor) - resultado1.valor()) / pow(e,-valor)) << endl << endl;
+        cout << "Error Absoluto menor a mayor 1/(e^x): " << (fabs(pow(e,-valor) - resultado2.valor())) << endl;
+        cout << "Error Relativo menor a mayor 1/(e^x): " << (fabs(pow(e,-valor) - resultado2.valor()) / pow(e,-valor)) << endl << endl << endl;
 
-	cout << "Error Absoluto mayor a menor e^(-x): " << (fabs(pow(e,-valor) - resultado1Inv.valor())) << endl;
-	cout << "Error Relativo mayor a menor e^(-x): " << (fabs(pow(e,-valor) - resultado1Inv.valor()) / pow(e,-valor)) << endl << endl;
-	cout << "Error Absoluto menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor())) << endl;
-	cout << "Error Relativo menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor()) / pow(e,-valor)) << endl << endl << endl;
-*/
+        cout << "Error Absoluto mayor a menor e^(-x): " << (fabs(pow(e,-valor) - resultado1Inv.valor())) << endl;
+        cout << "Error Relativo mayor a menor e^(-x): " << (fabs(pow(e,-valor) - resultado1Inv.valor()) / pow(e,-valor)) << endl << endl;
+        cout << "Error Absoluto menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor())) << endl;
+        cout << "Error Relativo menor a mayor e^(-x): " << (fabs(pow(e,-valor) - resultado2Inv.valor()) / pow(e,-valor)) << endl << endl << endl;
+        cout << endl << endl;
+        cout << "Desea realizar otra prueba? (s/n)" << endl;
+        cin >> hacerPrueba;
+    }
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
