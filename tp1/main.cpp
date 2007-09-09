@@ -284,7 +284,7 @@ void imprimirValores(ofstream& archivo)
     cout << "~~~~~" << endl << endl;
     cout << "A = [ ";
     for(int i = 1; i < 64; i++){
-        for(int j = 1; j <= 170; j++){
+        for(int j = 1; j <= 15; j++){
             archivo << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
         }
     }
@@ -296,7 +296,7 @@ void imprimirValores(ofstream& archivo)
     cout << "B = [ ";
 
     for(int i = 1; i < 64; i++){
-        for(int j = 1; j <= 170; j++){
+        for(int j = 1; j <= 15; j++){
             archivo << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
         }
     }
@@ -319,7 +319,7 @@ void imprimirValores(ofstream& archivo)
         cout << "A = [ ";
 
         for(int i = 1; i < 64; i++){
-            for(int j = 1; j <= 170; j++){
+            for(int j = 1; j <= 15; j++){
                 archivo << setprecision(20) << taylorMenorAMayor(x, j, i) << " ";
             }
         }
@@ -333,7 +333,7 @@ void imprimirValores(ofstream& archivo)
         cout << "B = [ ";
 
         for(int i = 1; i < 64; i++){
-            for(int j = 1; j <= 170; j++){
+            for(int j = 1; j <= 15; j++){
                 archivo << setprecision(20) << taylorMenorAMayorInv(x, j, i) << " ";
             }
         }
@@ -362,7 +362,7 @@ void imprimirValores(ofstream& archivo)
     cout << "A = [ ";
 
     for(int i = 1; i < 64; i++){
-        for(int j = 1; j < 170; j++){
+        for(int j = 1; j < 15; j++){
             archivo << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
         }
     }
@@ -376,7 +376,7 @@ void imprimirValores(ofstream& archivo)
     cout << "B = [ ";
 
     for(int i = 1; i < 64; i++){
-        for(int j = 1; j < 170; j++){
+        for(int j = 1; j < 15; j++){
             archivo << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
         }
     }
@@ -399,7 +399,7 @@ void imprimirValores(ofstream& archivo)
         cout << "A = [ ";
 
         for(int i = 1; i < 64; i++){
-            for(int j = 1; j < 170; j++){
+            for(int j = 1; j < 15; j++){
                 archivo << setprecision(20) << taylorMayorAMenor(x, j, i) << " ";
             }
         }
@@ -413,7 +413,7 @@ void imprimirValores(ofstream& archivo)
         cout << "B = [ ";
 
         for(int i = 1; i < 64; i++){
-            for(int j = 1; j < 170; j++){
+            for(int j = 1; j < 15; j++){
                 archivo << setprecision(20) << taylorMayorAMenorInv(x, j, i) << " ";
             }
         }
@@ -445,10 +445,9 @@ int main()
 	 unsigned int comienzo = time(NULL);
     ofstream a ("grafico.txt");
     imprimirValores(a);
-
 	 cout << "\n\nEl algoritmo tardo: " << time(NULL) - comienzo << " segundos.\n\n";
-
-/*	unsigned int p, orden;
+/*
+	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
 
 	cout << "Aproximacion de e^(-x) con presicion y orden variable" << endl;
@@ -480,8 +479,6 @@ int main()
 
 	resultado1 = taylorMayorAMenor(valor, orden, p);
 	resultado2 = taylorMenorAMayor(valor, orden, p);
-	resultado1 = resultado1^(-1);
-	resultado2 = resultado2^(-1);
 
 	resultado1Inv = taylorMayorAMenorInv(valor, orden, p);
 	resultado2Inv = taylorMenorAMayorInv(valor, orden, p);
