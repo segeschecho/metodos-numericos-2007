@@ -426,6 +426,144 @@ void imprimirValores(ofstream& archivo)
     archivo.close();
 }
 
+void imprimirValores2(ofstream& archivo)
+{
+    int cantTerminos = 50;
+    long double valor = 1, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
+
+    cout << "Guardando error relativo de e^(-x) en funcion de la presicion en bits";
+    cout << "en X = " << valor << " y cantidad de terminos = " << cantTerminos << endl;
+
+    archivo << "Guardando error relativo de e^(-x) en funcion de la presicion en bits: ";
+    archivo << "En X = " << valor << " y cantidad de terminos = " << cantTerminos << endl << endl;
+
+    /* imprimo los X */
+    archivo << "[ ";
+    for(int precision = 1; precision < 64; precision++)
+        archivo << 1 << " ";
+
+    archivo << " ]" << endl << endl;
+
+    /* imprimo la cantidad de terminos */
+    archivo << "[ ";
+    for(int precision = 1; precision < 64; precision++)
+        archivo << 50 << " ";
+
+    archivo << " ]" << endl << endl;
+
+    /* taylor mayor a menor*/
+    archivo << "taylor mayor a menor:" << endl << endl;
+    archivo << "[ ";
+    for(int precision = 1; precision < 64; precision++){
+		  DLFloat res(precision);
+		  res = taylorMayorAMenor(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+    archivo << " ]" << endl << endl;
+
+    /* taylor mayor a menor inv */
+    archivo << "taylor mayor a menor INV:" << endl << endl;
+    archivo << "[ ";
+    for(int precision = 1; precision < 64; precision++){
+		  DLFloat res(precision);
+		  res = taylorMayorAMenorInv(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << " ]" << endl << endl;
+
+    /* taylor menor a mayor */
+    archivo << "taylor menor a mayor:" << endl << endl;
+    archivo << "[ ";
+    for(int precision = 1; precision < 64; precision++){
+		  DLFloat res(precision);
+		  res = taylorMenorAMayor(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << " ]" << endl << endl;
+
+    /* taylor menor a mayor */
+    archivo << "taylor menor a mayor INV:" << endl << endl;
+    archivo << "[ ";
+    for(int precision = 1; precision < 64; precision++){
+		  DLFloat res(precision);
+		  res = taylorMenorAMayorInv(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << " ]" << endl << endl;
+
+
+    int precision = 50;
+
+    cout << "Guardando error relativo de e^(-x) en funcion del orden de Taylor";
+    cout << "en X = " << valor << " y precision = " << cantTerminos << endl;
+
+    archivo << "Guardando error relativo de e^(-x) en funcion del orden de Taylor: ";
+    archivo << "En X = " << valor << " y precision = " << cantTerminos << endl << endl;
+
+    /* imprimo los X */
+    archivo << "[ ";
+    for(int cantTerminos = 1; cantTerminos < 50; cantTerminos++)
+        archivo << 1 << " ";
+
+	 archivo << " ]" << endl << endl;
+
+    /* imprimo la cantidad de terminos */
+    archivo << "[ ";
+    for(int cantTerminos = 1; cantTerminos < 50; cantTerminos++)
+        archivo << 50 << " ";
+
+    archivo << " ]" << endl << endl;
+
+    /* taylor mayor a menor*/
+    archivo << "taylor mayor a menor:" << endl << endl;
+    archivo << "[ ";
+    for(int cantTerminos = 1; cantTerminos < 50; cantTerminos++){
+		  DLFloat res(precision);
+		  res = taylorMayorAMenor(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << " ]" << endl << endl;
+
+    /* taylor mayor a menor inv */
+    archivo << "taylor mayor a menor INV:" << endl << endl;
+    archivo << "[ ";
+    for(int cantTerminos = 1; cantTerminos < 50; cantTerminos++){
+		  DLFloat res(precision);
+		  res = taylorMayorAMenorInv(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << " ]" << endl << endl;
+
+    /* taylor menor a mayor */
+    archivo << "taylor menor a mayor:" << endl << endl;
+    archivo << "[ ";
+    for(int cantTerminos = 1; cantTerminos < 50; cantTerminos++){
+		  DLFloat res(precision);
+		  res = taylorMenorAMayor(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << " ]" << endl << endl;
+
+    /* taylor menor a mayor */
+    archivo << "taylor menor a mayor INV:" << endl << endl;
+    archivo << "[ ";
+    for(int cantTerminos = 1; cantTerminos < 50; cantTerminos++){
+		  DLFloat res(precision);
+		  res = taylorMenorAMayorInv(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << " ]" << endl << endl;
+
+    archivo.close();
+}
+
 int main()
 {
 /*    long double e = 2.718281828459045235360287471352662497757247093699959574966967627724;
@@ -443,8 +581,8 @@ int main()
    }
 */
 /*	 unsigned int comienzo = time(NULL);
-    ofstream a ("grafico.txt");
-    imprimirValores(a);
+    ofstream a ("grafico2.txt");
+    imprimirValores2(a);
 	 cout << "\n\nEl algoritmo tardo: " << time(NULL) - comienzo << " segundos.\n\n";*/
 
 	unsigned int p, orden;
