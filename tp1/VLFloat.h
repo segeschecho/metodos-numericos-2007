@@ -11,7 +11,7 @@ using namespace std;
 
 class VLFloat{
         friend ostream& operator << (ostream &o, const VLFloat &a);
-        friend void redondear(VLFloat *c);
+        friend void truncar(VLFloat *c);
 
     public:
 
