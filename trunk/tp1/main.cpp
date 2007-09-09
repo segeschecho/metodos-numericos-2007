@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <math.h>
+#include <time.h>
 #include "VLFloat.h"
 
 using namespace std;
@@ -441,8 +442,13 @@ int main()
         system("PAUSE");
    }
 */
+	 unsigned int comienzo = time(NULL);
     ofstream a ("grafico.txt");
     imprimirValores(a);
+	 unsigned int fin = time(NULL);
+
+	 cout << "\n\nEl algoritmo tardo: " << fin - comienzo << "segundos\n\n";
+
 /*	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
 
