@@ -180,13 +180,26 @@ Como conclusión general resultante de todos los gráficos, los métodos que emplea
 Sin embargo, los métodos que emplean  e\^{}(-x) para x < 0 son más precisos que los que se basan directamente en la inversa de e\^{}x. Esto se debe a que la serie de Taylor de e\^{}(-x) tiene sus restas en los términos impares, lo que quiere decir que con x < 0, el termino se hara positivo, y los términos pares serán también positivos pero gracias a la potencia par de x. Ademas la inversa de e\^{}x debe hacer una o operación de mas (la inversa) lo cual suma error relativo, para x > 0 perdia importancia gracias al mal condicionamiento de la resta de e\^{}(-x). Entonces la serie e\^{}(-x) para x < 0 cede sus términos negativos a la la inversa de e\^{}x, y sumando se evita el mal condicionamiento de la resta que sufría para x > 0.
 
 Un dato interesante que se obtiene de los gráficos del 1 al 4 es que se observa que con una buena precisión, no se requiere desarrollar demasiados términos en la serie de Taylor para obtener un error relativo pequeño(en los gráficos 3 y 4 se puede ver como con orden mayor a 5 el error relativo tiende a cero), en cambio, cuando se usa una precisión baja (por baja se entiende menor a 10), el incrementar el orden de la serie, no implica disminuir demasiado el margen del error relativo. Resulta evidente que si se mantiene fija la cantidad de términos y se incrementa la precisión, se esta actuando unicamente para acotar el error, mientras que mantener quieta la precisión y alimentar la serie con más términos, incluye además de una ganancia en exactitud, una perdida, ya que un orden mayor involucra más operaciones que aumentan el error.
+
 Este resultado ademas de teorico es bastante intuitivo, por una  simple razón: cuando se usa una precisión alta y se calculan varios términos, estos actúan generando una ganancia en la precisión al margen de que se producen errores en las operaciones, sin embargo en el otro caso, al haber poca precisión la incidencia del error es mucho mayor.
 
 \pagebreak
 
 \leftline{\bf Conclusiones Generales}
 
+Comparando las hipótesis preliminares con respecto a los resultados obtenidos, podemos concluir que, las  mismas no se ven respaldadas en su totalidad.
+Los fundamentos teóricos que rebaten las suposiciones formuladas sobre el comportamiento del algoritmo que implementa e^{}(-x) contra 1/e^{}(x), ya se han comentado en secciones anteriores.
+Como conclusión de este hecho, podemos decir que para obtener la mejor aproximación posible se debe utilizar una conjunción de ambos métodos, empleando  e^{}(-x) cuando se trabaja con x < 0, y 1/e^{}(x) en caso contrario. Cada uno tiene un rendimiento notoriamente superior a su contraparte en los casos en los que se desempeña mejor. Además, siempre basándonos en los gráficos 5 y 6 en los algoritmos que suman desde los términos más pequeños de la serie hacia los más grandes parece haber una magnitud de error menor. 
+Para lograr una aún mejor aproximación, recomendamos incrementar la precisión y mantener la cantidad de términos de la serie de Taylor en la menor posible, por razones también ya comentadas en secciones anteriores.
+
 Otra observación con respecto a las hipótesis planteadas al principio del artículo, es que la variante del polinomio de Taylor que trabaja con los términos más pequeños hacia los más grandes, no resultó tan efectiva como la imaginábamos. Observando los gráficos del uno al cuatro, primero se evidencia que en los primeros dos, Taylor de menor a mayor tiene un menor desempeño con respecto a su contraparte original, si bien la diferencia es casi nula para el método 1/e\^{}x, calculando e\^{}(-x) se observa mejor.
+
+No se encontraron fundamentos teóricos que respalden lo observado en los gráficos del 1 al 4, en cuanto a que no siempre es mejor el algoritmo que calcula la serie desde los menores hacia los mayores. Sin embargo no se descarta ninguna hipótesis, entre las cuales se encuentra un posible error de implementación, tanto en el algoritmo como en el experimento, o un caso de prueba en particular poco favorable.  
+
+El método general para la manipulación aritmética en precisión finita fue el truncamiento, sin embargo, extender esto al redondeo mejoraría notoriamente la aproximación, reduciendo el error absoluto prácticamente a la mitad, con la consecuente reducción del error relativo, aunque en menor magnitud. Ya se ha comentado acerca de este tema en los Detalles de Implementación. 
+
+Otra posible estrategia para mejorar la aproximación es implementar un sistema de aritmética arbitraria sin la cota superior de 64 bits, mediante un arreglo arbitrariamente grande de valores bool, que emule un numero normalizado. Esta opción de implementación se descarto por los tiempos a los que estaba sujeto el proyecto.
+Por esta misma razón, no se realizaron algunos experimentos más que podrían haber arrojado alguna luz sobre el comportamiento errático de los algoritmos que implementan la serie de menor a mayor.
 
 \pagebreak
 \newcommand{\erf}{\hbox{erf}}
