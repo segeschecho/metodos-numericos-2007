@@ -622,6 +622,21 @@ void imprimirValores2(ofstream& archivo)
 
     archivo << "];" << endl << endl;
 
+    precision = 50;
+    cantTerminos = 50;
+    cout << "Comparacion entre las funciones 1/e^x y e^(-x) Mayor a Menor:" << endl << endl;
+    archivo << "Comparacion entre las funciones 1/e^x y e^(-x) Mayor a Menor:" << endl << endl;
+    for(valor = -100; valor <= 100; valor++){
+		  DLFloat res(precision);
+		  DLFloat res2(precision);
+		  long double resta;
+		  res = taylorMayorAMenor(valor, cantTerminos, precision);
+		  res2 = taylorMayorAMenorInv(valor, cantTerminos, precision);
+		  resta = ((fabs(pow(e,-valor) - res2.valor()) / pow(e,-valor)) - (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)));
+        archivo << "x = " << valor << " : " << setprecision(20) << resta;
+        (resta < 0) ? (archivo << "\tGANA e^(-x)" << endl) : (archivo << "\tGANA 1/e^x" << endl);
+    }
+
     archivo.close();
 }
 
