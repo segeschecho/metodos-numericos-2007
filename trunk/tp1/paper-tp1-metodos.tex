@@ -2,6 +2,7 @@
 \usepackage[spanish]{babel}%corta palabras en español
 \usepackage[latin1]{inputenc}%escribir con acentos, ñ
 \usepackage{graphicx}
+\usepackage{a4wide}
 \begin{document}
 $$ \mbox{\bf Universidad de Buenos Aires} $$
 $$ \mbox{Facultad de Ciencias Exáctas y Naturales} $$
@@ -20,9 +21,10 @@ $$ \mbox{Departamento de Computación} $$
 {Ferro Mariano(eltrencitomasverde@gmail.com)}
 
 \medskip
-Palábras clave:
+Palábras clave: error relativo, aproximación, aritmetica finita, e^{}(-x)
 
-Resúmen:
+Resúmen: \textit{En este trabajo presentamos un grupo de algoritmos para la aproximación de f(x)= e^{}(-x), basados en la serie de Taylor para la función correspondiente, alrededor del cero. Dichos algoritmos fueron implementados bajo un sistema de aritmética finita y arbitraria, con el estándar IEEE 754 como base y con un método de truncamiento simple para mantener la coherencia de la precisión. Como fruto de la utilización de una aritmetica de precisión finita, surgen distintos tipos de error. Distintas formas de implementar los algoritmos conducen a un mayor o menor error, en distintas circunstancias. 
+De las aproximaciones obtenidas mediante los algoritmos implementados, calculamos el error relativo para la función e^{}(-x) evaluada en distintos puntos, precisiones y cantidades de términos y los comparamos, contrastando las hipótesis preliminares con los resultados obtenidos mediante la experimentación, en busca del algoritmo más idoneo para realizar el calculo.}
 \medskip
 
 \pagebreak
@@ -105,11 +107,11 @@ Habiéndonos decidido en cuanto a la representación de los valores que debíamos m
 
 Esta implementación no revistió mayores dificultades, razón por la cual decidimos agregar dos versiones más a las ya requeridas, teniendo en total cuatro versiones del algoritmo que implementa el polinomio de Taylor. Las dos primeras son las mencionadas en el enunciado y reproducen fielmente la serie de Taylor, definida matemáticamente, hasta una cantidad de términos decidida por el usuario. Las otras dos, alteran la sucesión de los términos de manera que la suma de los mismos se efectúa de manera inversa, yendo desde los términos más pequeños hacia los más grandes.
 
-Establecidas las cuatro formas de aproximar e^(-x), las hipótesis preliminares acerca del error situaban a la serie de Taylor de e^(-x) calculada de menor a mayor como la de mejor rendimiento. En segundo lugar, pero sin unanimidad, se encontraban la serie de Taylor de e^(x) invertida de mayor a menor, y la variante e^(x) de menor a mayor. En último lugar, todos estuvimos de acuerdo en colocar a la serie para e^(x) invertida y calculada de mayor a menor.
+Establecidas las cuatro formas de aproximar e\^{}(-x), las hipótesis preliminares acerca del error situaban a la serie de Taylor de e\^{}(-x) calculada de menor a mayor como la de mejor rendimiento. En segundo lugar, pero sin unanimidad, se encontraban la serie de Taylor de e\^{}(x) invertida de mayor a menor, y la variante e\^{}(x) de menor a mayor. En último lugar, todos estuvimos de acuerdo en colocar a la serie para e\^{}(x) invertida y calculada de mayor a menor.
 
 Los criterios para establecer estas hipótesis son básicamente dos: si se suman primero los números más pequeños, estos se vuelven los suficientemente significativos como para poder modificar a un número más grande en una suma. De otro modo puede suceder que sumar un número grande a uno pequeño, nos dé por resultado el grande sin modificación.
 
-El segundo criterio es muy sencillo, consideramos que la serie de Taylor para e^(-x), aproxima mejor a ese número que la de e^(x) invertida, ya que la primera es la serie "exacta", mientras que la segunda no lo es, y para transformarla se requiere una operación extra, que incrementa el error.
+El segundo criterio es muy sencillo, consideramos que la serie de Taylor para e\^{}(-x), aproxima mejor a ese número que la de e\^{}(x) invertida, ya que la primera es la serie "exacta", mientras que la segunda no lo es, y para transformarla se requiere una operación extra, que incrementa el error.
 
 \medskip
 \leftline{\bf Resultados:}
@@ -127,7 +129,7 @@ En los dos primero gráficos se muestran lo errores relativos calculando e\^{}(-x
 
 \centerline{\scriptsize Grafico1}
 
-En el grafico 1 se ve reflejado el error relativo usando la versión de la serie de Taylor que calcula desde los términos mas chicos en valor a los mas grandes. En este caso se ve una clara diferencia entre e\^{}(-x) y 1/e\^{}x al comienzo del grafico, luego a medida que aumenta la precisión, el error relativo de ambos métodos se va acercando a cero rápidamente. De todas formas, según el gráfico la función que menos error relativo tiene a medida que aumenta la precisión es 1/e\^{}x.
+En el gráfico 1 se ve reflejado el error relativo usando la versión de la serie de Taylor que calcula desde los términos más chicos en valor a los más grandes. En este caso se ve una clara diferencia entre e\^{}(-x) y 1/e\^{}x al comienzo del gráfico, luego a medida que aumenta la precisión, el error relativo de ambos métodos se va acercando a cero rápidamente. De todas formas, según el gráfico la función que menos error relativo tiene a medida que aumenta la precisión es 1/e\^{}x.
 
 \centerline{\includegraphics[scale=0.5]{grafico2.jpg}}
 
@@ -168,6 +170,91 @@ Este último gráfico es muy similar al anterior, con la diferencia que con la ver
 No es despreciable notar en los gráficos 5 y 6 que para valores altos de x el error es no acotado, tiende a infinito. Este fenómeno es una consecuencia de la utilización de la aritmética de precisión finita. Con esta forma de representación para los valores, aquellos x por sobre un valor determinado se salen del rango aceptado, haciendo que la PC busque representaciones alternativas y que el error relativo sea muy grande.
 
 Como conclusión general resultante de todos los gráficos, los métodos que emplean la inversa de e^x son con mucho, más precisos que los que se basan directamente en e^(-x). Esto da por tierra con una de nuestras hipótesis preliminares, sin embargo, tiene un asidero teórico. La segunda variante es una serie de sumas y restas, esta última operación esta mal condicionada, lo que  quiere decir que para valores similares incurre en grandes errores. Justamente la serie de Taylor guarda cierta similaridad entre sus valors contiguos, con lo que podríamos considerarla un caso patologico para el mal condicionamiento de la resta, con lo que esta variante pierde confiabilidad.     
+
+\pagebreak
+\newcommand{\erf}{\hbox{erf}}
+\newcommand{\real}{\hbox{\bf R}}
+
+\begin{document}
+
+\begin{centering}
+\bf Laboratorio de M\'etodos Num\'ericos - Segundo cuatrimestre 2007 \\
+\bf Trabajo Pr\'actico N\'umero 1: Esp\'\i a por error (num\'erico) \\
+\end{centering}
+
+\vskip 25pt
+\hrule
+\vskip 11pt
+
+El objetivo del trabajo pr\'actico es realizar un an\'alisis emp\'\i rico
+del comportamiento num\'erico de la serie de Taylor para calcular el valor
+de $e^{-a}$, con $a\in\hbox{\bf R}$. Consideremos los siguientes m\'etodos
+para calcular el valor de esta expresi\'on:
+\begin{enumerate}
+\item Desarrollar la funci\'on $f(x) = e^{-x}$ en serie de Taylor alrededor
+del 0, y evaluar esta serie en el punto $x=a$.
+\item Desarrollar la funci\'on $f(x) = e^x$ en serie de Taylor alrededor
+del 0, evaluar esta serie en el punto $x=a$ y responder la inversa del valor
+calculado.
+\end{enumerate}
+Implementar ambos m\'etodos con aritm\'etica binaria de punto flotante con
+$t$ d\'\i gitos de precisi\'on y comparar los errores re\-la\-ti\-vos de los
+resultados obtenidos en ambos casos. >Por qu\'e se observan estos resultados?
+>Puede dar una explicaci\'on intuitiva de los errores obtenidos? Para
+profundizar en el an\'alisis, realizar los siguientes experimentos
+num\'ericos:
+\begin{enumerate}
+\item Reportar el error relativo de cada m\'etodo en funci\'on de la cantidad
+de iteraciones de la serie de Taylor. >Se puede afirmar que alg\'un m\'etodo
+tiene una convergencia superior?
+\item Reportar el error relativo de cada m\'etodo en funci\'on de la cantidad
+$t$ de d\'\i gitos binarios considerados para implementar los c\'alculos
+num\'ericos. Discutir estos resultados, explicando las razones que motivan
+este comportamiento y agregando todos los experimentos num\'ericos que sean
+necesarios.
+\item Comparar el error relativo de ambos m\'etodos en funci\'on del valor
+de $a$, dentro de un intervalo razonable.
+\end{enumerate}
+Se deben presentar los resultados de estas pruebas en un formato conveniente
+para su an\'alisis. Sobre la base de los resultados obtenidos, >se pueden
+extraer conclusiones sobre la conveniencia de utilizar uno u otro m\'etodo?
+
+El informe debe contener una descripci\'on detallada de las distintas
+alternativas que el grupo haya considerado para la implementaci\'on de la
+aritm\'etica de punto flotante de $t$ d\'\i gitos binarios de precisi\'on, junto
+con una discusi\'on de estas alternativas que justifique la opci\'on
+implementada. Por otra parte, se debe incluir en la secci\'on correspondiente
+el c\'odigo que implementa esta aritm\'etica, junto con todos los comentarios
+y decisiones relevantes acerca de esta implementaci\'on.
+
+\vskip 15pt
+
+\hrule
+
+\vskip 11pt
+
+Fecha de entrega: Lunes 10 de Septiembre
+
+
+\pagebreak
+
+Referencias:
+
+http://www.cplusplus.com/
+Referencia y consulta para C++
+http://www.oss-watch.ac.uk/resources/googlecode.xml 
+Repositorio
+http://svnbook.red-bean.com/ 
+Manual de svn
+pcmap.unizar.es/~pilar/latex.pdf
+Introduccion a latex
+http://es.wikipedia.org/wiki/Análisis_numérico 
+Analisis numerico, redondeo etc
+http://babbage.cs.qc.edu/courses/cs341/IEEE-754references.html
+Referencia para IEEE 754
+webs.uvigo.es/mat.avanzadas/PracME_1.pdf 
+Introduccion a matlab
+
 
 
 \end{document}
