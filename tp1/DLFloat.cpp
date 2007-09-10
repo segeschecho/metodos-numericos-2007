@@ -84,8 +84,10 @@ DLFloat DLFloat :: operator^(int a){
 		a--;
 	}
 
-	if (neg)
+	if (neg){
 		res.numero = 1/(res.numero);
+		truncar(&res);
+	}
 
 	return res;
 }
@@ -111,8 +113,12 @@ void truncar(DLFloat* c)
 
 	unsigned char* ch = ((unsigned char*)&(c->numero) + bytes - 1);
 
+
+//////////////// PARTE DE REDONDEO CANCELADA ////////////////
 //	*ch += ( 1 << (7 - (c->prec % 8)) ); //con esto le sumamos 1 al primer bit que voy a truncar
                                          //con el fin de truncar
+/////////////////////////////////////////////////////////////
+
 	*ch &= (255 << (8 - (c->prec % 8)) ); //255 = 1111 1111
 	//ahora borramos los bytes menos significativos
 	memset(&(c->numero), 0, bytes - 1);
