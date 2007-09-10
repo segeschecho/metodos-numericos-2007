@@ -193,7 +193,7 @@ DLFloat factorial(unsigned int n, unsigned int p)
 /////////////////////////////////////////////////////////////////////////////
 //Aproximacion de 1/(e^x) con taylor, sumando desde el mayor termino al menor
 /////////////////////////////////////////////////////////////////////////////
-DLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precision){
+DLFloat taylorMenorAMayorInv(long double valor, unsigned int n, unsigned int precision){
 	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	DLFloat x(precision);
 
@@ -210,7 +210,7 @@ DLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 /////////////////////////////////////////////////////////////////////////////
 //Aproximacion de 1/(e^x) con taylor, sumando desde el menor termino al mayor
 /////////////////////////////////////////////////////////////////////////////
-DLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precision){
+DLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int precision){
 	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	DLFloat x(precision);
 
@@ -230,7 +230,7 @@ DLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precis
 ////////////////////////////////////////////////////////////////////////////
 //Aproximacion de e^(-x) con taylor, sumando desde el mayor termino al menor
 ////////////////////////////////////////////////////////////////////////////
-DLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int precision){
+DLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precision){
 	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	DLFloat x(precision);
 	DLFloat neg(1, 1);
@@ -249,7 +249,7 @@ DLFloat taylorMayorAMenorInv(long double valor, unsigned int n, unsigned int pre
 ////////////////////////////////////////////////////////////////////////////
 //Aproximacion de e^(-x) con taylor, sumando desde el menor termino al mayor
 ////////////////////////////////////////////////////////////////////////////
-DLFloat taylorMenorAMayorInv(long double valor, unsigned int n, unsigned int precision){
+DLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precision){
 	DLFloat res(precision, 1);	//lo inicializo en 1 para no calcular el 1er termino de la serie
 	DLFloat x(precision);
 	DLFloat neg(1, 1);
@@ -453,27 +453,16 @@ void imprimirValores2(ofstream& archivo)
     archivo << "];" << endl << endl;
 
     /* taylor mayor a menor*/
-    archivo << "taylor mayor a menor:" << endl << endl;
+    archivo << "taylor menor a mayor INV:" << endl << endl;
     archivo << "[ ";
     for(precision = 1; precision < 64; precision++){
 		  DLFloat res(precision);
-		  res = taylorMayorAMenor(valor, cantTerminos, precision);
+		  res = taylorMenorAMayorInv(valor, cantTerminos, precision);
         archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
     }
     archivo << "];" << endl << endl;
 
     /* taylor mayor a menor inv */
-    archivo << "taylor mayor a menor INV:" << endl << endl;
-    archivo << "[ ";
-    for(precision = 1; precision < 64; precision++){
-		  DLFloat res(precision);
-		  res = taylorMayorAMenorInv(valor, cantTerminos, precision);
-        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
-    }
-
-    archivo << "];" << endl << endl;
-
-    /* taylor menor a mayor */
     archivo << "taylor menor a mayor:" << endl << endl;
     archivo << "[ ";
     for(precision = 1; precision < 64; precision++){
@@ -485,11 +474,22 @@ void imprimirValores2(ofstream& archivo)
     archivo << "];" << endl << endl;
 
     /* taylor menor a mayor */
-    archivo << "taylor menor a mayor INV:" << endl << endl;
+    archivo << "taylor mayor a menor INV:" << endl << endl;
     archivo << "[ ";
     for(precision = 1; precision < 64; precision++){
 		  DLFloat res(precision);
-		  res = taylorMenorAMayorInv(valor, cantTerminos, precision);
+		  res = taylorMayorAMenorInv(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << "];" << endl << endl;
+
+    /* taylor menor a mayor */
+    archivo << "taylor mayor a menor:" << endl << endl;
+    archivo << "[ ";
+    for(precision = 1; precision < 64; precision++){
+		  DLFloat res(precision);
+		  res = taylorMayorAMenor(valor, cantTerminos, precision);
         archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
     }
 
@@ -519,28 +519,17 @@ void imprimirValores2(ofstream& archivo)
     archivo << "];" << endl << endl;
 
     /* taylor mayor a menor*/
-    archivo << "taylor mayor a menor:" << endl << endl;
+    archivo << "taylor menor a mayor INV:" << endl << endl;
     archivo << "[ ";
     for(cantTerminos = 1; cantTerminos <= 50; cantTerminos++){
 		  DLFloat res(precision);
-		  res = taylorMayorAMenor(valor, cantTerminos, precision);
-          archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
-    }
-
-    archivo << "];" << endl << endl;
-
-    /* taylor mayor a menor inv */
-    archivo << "taylor mayor a menor INV:" << endl << endl;
-    archivo << "[ ";
-    for(cantTerminos = 1; cantTerminos <= 50; cantTerminos++){
-		  DLFloat res(precision);
-		  res = taylorMayorAMenorInv(valor, cantTerminos, precision);
+		  res = taylorMenorAMayorInv(valor, cantTerminos, precision);
         archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
     }
 
     archivo << "];" << endl << endl;
 
-    /* taylor menor a mayor */
+    /* taylor mayor a menor inv */
     archivo << "taylor menor a mayor:" << endl << endl;
     archivo << "[ ";
     for(cantTerminos = 1; cantTerminos <= 50; cantTerminos++){
@@ -552,11 +541,22 @@ void imprimirValores2(ofstream& archivo)
     archivo << "];" << endl << endl;
 
     /* taylor menor a mayor */
-    archivo << "taylor menor a mayor INV:" << endl << endl;
+    archivo << "taylor mayor a menor INV:" << endl << endl;
     archivo << "[ ";
     for(cantTerminos = 1; cantTerminos <= 50; cantTerminos++){
 		  DLFloat res(precision);
-		  res = taylorMenorAMayorInv(valor, cantTerminos, precision);
+		  res = taylorMayorAMenorInv(valor, cantTerminos, precision);
+        archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << "];" << endl << endl;
+
+    /* taylor menor a mayor */
+    archivo << "taylor mayor a menor:" << endl << endl;
+    archivo << "[ ";
+    for(cantTerminos = 1; cantTerminos <= 50; cantTerminos++){
+		  DLFloat res(precision);
+		  res = taylorMayorAMenor(valor, cantTerminos, precision);
         archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
     }
 
@@ -579,32 +579,21 @@ void imprimirValores2(ofstream& archivo)
 	 archivo << "];" << endl << endl;
 
     /* taylor mayor a menor*/
-    archivo << "taylor mayor a menor:" << endl << endl;
+    archivo << "taylor menor a mayor INV:" << endl << endl;
     archivo << "[ ";
     for(valor = -100; valor <= 100; valor++){
 		DLFloat res(precision);
-		res = taylorMayorAMenor(valor, cantTerminos, precision);
+		res = taylorMenorAMayorInv(valor, cantTerminos, precision);
       archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
     }
 
     archivo << "];" << endl << endl;
 
     /* taylor mayor a menor inv */
-    archivo << "taylor mayor a menor INV:" << endl << endl;
-    archivo << "[ ";
-    for(valor = -100; valor <= 100; valor++){
-      DLFloat res(precision);
-		res = taylorMayorAMenorInv(valor, cantTerminos, precision);
-      archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
-    }
-
-    archivo << "];" << endl << endl;
-
-    /* taylor menor a mayor */
     archivo << "taylor menor a mayor:" << endl << endl;
     archivo << "[ ";
     for(valor = -100; valor <= 100; valor++){
-		DLFloat res(precision);
+      DLFloat res(precision);
 		res = taylorMenorAMayor(valor, cantTerminos, precision);
       archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
     }
@@ -612,11 +601,22 @@ void imprimirValores2(ofstream& archivo)
     archivo << "];" << endl << endl;
 
     /* taylor menor a mayor */
-    archivo << "taylor menor a mayor INV:" << endl << endl;
+    archivo << "taylor mayor a menor INV:" << endl << endl;
+    archivo << "[ ";
+    for(valor = -100; valor <= 100; valor++){
+		DLFloat res(precision);
+		res = taylorMayorAMenorInv(valor, cantTerminos, precision);
+      archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
+    }
+
+    archivo << "];" << endl << endl;
+
+    /* taylor menor a mayor */
+    archivo << "taylor mayor a menor:" << endl << endl;
     archivo << "[ ";
     for(valor = -100; valor <= 100; valor++){
       DLFloat res(precision);
-		res = taylorMenorAMayorInv(valor, cantTerminos, precision);
+		res = taylorMayorAMenor(valor, cantTerminos, precision);
       archivo << setprecision(20) << (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)) << " ";
     }
 
@@ -630,8 +630,8 @@ void imprimirValores2(ofstream& archivo)
 		  DLFloat res(precision);
 		  DLFloat res2(precision);
 		  long double resta;
-		  res = taylorMayorAMenor(valor, cantTerminos, precision);
-		  res2 = taylorMayorAMenorInv(valor, cantTerminos, precision);
+		  res = taylorMenorAMayorInv(valor, cantTerminos, precision);
+		  res2 = taylorMenorAMayorInv(valor, cantTerminos, precision);
 		  resta = ((fabs(pow(e,-valor) - res2.valor()) / pow(e,-valor)) - (fabs(pow(e,-valor) - res.valor()) / pow(e,-valor)));
         archivo << "x = " << valor << " : " << setprecision(20) << resta;
         (resta < 0) ? (archivo << "\tGANA e^(-x)" << endl) : (archivo << "\tGANA 1/e^x" << endl);
