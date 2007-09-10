@@ -73,18 +73,18 @@ El resultado de analizar las magnitudes y los comportamientos de los errores int
 
 Como la condición del trabajo es obtener el valor de la función e\^{}(-x) implementando una aritmética de precisión arbitraria, comenzamos pensando cómo es que realmente íbamos a implementarla. Luego de algunas reflexiones, llegamos a concebir dos formas diferentes. La primera, diseñar e implementar desde cero, una aritmética arbitraria adaptada al problema que se quería resolver. La segunda, utilizar la aritmética fija que nos provee la PC como base y modificarla de alguna manera para que tenga la propiedad de ser arbitraria.
 
-Comenzamos planteando la primera opción, buscando una manera de representar los datos. No hubo divergencia en cuanto a este tema, ya que solo una forma de representación nos vino a la mente, la de utilizar un arreglo de caracteres del tamaño que el usuario indicara para la cantidad de dígitos en la mantisa, más los del exponente y el signo. Este arreglo contendría ceros y unos, y codificaría cada número a representar, ya sea por ingreso manual del dato o como resultado de alguna función del sistema a implementar.
+Comenzamos planteando la primera opción, buscando una manera de representar los datos. No hubo divergencia en cuanto a este tema, ya que solo una forma de representación nos vino a la mente, la de utilizar un arreglo de bool del tamaño que el usuario indicara para la cantidad de dígitos en la mantisa, más los del exponente y el signo. Este arreglo contendría ceros y unos, y codificaría cada número a representar, ya sea por ingreso manual del dato o como resultado de alguna función del sistema a implementar.
 
 El formato a utilizar para almacenar los datos dentro del arreglo iba a estar basado en el estándar IEEE numero 754. Es decir, que el arreglo tendría tres partes, una parte para el signo, otra para el exponente y otra para la mantisa. En principio, un problema que se nos planteo era el de saber o determinar cuantos "bits" tendría asignado el exponente, el signo y la mantisa no tendrían ningún inconveniente, ya que tendrían un bit y la cantidad ingresada por el usuario respectivamente. Como nuestra idea era conseguir una mejor precisión a la hora de resolver el problema, decidimos asignarle la misma cantidad de bits que usa el estándar IEEE numero 754 en su versión extendida, ya que consideramos esa cantidad ni muy pobre ni muy excesiva a la hora de hacer los cálculos.
 
-Finalmente, dada la envergadura de la implementación que esta opción requríria, la consideramos demasiado compleja, por lo que desistimos de utilizarla.
+Finalmente, dada la envergadura de la implementación que esta opción requriría, la consideramos demasiado compleja, por lo que desistimos de utilizarla.
 
 Planteamos la segunda opción, y de inmediato nos percatamos de que era relativamente mas fácil de implementar que la anterior, pero acarreaba el inconveniente de que la cantidad de bits en la mantisa estaba limitada superiormente. Esto nos permitió saber que íbamos a tener una cota con respecto a la precisión que podría requerir el usuario. De todas formas, a pesar del inconveniente mencionado, nos pareció mas seguro con respecto a los cálculos, trabajar con una representación que ya estaba asentada y por lo tanto funcionando.
 
 
-Teniendo en cuenta estas consideraciónes sobre la complejidad de implementación y confiabilidad de la aritmética nos decidimos finalmente por la segunda opción.
+Teniendo en cuenta estas consideraciones sobre la complejidad de implementación y confiabilidad de la aritmética nos decidimos finalmente por la segunda opción.
 
-Utilizando el tipo de dato long double (que tiene un formato de 80 bits significativos, con las caracteristicas del IEEE 754 doble extendido mencionados más arriba) de C++  como base, creamos una clase que cuenta con dos atributos: el valor real, almacenado en un long double, y un entero que nos indica la presición con la que se van a enmascarar los datos. El nombre de la clase es DLFloat (Defined Longitude Float).
+Utilizando el tipo de dato long double (que tiene un formato de 80 bits significativos, con las características del IEEE 754 doble extendido mencionados más arriba) de C++  como base, creamos una clase que cuenta con dos atributos: el valor real, almacenado en un long double, y un entero que nos indica la precisión con la que se van a enmascarar los datos. El nombre de la clase es DLFloat (Defined Longitude Float).
 
 \leftline{La clase funciona de la siguiente manera:}
 
@@ -92,67 +92,82 @@ Utilizando el tipo de dato long double (que tiene un formato de 80 bits signific
 \item Se crea un DLFloat con una precisión y un valor decididos por el usuario. El valor, inicialmente long double, se trunca para acordarse con la precisión. Los valores por defecto, en el caso que el usuario no ingrese un parametro, son: cero para el valor (formato IEEE 754 doble extendido) y 63 de precisión. Caso contrario, la precision debe ser mayor a 0 y menor que 64.
 
 
-\item Cada operación se efectua en precisión doble extendida, y se trunca para mantener la precisión. Las operaciones disponibles son: suma, resta, multiplicación, dvisión y potenciación. En el caso particular de la división se incluyó por comodidad la división contra un long double, para todo el resto de las operaciónes los operandos son siempre DLFloat.
+\item Cada operación se efectúa en precisión doble extendida, y se trunca para mantener la precisión. Las operaciones disponibles son: suma, resta, multiplicación, división y potenciación. En el caso particular de la división se incluyó por comodidad la división contra un long double, para todo el resto de las operaciones los operandos son siempre DLFloat.
 
 
 \item Toda operación aritmetica se realiza con precisión doble extendida y finaliza con un llamado a la función "truncar", ésta se encarga de acotar la precisión del resultado obtenido mediante la manipulación en 80 bits de los operandos a la requerida por el usuario. El método que sigue esta función consiste en reservar los bits más significativos hasta completar la precisión requerida, y colocar ceros en los bits que sobrepasan la precision pedida. Tras efectuar el truncamiento, tanto el signo como el exponente conservan su valor.
 \end{enumerate}
 
+En cuanto a la función 'truncar', cabe aclarar que durante gran parte del desarrollo se mantuvo una función llamada 'redondear', que seguía el mismo método que la anterior, pero sumaba uno en el bit más significativo de los que  serían descartados. Esto acarreó varios problemas, en primer lugar, por la forma de la implementación la suma no se propagaba a través de los bytes. Cuando solucionamos ese inconveniente surgió otro, si la mantisa del número consistía solo en unos, el redondeo se propagaba hasta el exponente (comportamiento matemáticamente correcto) y la mantisa quedaba en cero. Este formato es indefinido para los compiladores utilizados, y si bien en el caso de las potencias inversas de e, obtenerlo resulta imposible, se opto por el truncamiento en pos de una implementación más firme y reutilizable. 
 
-Habiendonos decidido en cuanto a la representación de los valores que debiamos manejar, pasamos a trasladar el algoritmo de la serie de Taylor a la PC  en las condiciones antes mencionadas.
 
-Esta implementación no revistió mayores dificultades, razón por la cual decidimos agregar dos versiones más a las ya requeridas, teniendo en total cuatro versiones del algoritmo que implementa el polinomio de Taylor. Las dos primeras son las mencionadas en el enunciado y reproducen fielmente la serie de Taylor, definida matématicamente, hasta una cantidad de terminos decidida por el usuario. Las otras dos, alteran la sucesión de los terminos de manera que la suma de los mismos se efecuta de manera inversa, llendo desde los terminos más pequeños hacia los más grandes.
+Habiéndonos decidido en cuanto a la representación de los valores que debíamos manejar, pasamos a trasladar el algoritmo de la serie de Taylor a la PC  en las condiciones antes mencionadas.
+
+Esta implementación no revistió mayores dificultades, razón por la cual decidimos agregar dos versiones más a las ya requeridas, teniendo en total cuatro versiones del algoritmo que implementa el polinomio de Taylor. Las dos primeras son las mencionadas en el enunciado y reproducen fielmente la serie de Taylor, definida matemáticamente, hasta una cantidad de términos decidida por el usuario. Las otras dos, alteran la sucesión de los términos de manera que la suma de los mismos se efectúa de manera inversa, yendo desde los términos más pequeños hacia los más grandes.
+
+Establecidas las cuatro formas de aproximar e^(-x), las hipótesis preliminares acerca del error situaban a la serie de Taylor de e^(-x) calculada de menor a mayor como la de mejor rendimiento. En segundo lugar, pero sin unanimidad, se encontraban la serie de Taylor de e^(x) invertida de mayor a menor, y la variante e^(x) de menor a mayor. En último lugar, todos estuvimos de acuerdo en colocar a la serie para e^(x) invertida y calculada de mayor a menor.
+
+Los criterios para establecer estas hipótesis son básicamente dos: si se suman primero los números más pequeños, estos se vuelven los suficientemente significativos como para poder modificar a un número más grande en una suma. De otro modo puede suceder que sumar un número grande a uno pequeño, nos dé por resultado el grande sin modificación.
+
+El segundo criterio es muy sencillo, consideramos que la serie de Taylor para e^(-x), aproxima mejor a ese número que la de e^(x) invertida, ya que la primera es la serie "exacta", mientras que la segunda no lo es, y para transformarla se requiere una operación extra, que incrementa el error.
 
 \medskip
 \leftline{\bf Resultados:}
 
-Se hicieron diversas pruebas, en las cuales se probo la calidad del resultado a calcular. Estas consisten en: Mostrar el error relativo para cada metodo en funcion de la cantidad de iteraciones de la serie de taylor; Mostrar el error relativo en cada metodo en funcion de la presicion requerida por el usuario; Y comparar el error relativo de los metodos en funcion de el valor en el que se instanciara la funcion.
+Se hicieron diversas pruebas, en las cuales se probo la calidad del resultado a calcular. Estas consisten en: Mostrar el error relativo para cada método en función de la cantidad de iteraciones de la serie de Taylor; Mostrar el error relativo en cada método en función de la precisión requerida por el usuario; Y comparar el error relativo de los métodos en considerando el valor en el que se instanciaría la función
 
-En los dos primero graficos se muestran lo errores relativos calculando e\^{}(-x) y 1/e\^{}(x), los dos en funcion de la precision ingresada, para un punto de evaluacion x=1 y para un orden de la serie de taylor de 50 terminos.
+
+
+
+\leftline{Orden vs Precision:}
+
+En los dos primero gráficos se muestran lo errores relativos calculando e\^{}(-x) y 1/e\^{}(x), los dos en función de la precision ingresada, para un punto de evaluación x=1 y para un orden de la serie de Taylor de 50 términos.
 
 \centerline{\includegraphics[scale=0.5]{grafico1.jpg}}
 
 \centerline{\scriptsize Grafico1}
 
-En el grafico 1 se ve reflejado el error relativo usando la version de la serie de taylor que calcula desde los terminos mas chicos en valor a los mas grandes. En este caso se ve una clara diferencia entre e\^{}(-x) y 1/e\^{}x al comienzo del grafico, luego a medida que aumenta la presicion, el error relativo de ambos metodos se va acercando a cero muy similarmente. Pero de todas formas, segun el grafico la funcion que menos error relativo tiene a medida que aumenta la presicion es 1/e\^{}x.
+En el grafico 1 se ve reflejado el error relativo usando la versión de la serie de Taylor que calcula desde los términos mas chicos en valor a los mas grandes. En este caso se ve una clara diferencia entre e\^{}(-x) y 1/e\^{}x al comienzo del grafico, luego a medida que aumenta la precisión, el error relativo de ambos métodos se va acercando a cero rápidamente. De todas formas, según el gráfico la función que menos error relativo tiene a medida que aumenta la precisión es 1/e\^{}x.
 
 \centerline{\includegraphics[scale=0.5]{grafico2.jpg}}
 
 \centerline{\scriptsize Grafico2}
 
-En este otro grafico se refleja la misma situacion antes comentada, con la diferencia que se usa la variante de taylor que comienza por los terminos mas grandes en tamaño hacia los mas chicos. En este caso se percibe que al comienzo del grafico, ambos metodos tienen un error relativo mucho menor conrespecto a la otra serie. Al igual que en el grafico anterior, el metodo que menor error relativo tiene 1/e\^{}x.
+En este otro gráfico se refleja la misma situación antes comentada, con la diferencia que se usa la variante de Taylor que comienza por los términos más grandes en tamaño hacia los más chicos. En este caso se percibe al comienzo del gráfico, que ambos métodos tienen un error relativo mucho menor con respecto a la otra serie. Al igual que en el gráfico anterior, el método que menor error relativo tiene es 1/e\^{}x.
 
-En los dos siguientes graficos se mostrará el error relativo en funcion del orden de la serie de taylor(es decir la cantidad de terminos a desarrollar).
+En los dos siguientes gráficos se mostrará el error relativo en función del orden de la serie de Taylor(es decir la cantidad de términos a desarrollar).
 
 \centerline{\includegraphics[scale=0.5]{grafico3.jpg}}
 
 \centerline{\scriptsize Grafico3}
 
-En el grafico 3 se ve claramente como a partir del quinto orden, el error relativo se hace muy chico, para ambas series de taylor. En esta parte la serie que menor error relativo tiene es nuevamente 1/e\^{}x.
+En el grafico 3 se ve claramente como a partir del quinto orden, el error relativo se hace muy chico, para ambas series de Taylor. En este juego de gráficos la serie de menor error relativo es nuevamente 1/e\^{}x.
 
 \centerline{\includegraphics[scale=0.5]{grafico4.jpg}}
 
 \centerline{\scriptsize Grafico4}
 
-En el grafico 4 se repite la situacion anterior, mostrando nuevamente que 1/e\^{} tiene menor error relativo. Este caso es claramente peor que el anterior ya que para una cantidad pequeña de terminos de la serie, el error que se comente es mucho mayor.
+Este caso es claramente peor que el anterior ya que para una cantidad pequeña de términos de la serie, el error que se comente es mucho mayor.
+En ambos gráficos se nota un mejor desempeño para las series calculadas de menor a mayor, esto se debe, creemos, al criterio expresado anteriormente, según el cual este método de sumar los términos, tiende a brindarle significatividad a cada uno de los operandos.
 
 \centerline{\includegraphics[scale=0.5]{grafico5.jpg}}
 
 \centerline{\scriptsize Grafico5}
 
-En los ultimos 2 graficos, en donde varia el punto de evaluacion y permanecen fijos el orden de la serie y la presicion, se ve como para ciertos valores un metodos aproxima mejor que otro, osea que el error relativo para ciertos valores es mucho menor en un metodo que en otro. Por ejemplo, para los valores positivos (x > 0) se observa que ambos metodos tienen un error relativo pequeño hasta el valor 15 aproximadamente, luego de ese valor los 2 metodos se compotan similar cuando el valor a evaluar es muy grande, salvo entre los valores 15 y 35 aproximandamente donde se observa claramente que 1/e\^{}x tiene una muy buena aproximacion con respecto a e\^{}(-x).
+En los últimos 2 gráficos, en donde varia el punto de evaluación y permanecen fijos el orden de la serie y la precisión, se ve como para ciertos valores un método aproxima mejor que otro, esto quiere decir que el error relativo para ciertos valores es mucho menor en un método que en otro. Por ejemplo, para los valores positivos (x > 0) se observa que ambos tienen un error relativo pequeño hasta el valor 15 aproximadamente, luego de ese valor los 2 métodos se comportan de manera similar cuando el valor a evaluar es muy grande, salvo entre los valores 15 y 35 aproximadamente donde se observa claramente que 1/e\^{}x tiene una mejor aproximación con respecto a e\^{}(-x).
 
-Para los valores negativos, pasa algo diferente. Hasta el valor -15 aproximadamente ambos metodos tiene un erro pequeño. Pero entre los valores -15
-y -35 vemos que pasa lo inverso a lo que pasaba en los valores positivos, en este caso el metodo para e\^{}(-x) mantiene un error relativo pequeño respecto del 1/e\^{}x, por lo tanto se obtiene un mejor resultado. Para los valores menores que -35, se observa que ambos metodos convergen en un error igual a 1, 
-lo que indica que no se obtiene una buena aproximacion para esos valores. 
+Para los valores negativos, ocurre algo diferente. Hasta el valor -15 aproximadamente ambos métodos tiene un error pequeño. Pero entre los valores -15
+y -35 vemos que pasa lo inverso a lo que pasaba en los valores positivos, en este caso el método para e\^{}(-x) mantiene un error relativo pequeño respecto del de 1/e\^{}x, por lo tanto se obtiene un mejor resultado. Para los valores menores que -35, se observa que ambos métodos convergen en un error igual a 1, 
+lo que indica que no se obtiene una buena aproximación para esos valores. 
 
 \centerline{\includegraphics[scale=0.5]{grafico6.jpg}}
 
 \centerline{\scriptsize Grafico6}
 
-Para este ultimo grafico se observa lo mismo que en el anterior con la diferencia que con la version de la serie de taylor utilizada en este grafico, se observa una leve perdida en la presicion, ademas del del pico que se observa entre los valores -15 y -20 aproximadamente para 1/e\^{}x.
+Este último gráfico es muy similar al anterior, con la diferencia que con la versión de la serie de Taylor utilizada en este gráfico, se observa una leve perdida en la precisión, además del pico que se observa entre los valores -15 y -20 aproximadamente para 1/e\^{}x.
+No es despreciable notar en los gráficos 5 y 6 que para valores altos de x el error es no acotado, tiende a infinito. Este fenómeno es una consecuencia de la utilización de la aritmética de precisión finita. Con esta forma de representación para los valores, aquellos x por sobre un valor determinado se salen del rango aceptado, haciendo que la PC busque representaciones alternativas y que el error relativo sea muy grande.
 
-\leftline{Orden vs Precision:}
+Como conclusión general resultante de todos los gráficos, los métodos que emplean la inversa de e^x son con mucho, más precisos que los que se basan directamente en e^(-x). Esto da por tierra con una de nuestras hipótesis preliminares, sin embargo, tiene un asidero teórico. La segunda variante es una serie de sumas y restas, esta última operación esta mal condicionada, lo que  quiere decir que para valores similares incurre en grandes errores. Justamente la serie de Taylor guarda cierta similaridad entre sus valors contiguos, con lo que podríamos considerarla un caso patologico para el mal condicionamiento de la resta, con lo que esta variante pierde confiabilidad.     
 
 
 \end{document}
