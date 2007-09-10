@@ -114,27 +114,45 @@ En los dos primero graficos se muestran lo errores relativos calculando e\^{}(-x
 
 \centerline{\scriptsize Grafico1}
 
+En el grafico 1 se ve reflejado el error relativo usando la version de la serie de taylor que calcula desde los terminos mas chicos en valor a los mas grandes. En este caso se ve una clara diferencia entre e\^{}(-x) y 1/e\^{}x al comienzo del grafico, luego a medida que aumenta la presicion, el error relativo de ambos metodos se va acercando a cero muy similarmente. Pero de todas formas, segun el grafico la funcion que menos error relativo tiene a medida que aumenta la presicion es 1/e\^{}x.
+
 \centerline{\includegraphics[scale=0.5]{grafico2.jpg}}
 
 \centerline{\scriptsize Grafico2}
+
+En este otro grafico se refleja la misma situacion antes comentada, con la diferencia que se usa la variante de taylor que comienza por los terminos mas grandes en tamaño hacia los mas chicos. En este caso se percibe que al comienzo del grafico, ambos metodos tienen un error relativo mucho menor conrespecto a la otra serie. Al igual que en el grafico anterior, el metodo que menor error relativo tiene 1/e\^{}x.
+
+En los dos siguientes graficos se mostrará el error relativo en funcion del orden de la serie de taylor(es decir la cantidad de terminos a desarrollar).
 
 \centerline{\includegraphics[scale=0.5]{grafico3.jpg}}
 
 \centerline{\scriptsize Grafico3}
 
+En el grafico 3 se ve claramente como a partir del quinto orden, el error relativo se hace muy chico, para ambas series de taylor. En esta parte la serie que menor error relativo tiene es nuevamente 1/e\^{}x.
+
 \centerline{\includegraphics[scale=0.5]{grafico4.jpg}}
 
 \centerline{\scriptsize Grafico4}
+
+En el grafico 4 se repite la situacion anterior, mostrando nuevamente que 1/e\^{} tiene menor error relativo. Este caso es claramente peor que el anterior ya que para una cantidad pequeña de terminos de la serie, el error que se comente es mucho mayor.
 
 \centerline{\includegraphics[scale=0.5]{grafico5.jpg}}
 
 \centerline{\scriptsize Grafico5}
 
+En los ultimos 2 graficos, en donde varia el punto de evaluacion y permanecen fijos el orden de la serie y la presicion, se ve como para ciertos valores un metodos aproxima mejor que otro, osea que el error relativo para ciertos valores es mucho menor en un metodo que en otro. Por ejemplo, para los valores positivos (x > 0) se observa que ambos metodos tienen un error relativo pequeño hasta el valor 15 aproximadamente, luego de ese valor los 2 metodos se compotan similar cuando el valor a evaluar es muy grande, salvo entre los valores 15 y 35 aproximandamente donde se observa claramente que 1/e\^{}x tiene una muy buena aproximacion con respecto a e\^{}(-x).
+
+Para los valores negativos, pasa algo diferente. Hasta el valor -15 aproximadamente ambos metodos tiene un erro pequeño. Pero entre los valores -15
+y -35 vemos que pasa lo inverso a lo que pasaba en los valores positivos, en este caso el metodo para e\^{}(-x) mantiene un error relativo pequeño respecto del 1/e\^{}x, por lo tanto se obtiene un mejor resultado. Para los valores menores que -35, se observa que ambos metodos convergen en un error igual a 1, 
+lo que indica que no se obtiene una buena aproximacion para esos valores. 
+
 \centerline{\includegraphics[scale=0.5]{grafico6.jpg}}
 
 \centerline{\scriptsize Grafico6}
 
-leftline{Orden vs Precision:}
+Para este ultimo grafico se observa lo mismo que en el anterior con la diferencia que con la version de la serie de taylor utilizada en este grafico, se observa una leve perdida en la presicion, ademas del del pico que se observa entre los valores -15 y -20 aproximadamente para 1/e\^{}x.
+
+\leftline{Orden vs Precision:}
 
 
 \end{document}
