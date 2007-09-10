@@ -1,11 +1,8 @@
 #ifndef _DLFloat_H
 #define _DLFloat_H
 
-
 #include <stdio.h>
 #include <iostream>
-#include <math.h>
-#include <iomanip>      //para setprecision
 
 using namespace std;
 
@@ -16,7 +13,7 @@ class DLFloat{
     public:
 
         DLFloat(int = 63, long double = 0);	//precision predefinida: 63 bits
-                                            //valor predefinido: 0
+                                             //valor predefinido: 0
 
         int 		precision	(void);
         long double	valor   	(void);
