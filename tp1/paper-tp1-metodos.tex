@@ -21,10 +21,10 @@ $$ \mbox{Departamento de Computación} $$
 {Ferro Mariano(eltrencitomasverde@gmail.com)}
 
 \medskip
-Palábras clave: error relativo, aproximación, aritmetica finita, e^{}(-x)
+Palábras clave: error relativo, aproximación, aritmetica finita, e\^{}(-x)
 
-Resúmen: \textit{En este trabajo presentamos un grupo de algoritmos para la aproximación de f(x)= e^{}(-x), basados en la serie de Taylor para la función correspondiente, alrededor del cero. Dichos algoritmos fueron implementados bajo un sistema de aritmética finita y arbitraria, con el estándar IEEE 754 como base y con un método de truncamiento simple para mantener la coherencia de la precisión. Como fruto de la utilización de una aritmetica de precisión finita, surgen distintos tipos de error. Distintas formas de implementar los algoritmos conducen a un mayor o menor error, en distintas circunstancias. 
-De las aproximaciones obtenidas mediante los algoritmos implementados, calculamos el error relativo para la función e^{}(-x) evaluada en distintos puntos, precisiones y cantidades de términos y los comparamos, contrastando las hipótesis preliminares con los resultados obtenidos mediante la experimentación, en busca del algoritmo más idoneo para realizar el calculo.}
+Resúmen: \textit{En este trabajo presentamos un grupo de algoritmos para la aproximación de f(x)= e\^{}(-x), basados en la serie de Taylor para la función correspondiente, alrededor del cero. Dichos algoritmos fueron implementados bajo un sistema de aritmética finita y arbitraria, con el estándar IEEE 754 como base y con un método de truncamiento simple para mantener la coherencia de la precisión. Como fruto de la utilización de una aritmetica de precisión finita, surgen distintos tipos de error. Distintas formas de implementar los algoritmos conducen a un mayor o menor error, en distintas circunstancias. 
+De las aproximaciones obtenidas mediante los algoritmos implementados, calculamos el error relativo para la función e\^{}(-x) evaluada en distintos puntos, precisiones y cantidades de términos y los comparamos, contrastando las hipótesis preliminares con los resultados obtenidos mediante la experimentación, en busca del algoritmo más idoneo para realizar el calculo.}
 \medskip
 
 \pagebreak
@@ -169,13 +169,18 @@ lo que indica que no se obtiene una buena aproximación para esos valores.
 Este último gráfico es muy similar al anterior, con la diferencia que con la versión de la serie de Taylor utilizada en este gráfico, se observa una leve perdida en la precisión, además del pico que se observa entre los valores -15 y -20 aproximadamente para 1/e\^{}x.
 No es despreciable notar en los gráficos 5 y 6 que para valores altos de x el error es no acotado, tiende a infinito. Este fenómeno es una consecuencia de la utilización de la aritmética de precisión finita. Con esta forma de representación para los valores, aquellos x por sobre un valor determinado se salen del rango aceptado, haciendo que la PC busque representaciones alternativas y que el error relativo sea muy grande.
 
-Como conclusión general resultante de todos los gráficos, los métodos que emplean la inversa de e^x son con mucho, más precisos que los que se basan directamente en e^(-x). Esto da por tierra con una de nuestras hipótesis preliminares, sin embargo, tiene un asidero teórico. La segunda variante es una serie de sumas y restas, esta última operación esta mal condicionada, lo que  quiere decir que para valores similares incurre en grandes errores. Justamente la serie de Taylor guarda cierta similaridad entre sus valors contiguos, con lo que podríamos considerarla un caso patologico para el mal condicionamiento de la resta, con lo que esta variante pierde confiabilidad.     
+Como conclusión general resultante de todos los gráficos, los métodos que emplean la inversa de e\^{}x son con mucho, más precisos que los que se basan directamente en e\^{}(-x). Esto da por tierra con una de nuestras hipótesis preliminares, sin embargo, tiene un asidero teórico. La segunda variante es una serie de sumas y restas, esta última operación esta mal condicionada, lo que  quiere decir que para valores similares incurre en grandes errores. Justamente la serie de Taylor guarda cierta similaridad entre sus valors contiguos, con lo que podríamos considerarla un caso patologico para el mal condicionamiento de la resta, con lo que esta variante pierde confiabilidad. 
+
+\leftline{\bf Discusion:}
+
+Al ver los resultados en los graficos anteriores, algunas de nuestras hipotesis se vieron derrumbadas. Por ejemplo mirando en general los graficos, claramente se ve como en promedio, el mejor algoritmo, el que tiene menor error relativo es el que calcula 1/e\^{}x. Con respecto a esto estuvimos debatiendo el porque de este resultado, y llegamos a la conclusion de que se debe a que, la forma e\^{}(-x) es mas inestable en los primeros terminos, ya que el grafico del el resultado va oscilando entre los positivos y negativos, hasta que comienza a estabilizarse en el valor a calcular, para que suceda esto deben haber mas terminos, y ademas mas presicion. En cambio la forma 1/e\^{}x es mas estable, ya que primero se calcula e\^{}x, donde todos sus terminos son posivos, por lo que no existe el problema de que la serie oscile hasta comenzar a obtener el resultado, lo que significa que no se necesitan tantos terminos, ni tanta presicion para llegar a el resultado. A pesar de que al final, luego de calcular e\^{}x se hace una operacion adicional, que es la de elevar a la potencia negativa -1, el error propagado no es tan significativo, a pesar de que se hace una operacion mas. Por lo tanto queda claro el por que de le resultado.
+
+Otra observacion con respecto a las hipotesis planteadas al principio del articulo, es que la variante del polinomio de taylor que trabaja con los terminos mas pequeños hacia los mas grandes, no resulto tan efectiva como la planeamos. Observando los graficos del uno al cuatro, primero se observa que en los primeros dos, taylor de menor a mayor tiene un menor desempeño con respecto a su contraparte original, si bien la diferencia es casi nula para el metodo 1/e\^{}x, calculando e\^{}(-x) se observa mejor. Viendo esto, llegamos a la conclusion.
+
 
 \pagebreak
 \newcommand{\erf}{\hbox{erf}}
 \newcommand{\real}{\hbox{\bf R}}
-
-\begin{document}
 
 \begin{centering}
 \bf Laboratorio de M\'etodos Num\'ericos - Segundo cuatrimestre 2007 \\
@@ -241,18 +246,31 @@ Fecha de entrega: Lunes 10 de Septiembre
 Referencias:
 
 http://www.cplusplus.com/
+
 Referencia y consulta para C++
+
 http://www.oss-watch.ac.uk/resources/googlecode.xml 
+
 Repositorio
+
 http://svnbook.red-bean.com/ 
+
 Manual de svn
+
 pcmap.unizar.es/~pilar/latex.pdf
+
 Introduccion a latex
-http://es.wikipedia.org/wiki/Análisis_numérico 
+
+http://es.wikipedia.org/wiki/Análisis\_numérico 
+
 Analisis numerico, redondeo etc
+
 http://babbage.cs.qc.edu/courses/cs341/IEEE-754references.html
+
 Referencia para IEEE 754
-webs.uvigo.es/mat.avanzadas/PracME_1.pdf 
+
+webs.uvigo.es/mat.avanzadas/PracME\_1.pdf 
+
 Introduccion a matlab
 
 
