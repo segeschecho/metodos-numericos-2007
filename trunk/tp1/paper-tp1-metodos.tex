@@ -1,6 +1,7 @@
 \documentclass[10pt,a4paper]{article}
 \usepackage[spanish]{babel}%corta palabras en español
 \usepackage[latin1]{inputenc}%escribir con acentos, ñ
+\usepackage{graphicx}
 \begin{document}
 $$ \mbox{\bf Universidad de Buenos Aires} $$
 $$ \mbox{Facultad de Ciencias Exáctas y Naturales} $$
@@ -107,10 +108,33 @@ Esta implementación no revistió mayores dificultades, razón por la cual decidimo
 
 Se hicieron diversas pruebas, en las cuales se probo la calidad del resultado a calcular. Estas consisten en: Mostrar el error relativo para cada metodo en funcion de la cantidad de iteraciones de la serie de taylor; Mostrar el error relativo en cada metodo en funcion de la presicion requerida por el usuario; Y comparar el error relativo de los metodos en funcion de el valor en el que se instanciara la funcion.
 
+En los dos primero graficos se muestran lo errores relativos calculando e\^{}(-x) y 1/e\^{}(x), los dos en funcion de la precision ingresada, para un punto de evaluacion x=1 y para un orden de la serie de taylor de 50 terminos.
 
+\centerline{\includegraphics[scale=0.5]{grafico1.jpg}}
 
+\centerline{\scriptsize Grafico1}
 
-\leftline{Orden vs Precision:}
+\centerline{\includegraphics[scale=0.5]{grafico2.jpg}}
+
+\centerline{\scriptsize Grafico2}
+
+\centerline{\includegraphics[scale=0.5]{grafico3.jpg}}
+
+\centerline{\scriptsize Grafico3}
+
+\centerline{\includegraphics[scale=0.5]{grafico4.jpg}}
+
+\centerline{\scriptsize Grafico4}
+
+\centerline{\includegraphics[scale=0.5]{grafico5.jpg}}
+
+\centerline{\scriptsize Grafico5}
+
+\centerline{\includegraphics[scale=0.5]{grafico6.jpg}}
+
+\centerline{\scriptsize Grafico6}
+
+leftline{Orden vs Precision:}
 
 
 \end{document}
