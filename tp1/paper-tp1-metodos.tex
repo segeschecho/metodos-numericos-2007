@@ -79,7 +79,7 @@ Comenzamos planteando la primera opción, buscando una manera de representar los 
 
 El formato a utilizar para almacenar los datos dentro del arreglo iba a estar basado en el estándar IEEE numero 754. Es decir, que el arreglo tendría tres partes, una parte para el signo, otra para el exponente y otra para la mantisa. En principio, un problema que se nos planteo era el de saber o determinar cuantos "bits" tendría asignado el exponente, el signo y la mantisa no tendrían ningún inconveniente, ya que tendrían un bit y la cantidad ingresada por el usuario respectivamente. Como nuestra idea era conseguir una mejor precisión a la hora de resolver el problema, decidimos asignarle la misma cantidad de bits que usa el estándar IEEE numero 754 en su versión extendida, ya que consideramos esa cantidad ni muy pobre ni muy excesiva a la hora de hacer los cálculos.
 
-Finalmente, dada la envergadura de la implementación que esta opción requriría, la consideramos demasiado compleja, por lo que desistimos de utilizarla.
+Finalmente, dada la envergadura de la implementación que esta opción requeriría, la consideramos demasiado compleja, por lo que desistimos de utilizarla.
 
 Planteamos la segunda opción, y de inmediato nos percatamos de que era relativamente mas fácil de implementar que la anterior, pero acarreaba el inconveniente de que la cantidad de bits en la mantisa estaba limitada superiormente. Esto nos permitió saber que íbamos a tener una cota con respecto a la precisión que podría requerir el usuario. De todas formas, a pesar del inconveniente mencionado, nos pareció mas seguro con respecto a los cálculos, trabajar con una representación que ya estaba asentada y por lo tanto funcionando.
 
@@ -91,10 +91,10 @@ Utilizando el tipo de dato long double (que tiene un formato de 80 bits signific
 \leftline{La clase funciona de la siguiente manera:}
 
 \begin{enumerate}
-\item Se crea un DLFloat con una precisión y un valor decididos por el usuario. El valor, inicialmente long double, se trunca para acordarse con la precisión. Los valores por defecto, en el caso que el usuario no ingrese un parametro, son: cero para el valor (formato IEEE 754 doble extendido) y 63 de precisión. Caso contrario, la precision debe ser mayor a 0 y menor que 64.
+\item Se crea un DLFloat con una precisión  y un valor decididos por el usuario, que debe ser mayor a 0 y menor que 64. El valor, inicialmente long double, se trunca para acordarse con la precisión. Los valores por defecto, en el caso que el usuario no ingrese un parametro, son: cero para el valor (formato IEEE 754 doble extendido) y 63 de precisión.
+Nuestra clase define la precisión como los bits que comprenden la mantisa, incluido el bit explicito de la parte entera. Esto quiere decir que ni el exponente ni el signo pueden ser de longitud definida por el usuario, y la precisión no los afecta.
 
-
-\item Cada operación se efectúa en precisión doble extendida, y se trunca para mantener la precisión. Las operaciones disponibles son: suma, resta, multiplicación, división y potenciación. En el caso particular de la división se incluyó por comodidad la división contra un long double, para todo el resto de las operaciones los operandos son siempre DLFloat.
+\item Las operaciones disponibles son: suma, resta, multiplicación, división y potenciación. En el caso particular de la división se incluyó por comodidad la división contra un long double, para todo el resto de las operaciones los operandos son siempre DLFloat.
 
 
 \item Toda operación aritmetica se realiza con precisión doble extendida y finaliza con un llamado a la función "truncar", ésta se encarga de acotar la precisión del resultado obtenido mediante la manipulación en 80 bits de los operandos a la requerida por el usuario. El método que sigue esta función consiste en reservar los bits más significativos hasta completar la precisión requerida, y colocar ceros en los bits que sobrepasan la precision pedida. Tras efectuar el truncamiento, tanto el signo como el exponente conservan su valor.
@@ -109,9 +109,11 @@ Esta implementación no revistió mayores dificultades, razón por la cual decidimo
 
 Establecidas las cuatro formas de aproximar e\^{}(-x), las hipótesis preliminares acerca del error situaban a la serie de Taylor de e\^{}(-x) calculada de menor a mayor como la de mejor rendimiento. En segundo lugar, pero sin unanimidad, se encontraban la serie de Taylor de e\^{}(x) invertida de mayor a menor, y la variante e\^{}(x) de menor a mayor. En último lugar, todos estuvimos de acuerdo en colocar a la serie para e\^{}(x) invertida y calculada de mayor a menor.
 
-Los criterios para establecer estas hipótesis son básicamente dos: si se suman primero los números más pequeños, estos se vuelven los suficientemente significativos como para poder modificar a un número más grande en una suma. De otro modo puede suceder que sumar un número grande a uno pequeño, nos dé por resultado el grande sin modificación.
+Los criterios para establecer estas hipótesis son básicamente tres: si se suman primero los números más pequeños, estos se vuelven los suficientemente significativos como para poder modificar a un número más grande en una suma. De otro modo puede suceder que sumar un número grande a uno pequeño, nos dé por resultado el grande sin modificación.
 
 El segundo criterio es muy sencillo, consideramos que la serie de Taylor para e\^{}(-x), aproxima mejor a ese número que la de e\^{}(x) invertida, ya que la primera es la serie "exacta", mientras que la segunda no lo es, y para transformarla se requiere una operación extra, que incrementa el error.
+
+El tercer criterio es que se esperaba que las restas de la serie "exacta" de e\^{}(-x) compensaran el valor y se pierdan menos datos por culpa del truncamiento.
 
 \medskip
 \leftline{\bf Resultados:}

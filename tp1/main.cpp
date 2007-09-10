@@ -158,20 +158,22 @@ void redondear(long double c, int prec)
 
 	unsigned char* ch = ((unsigned char*)&c + bytes - 1);
 
-    cout << "mostrar(Precision = " << prec << ")" << endl;
-    mostrar(&c);
-    c += pow(2, -prec + 1); //con esto le sumamos 1 al primer bit que voy a truncar
+//    cout << "mostrar(Precision = " << prec << ")" << endl;
+//    mostrar(&c);
+//    c += pow(2, -prec + 1); //con esto le sumamos 1 al primer bit que voy a truncar
                         //con el fin de redondear
-    mostrar(&c);
+//    mostrar(&c);
 	*ch &= (255 << (8 - (prec % 8)) ); //255 = 1111 1111
 	//ahora borramos los bytes menos significativos
 	memset(&c, 0, bytes - 1);
-    mostrar(&c);
-    cout << c << endl;
-	ch = ((unsigned char*)&c + 7);
-    *ch += 128;
-    mostrar(&c);
-    cout << c << endl;
+
+	cout << endl << c << endl;
+	mostrar(&c);
+//   cout << c << endl;
+//	ch = ((unsigned char*)&c + 7);
+//   *ch += 128;
+//   mostrar(&c);
+//   cout << c << endl;
 }
 */
 DLFloat factorial(unsigned int n, unsigned int p)
@@ -239,6 +241,8 @@ DLFloat taylorMenorAMayor(long double valor, unsigned int n, unsigned int precis
 
 	while (n > 0){
 		neg = pow(-1,n%2);
+		DLFloat aux(precision);
+		aux = (x^n)/factorial(n,precision);
 		res = res + neg*((x^n)/factorial(n,precision));
 		n--;
 	}
@@ -254,6 +258,7 @@ DLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 	DLFloat x(precision);
 	DLFloat neg(1, 1);
 
+	cout << endl << endl<< endl;
 	x = valor;
 
 	unsigned int i = 1;
@@ -261,6 +266,7 @@ DLFloat taylorMayorAMenor(long double valor, unsigned int n, unsigned int precis
 	while (i < n){
 		neg = pow(-1,i%2);
 		res = res + neg*((x^i)/factorial(i, precision));
+		cout << "res.valor() = " << res.valor() << endl;
 		i++;
 	}
 
@@ -641,7 +647,11 @@ void imprimirValores2(ofstream& archivo)
 }
 
 int main()
-{
+{/*
+	long double c = 0.96875;
+	mostrar(&c);
+	cout << endl << c;
+	redondear(c, 5);
 /*    long double e = 2.718281828459045235360287471352662497757247093699959574966967627724;
     short int i = 255;
 
@@ -655,12 +665,12 @@ int main()
         cout << endl << endl;
         system("PAUSE");
    }
-*/
+
 	unsigned int comienzo = time(NULL);
     ofstream a ("grafico2.txt");
     imprimirValores2(a);
     cout << "\n\nEl algoritmo tardo: " << time(NULL) - comienzo << " segundos.\n\n";
-/*
+*/
 	unsigned int p, orden;
 	long double valor, e = 2.718281828459045235360287471352662497757247093699959574966967627724;
     char hacerPrueba = 's';
@@ -694,11 +704,11 @@ int main()
         DLFloat resultado1Inv(p);
         DLFloat resultado2Inv(p);
 
-        resultado1 = taylorMayorAMenor(valor, orden, p);
-        resultado2 = taylorMenorAMayor(valor, orden, p);
+        resultado1 = taylorMenorAMayorInv(valor, orden, p);
+        resultado2 = taylorMayorAMenorInv(valor, orden, p);
 
-        resultado1Inv = taylorMayorAMenorInv(valor, orden, p);
-        resultado2Inv = taylorMenorAMayorInv(valor, orden, p);
+        resultado1Inv = taylorMenorAMayor(valor, orden, p);
+        resultado2Inv = taylorMayorAMenor(valor, orden, p);
 
         cout.precision(40);
         cout << "e^(-x): " << pow(e,-valor) << endl;
@@ -720,7 +730,7 @@ int main()
         cout << "Desea realizar otra prueba? (s/n)" << endl;
         cin >> hacerPrueba;
 	}
-*/
+
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
