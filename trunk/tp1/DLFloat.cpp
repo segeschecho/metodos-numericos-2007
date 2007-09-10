@@ -85,7 +85,7 @@ DLFloat DLFloat :: operator^(int a){
 	}
 
 	if (neg)
-		res.numero = 1/res.numero;
+		res.numero = 1/(res.numero);
 
 	return res;
 }
@@ -119,6 +119,6 @@ void truncar(DLFloat* c)
 }
 
 ostream& operator<<(ostream &os, const DLFloat &a){
-    os << a.numero;
+   os << a.numero;
 	return os;
 }
