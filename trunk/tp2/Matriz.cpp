@@ -30,4 +30,7 @@ void Matriz :: triangular(void){
 }
 
 Matriz :: ~Matriz(){
+	for(unsigned int i = 0; i < fil; i++)
+			delete [] m[i];
+	delete [] m;
 }
