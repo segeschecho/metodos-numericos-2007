@@ -5,6 +5,7 @@
 #include <string.h>
 
 class Matriz{
+//	friend ostream& operator<<(ostream&, const Matriz&);
   public:
       Matriz(unsigned int = 4, unsigned int = 4);
       int filas();
@@ -15,7 +16,7 @@ class Matriz{
       void triangular(void);
 
       ~Matriz();
-  private:
+//  private:
       long double **m;
       unsigned int fil;
       unsigned int col;
