@@ -1,14 +1,14 @@
 #include "Matriz.h"
 
-Matriz :: Matriz(unsigned int f, unsigned int c){
+Matriz :: Matriz(int f, int c){
 	//f = filas, c = columnas
     fil = f;
     col = c;
 
     m = new long double* [f];
-	for(unsigned int i = 0; i < f; i++){
+	for(int i = 0; i < f; i++){
 		m[i] = new long double [c];
-		for(unsigned int j = 0; j < c; j++)
+		for(int j = 0; j < c; j++)
 			m[i][j] = 0;
 	}
 }
@@ -19,10 +19,10 @@ int Matriz :: columnas(){
     return col;
 }
 
-long double Matriz :: ver(unsigned int fila, unsigned int columna){
+long double Matriz :: ver(int fila, int columna){
     return m[fila][columna];
 }
-void Matriz :: asignar(unsigned int fila, unsigned int columna, long double valor){
+void Matriz :: asignar(int fila, int columna, long double valor){
     m[fila][columna] = valor;
 }
 
@@ -48,13 +48,13 @@ void Matriz :: triangular(void){
  *  restarfilas: recibe un coeficiente, una fila a anular y la fila de pivote.
  *                y resta las filas por el coeficiente.
  */
-void Matriz :: restarFilas(long double coef, unsigned int filaAanular, unsigned int filaActual){
+void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual){
     for(int i = filaActual; i < fil; i++){
         m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
     }
 }
 
-void Matriz :: permutar(unsigned int fila1, unsigned int fila2){
+void Matriz :: permutar(int fila1, int fila2){
 	long double* tmp;
 
 	tmp = m[fila1];
@@ -62,8 +62,8 @@ void Matriz :: permutar(unsigned int fila1, unsigned int fila2){
 	m[fila2] = tmp;
 }
 
-void Matriz :: pivotear(unsigned int c){
-	unsigned int max = 0;
+void Matriz :: pivotear(int c){
+	int max = 0;
 
 	for(int i = c; i < fil; i++)
 		if(m[i][c] > m[max][c])
@@ -73,19 +73,18 @@ void Matriz :: pivotear(unsigned int c){
 }
 
 Matriz :: ~Matriz(){
-	for(unsigned int i = 0; i < fil; i++)
+	for(int i = 0; i < fil; i++)
 			delete [] m[i];
 	delete [] m;
 }
 
 
-/*ostream& operator<<(ostream& os, const Matriz& matriz){
-	cout << " ";
-	for(int i = 0; i < matriz.col; i++)
-		cout << "---";
-
-	for(int i = 0; i < matriz.
-
-	cout << "---";
+ostream& operator<<(ostream& os, const Matriz& matriz){
+	for(int i = 0; i < matriz.fil; i++){
+		cout << "FILA" << i << ": ";
+		for(int j = 0; j < matriz.col; j++)
+			cout << matriz.m[i][j] << "  ";
+		cout << endl;
+	}
 	return os;
-}*/
+}

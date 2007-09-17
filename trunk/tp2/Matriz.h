@@ -8,23 +8,23 @@ using namespace std;
 class Matriz{
 	friend ostream& operator<<(ostream&, const Matriz&);
   public:
-      Matriz(unsigned int = 4, unsigned int = 4);
+      Matriz(int = 4, int = 4);
       int filas();
       int columnas();
 
-      long double ver(unsigned int fila, unsigned int columna);
-      void asignar(unsigned int fila, unsigned int columna, long double valor);
+      long double ver(int fila, int columna);
+      void asignar(int fila, int columna, long double valor);
       void triangular(void);
 
       ~Matriz();
   private:
       long double **m;
-      unsigned int fil;
-      unsigned int col;
+      int fil;
+      int col;
       /* metodos privados */
-      void permutar(unsigned int fila1, unsigned int fila2);
-      void pivotear(unsigned int);
-      void restarFilas(long double coef, unsigned int filaAanular, unsigned int filaActual);
+      void permutar(int fila1, int fila2);
+      void pivotear(int);
+      void restarFilas(long double coef, int filaAanular, int filaActual);
 };
 
 
