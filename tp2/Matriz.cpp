@@ -1,5 +1,5 @@
 #include "Matriz.h"
-#define MOD(a) (a < 0) ? -a : a
+#define MOD(a) ((a < 0) ? (-a) : (a))
 
 ostream& operator<<(ostream& os, const Matriz& matriz){
 	for(int i = 0; i < matriz.fil; i++){
@@ -47,12 +47,10 @@ void Matriz :: triangular(void){
 
     for(filaActual = 0 ; filaActual < fil ; filaActual++){
         pivotear(filaActual); //hago pivoteo parcial
-		cout << *this << endl << endl;
 
         for(int filatemp = filaActual + 1 ; filatemp < fil ; filatemp++){
             long double coeficiente = m[filatemp][filaActual]/m[filaActual][filaActual];
             restarFilas(coeficiente, filatemp, filaActual);
-			cout << *this << endl << endl;
         }
 
     }
@@ -76,7 +74,7 @@ void Matriz :: pivotear(int c){
 	int max = c;
 
 	for(int i = c; i < fil; i++)
-		if(m[i][c] > m[max][c])
+		if(MOD(m[i][c]) > MOD(m[max][c]))
 			max = i;
 
 	permutar(c, max);
@@ -90,7 +88,7 @@ void Matriz :: pivotear(int c){
 void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual){
     for(int i = filaActual; i < fil; i++){
         m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
-		if(MOD(m[filaAanular][i]) < 0.0000000001) //10^(-10)
+		if(MOD(m[filaAanular][i]) < 1e-10) //10^(-10)
 			m[filaAanular][i] = 0;
     }
 }
