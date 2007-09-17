@@ -17,7 +17,7 @@ class Matriz{
       void triangular(void);
 
       ~Matriz();
-  private:
+//  private:
       long double **m;
       int fil;
       int col;

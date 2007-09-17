@@ -35,10 +35,12 @@ void Matriz :: triangular(void){
 
     for(filaActual = 0 ; filaActual < fil ; filaActual++){
         pivotear(filaActual); //hago pivoteo parcial
+		cout << *this << endl << endl;
 
-        for(int filatemp = 1 ; filatemp < fil ; filatemp++){
+        for(int filatemp = filaActual + 1 ; filatemp < fil ; filatemp++){
             long double coeficiente = m[filatemp][filaActual]/m[filaActual][filaActual];
             restarFilas(coeficiente, filatemp, filaActual);
+			cout << *this << endl << endl;
         }
 
     }
@@ -51,6 +53,8 @@ void Matriz :: triangular(void){
 void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual){
     for(int i = filaActual; i < fil; i++){
         m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
+		if(m[filaAanular][i] < 0.0000000001) //10^(-10)
+			m[filaAanular][i] = 0;
     }
 }
 
@@ -63,7 +67,7 @@ void Matriz :: permutar(int fila1, int fila2){
 }
 
 void Matriz :: pivotear(int c){
-	int max = 0;
+	int max = c;
 
 	for(int i = c; i < fil; i++)
 		if(m[i][c] > m[max][c])
