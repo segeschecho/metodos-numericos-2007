@@ -1,4 +1,5 @@
 #include "Matriz.h"
+#define MOD(a) (a < 0) ? -a : a
 
 Matriz :: Matriz(int f, int c){
 	//f = filas, c = columnas
@@ -53,7 +54,7 @@ void Matriz :: triangular(void){
 void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual){
     for(int i = filaActual; i < fil; i++){
         m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
-		if(m[filaAanular][i] < 0.0000000001) //10^(-10)
+		if(MOD(m[filaAanular][i]) < 0.0000000001) //10^(-10)
 			m[filaAanular][i] = 0;
     }
 }
