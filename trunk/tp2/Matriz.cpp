@@ -26,8 +26,32 @@ void Matriz :: asignar(unsigned int fila, unsigned int columna, long double valo
     m[fila][columna] = valor;
 }
 
+/*
+ *  triangular: triangula la matriz mediante el metodo de eliminacion gaussiana
+ *              con pivoteo parcial.
+ */
 void Matriz :: triangular(void){
+    int filaActual = 0; //notar que filaActual = columnaActual ya que es la que recorre la matriz en diagonal
 
+    for(filaActual = 0 ; filaActual < fil ; filaActual++){
+        pivotear(filaActual); //hago pivoteo parcial
+
+        for(int filatemp = 1 ; filatemp < fil ; filatemp++){
+            long double coeficiente = m[filatemp][filaActual]/m[filaActual][filaActual];
+            restarFilas(coeficiente, filatemp, filaActual);
+        }
+
+    }
+}
+
+/*
+ *  restarfilas: recibe un coeficiente, una fila a anular y la fila de pivote.
+ *                y resta las filas por el coeficiente.
+ */
+void Matriz :: restarFilas(long double coef, unsigned int filaAanular, unsigned int filaActual){
+    for(int i = filaActual; i < fil; i++){
+        m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
+    }
 }
 
 void Matriz :: permutar(unsigned int fila1, unsigned int fila2){
@@ -55,13 +79,13 @@ Matriz :: ~Matriz(){
 }
 
 
-ostream& operator<<(ostream& os, const Matriz& matriz){
+/*ostream& operator<<(ostream& os, const Matriz& matriz){
 	cout << " ";
 	for(int i = 0; i < matriz.col; i++)
 		cout << "---";
 
 	for(int i = 0; i < matriz.
-	
+
 	cout << "---";
 	return os;
-}
+}*/
