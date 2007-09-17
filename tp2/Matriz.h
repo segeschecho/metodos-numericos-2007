@@ -1,12 +1,12 @@
 #ifndef _MATRIZ_H
 #define _MATRIZ_H
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 
 class Matriz{
   public:
-      Matriz(unsigned int = 4, unsigned int = 4, long double a[][] = {0});
+      Matriz(unsigned int = 4, unsigned int = 4);
       int filas();
       int columnas();
 
@@ -16,11 +16,11 @@ class Matriz{
 
       ~Matriz();
   private:
-      long double *m;
-      unsigned int filas;
-      unsigned int columnas;
+      long double **m;
+      unsigned int fil;
+      unsigned int col;
       /* metodos privados */
-      permutar(unsigned int fila1, unsigned int fila2)
+      void permutar(unsigned int fila1, unsigned int fila2);
 };
 
 

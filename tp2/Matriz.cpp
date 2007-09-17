@@ -1,17 +1,22 @@
 #include "Matriz.h"
 
-Matriz :: Matriz(unsigned int fila, unsigned int col, long double a[][]){
-    filas = fila;
-    columnas = col;
+Matriz :: Matriz(unsigned int f, unsigned int c){
+	//f = filas, c = columnas
+    fil = f;
+    col = c;
 
-    m = new long double[fila][col];
-    memcpy
+    m = new long double* [f];
+	for(unsigned int i = 0; i < f; i++){
+		m[i] = new long double [c];
+		for(unsigned int j = 0; j < c; j++)
+			m[i][j] = 0;
+	}
 }
 int Matriz :: filas(){
-    return filas;
+    return fil;
 }
 int Matriz :: columnas(){
-    return columnas;
+    return col;
 }
 
 long double Matriz :: ver(unsigned int fila, unsigned int columna){
@@ -25,5 +30,4 @@ void Matriz :: triangular(void){
 }
 
 Matriz :: ~Matriz(){
-    delete [][] m;
 }
