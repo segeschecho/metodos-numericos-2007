@@ -1,0 +1,5 @@
+indexamos desde (0,0)
+
+angulo(i) = 2*PI*i/#angulos
+
+radio(i) = i/(#radios - 1)
