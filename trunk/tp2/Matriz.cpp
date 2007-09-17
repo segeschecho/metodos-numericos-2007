@@ -38,18 +38,30 @@ void Matriz :: permutar(unsigned int fila1, unsigned int fila2){
 	m[fila2] = tmp;
 }
 
+void Matriz :: pivotear(unsigned int c){
+	unsigned int max = 0;
+
+	for(int i = c; i < fil; i++)
+		if(m[i][c] > m[max][c])
+			max = i;
+
+	permutar(c, max);
+}
+
 Matriz :: ~Matriz(){
 	for(unsigned int i = 0; i < fil; i++)
 			delete [] m[i];
 	delete [] m;
 }
 
-/*
+
 ostream& operator<<(ostream& os, const Matriz& matriz){
 	cout << " ";
 	for(int i = 0; i < matriz.col; i++)
-		cout << "---"
-		cout << "---"
-	cout << "---"
+		cout << "---";
+
+	for(int i = 0; i < matriz.
+	
+	cout << "---";
 	return os;
-}*/
+}
