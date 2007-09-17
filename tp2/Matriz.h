@@ -24,6 +24,7 @@ class Matriz{
       /* metodos privados */
       void permutar(unsigned int fila1, unsigned int fila2);
       void pivotear(unsigned int);
+      void restarFilas(long double coef, unsigned int filaAanular, unsigned int filaActual);
 };
 
 
