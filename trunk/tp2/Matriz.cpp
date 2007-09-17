@@ -1,8 +1,19 @@
 #include "Matriz.h"
 #define MOD(a) (a < 0) ? -a : a
 
+ostream& operator<<(ostream& os, const Matriz& matriz){
+	for(int i = 0; i < matriz.fil; i++){
+		cout << "FILA" << i << ": ";
+		for(int j = 0; j < matriz.col; j++)
+			cout << matriz.m[i][j] << "     ";
+		cout << endl;
+	}
+	return os;
+}
+
 Matriz :: Matriz(int f, int c){
 	//f = filas, c = columnas
+//	assert((f > 0) && (c > 0));
     fil = f;
     col = c;
 
@@ -47,16 +58,10 @@ void Matriz :: triangular(void){
     }
 }
 
-/*
- *  restarfilas: recibe un coeficiente, una fila a anular y la fila de pivote.
- *                y resta las filas por el coeficiente.
- */
-void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual){
-    for(int i = filaActual; i < fil; i++){
-        m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
-		if(MOD(m[filaAanular][i]) < 0.0000000001) //10^(-10)
-			m[filaAanular][i] = 0;
-    }
+Matriz :: ~Matriz(){
+	for(int i = 0; i < fil; i++)
+			delete [] m[i];
+	delete [] m;
 }
 
 void Matriz :: permutar(int fila1, int fila2){
@@ -77,19 +82,15 @@ void Matriz :: pivotear(int c){
 	permutar(c, max);
 }
 
-Matriz :: ~Matriz(){
-	for(int i = 0; i < fil; i++)
-			delete [] m[i];
-	delete [] m;
-}
+/*
+ *  restarfilas: recibe un coeficiente, una fila a anular y la fila de pivote.
+ *                y resta las filas por el coeficiente.
+ */
 
-
-ostream& operator<<(ostream& os, const Matriz& matriz){
-	for(int i = 0; i < matriz.fil; i++){
-		cout << "FILA" << i << ": ";
-		for(int j = 0; j < matriz.col; j++)
-			cout << matriz.m[i][j] << "  ";
-		cout << endl;
-	}
-	return os;
+void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual){
+    for(int i = filaActual; i < fil; i++){
+        m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
+		if(MOD(m[filaAanular][i]) < 0.0000000001) //10^(-10)
+			m[filaAanular][i] = 0;
+    }
 }
