@@ -25,8 +25,17 @@ long double Matriz :: ver(unsigned int fila, unsigned int columna){
 void Matriz :: asignar(unsigned int fila, unsigned int columna, long double valor){
     m[fila][columna] = valor;
 }
+
 void Matriz :: triangular(void){
 
+}
+
+void Matriz :: permutar(unsigned int fila1, unsigned int fila2){
+	long double* tmp;
+
+	tmp = m[fila1];
+	m[fila1] = m[fila2];
+	m[fila2] = tmp;
 }
 
 Matriz :: ~Matriz(){
@@ -34,3 +43,13 @@ Matriz :: ~Matriz(){
 			delete [] m[i];
 	delete [] m;
 }
+
+/*
+ostream& operator<<(ostream& os, const Matriz& matriz){
+	cout << " ";
+	for(int i = 0; i < matriz.col; i++)
+		cout << "---"
+		cout << "---"
+	cout << "---"
+	return os;
+}*/
