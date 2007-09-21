@@ -1,0 +1,9 @@
+referencias:
+http://www.cplusplus.com/
+
+http://www.oss-watch.ac.uk/resources/googlecode.xml	// creating a new google code proyect
+http://svnbook.red-bean.com/ 		//manual de svn
+pcmap.unizar.es/~pilar/latex.pdf	//introduccion a latex
+http://es.wikipedia.org/wiki/Análisis_numérico //analisis numerico, redondeo etc
+http://babbage.cs.qc.edu/courses/cs341/IEEE-754references.html //referencia para ieee 754
+webs.uvigo.es/mat.avanzadas/PracME_1.pdf //introduccion a matlab
