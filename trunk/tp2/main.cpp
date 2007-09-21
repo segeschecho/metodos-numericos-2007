@@ -1,10 +1,98 @@
 #include <iostream>
+#include <fstream>
 #include "Matriz.h"
+#include "Horno.h"
 
 using namespace std;
 
+Horno parser(ifstream &arch){
+    char data[128];
+    int cant = 0;
+    int n = 0;
+    int *radios = NULL;
+    Horno horno;
+
+    cout << "levantando datos del Archivo........" << endl << endl;
+    //agarro el comentario
+    arch.getline(data, 100);
+    //agarro radio exterior
+    arch.getline(data, 100);
+    horno.setRadio(atoi(data));
+    cout << "radio exterior: " << horno.getRadio() << endl;
+
+    //agarro el comentario
+    arch.getline(data, 100);
+    //agarro cantidad de angulos
+    arch.getline(data, 100);
+    horno.setCantidadAngulos(atoi(data));
+    cout << "cant angulos: " << horno.getCantidadAngulos() << endl;
+    //agarro el comentario
+    arch.getline(data, 100);
+    //agarro cantidad de radios
+    arch.getline(data, 100);
+    horno.setCantidadRadios(atoi(data));
+    cout << "cant radios: " << horno.getCantidadRadios() << endl;
+    //agarro el comentario
+    arch.getline(data, 100);
+    //agarro temperatura interior
+    arch.getline(data, 100);
+    horno.setTi(atoi(data));
+    cout << "temperatura interior: " << horno.getTi() << endl;
+    //agarro el comentario
+    arch.getline(data, 100);
+    //agarro temperatura exterior
+    arch.getline(data, 100);
+    horno.setTinf(atoi(data));
+    cout << "temp exterior: " << horno.getTinf() << endl;
+    //agarro comentario
+    arch.getline(data, 100);
+    //agarro cosntante K
+    arch.getline(data, 100);
+    horno.setK(atof(data));
+    cout << "K: " << horno.getK() << endl;
+    //agarro comentario
+    arch.getline(data, 100);
+    //agarro constante H
+    arch.getline(data, 100);
+    horno.setH(atof(data));
+    cout << "H: " << horno.getH() << endl;
+    //agarro comentario
+    arch.getline(data, 100);
+    //agarro funcion de temperatura
+    n = horno.getCantidadAngulos();
+    radios = new int(n);
+
+    while(cant < n){
+        // agarro el radio para el angulo cant
+        arch.getline(data, 100);
+        radios[cant] = atoi(data);
+        cout << "temperatura para el radio: " << cant << " es: "<< radios[cant] << endl;
+        cant++;
+    }
+
+    cout << endl;
+    horno.setFuncionTemperatura(radios);
+
+    return horno;
+}
+
+
 int main(){
-	Matriz mat(6,6);
+    ifstream arch("datos-entrada.txt");
+    Horno h;
+    Matriz mat(6,6);
+
+    if(arch.is_open())
+        h = parser(arch);
+    else
+    {
+        cout << "error no se pudo abrir el archivo:" << endl;
+        return -1;
+    }
+
+    cout << "Cerrando Archivo...";
+    arch.close();
+    cout << "OK" << endl << endl;
 
 	mat.asignar(0, 0, 1);
 	mat.asignar(0, 1, 2);
