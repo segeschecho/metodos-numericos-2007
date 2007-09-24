@@ -1,25 +1,17 @@
 #include "Horno.h"
 
-Horno :: Horno(int radio, int angulos, int radios, int tint, int text){
+Horno :: Horno(int radio, int angulos, int radios, int tint, int text, long double k, long double h){
     rad = radio;
     angs = angulos;
     rads = radios;
     ti = tint;
     tinf = text;
-    k = 1;
-    h = 0.05;
+    this->k = k;
+    this->h = h;
     radiosLimite = NULL;
 }
 
 /* interfaz */
-
-void Horno :: setK(long double k){
-    this->k = k;
-}
-
-void Horno :: setH(long double h){
-    this->h = h;
-}
 
 void Horno :: setFuncionTemperatura(int* radios){
     int cant = 0;

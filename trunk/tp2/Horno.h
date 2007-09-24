@@ -10,10 +10,8 @@ class Horno{
 	//friend ostream& operator<<(ostream&, const Matriz&);
     public:
         /* Constructor */
-        Horno(int radio = 1, int angulos = 4, int radios = 5, int tint = 5000, int text = 30);
+        Horno(int radio = 1, int angulos = 4, int radios = 5, int tint = 5000, int text = 30, long double k = 1, long double h = 0.05);
         /* interfaz */
-        void setK(long double k);          //constante K
-        void setH(long double h);          //constante H
         void setFuncionTemperatura(int* radios);
 
         int getRadio();
