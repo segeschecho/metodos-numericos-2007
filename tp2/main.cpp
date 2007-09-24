@@ -7,6 +7,7 @@ using namespace std;
 
 Horno parser(ifstream &arch){
 	int radio, cantAngulos, cantRadios, tint, text;
+	long double h, k;
     char data[128];
     int cant = 0;
     int n = 0;
@@ -39,23 +40,23 @@ Horno parser(ifstream &arch){
     //agarro temperatura exterior
     arch.getline(data, 100);
     text = atoi(data);
+    //agarro comentario
+    arch.getline(data, 100);
+    //agarro cosntante K
+    arch.getline(data, 100);
+    k = atof(data);
+    //agarro comentario
+    arch.getline(data, 100);
+    //agarro constante H
+    arch.getline(data, 100);
+    h = atof(data);
     Horno horno(radio, cantAngulos, cantRadios, tint, text);
     cout << "radio exterior: " << horno.getRadio() << endl;
     cout << "cant angulos: " << horno.getCantidadAngulos() << endl;
     cout << "cant radios: " << horno.getCantidadRadios() << endl;
     cout << "temperatura interior: " << horno.getTi() << endl;
     cout << "temp exterior: " << horno.getTinf() << endl;
-    //agarro comentario
-    arch.getline(data, 100);
-    //agarro cosntante K
-    arch.getline(data, 100);
-    horno.setK(atof(data));
     cout << "K: " << horno.getK() << endl;
-    //agarro comentario
-    arch.getline(data, 100);
-    //agarro constante H
-    arch.getline(data, 100);
-    horno.setH(atof(data));
     cout << "H: " << horno.getH() << endl;
     //agarro comentario
     arch.getline(data, 100);
