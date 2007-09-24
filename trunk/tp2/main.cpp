@@ -6,43 +6,44 @@
 using namespace std;
 
 Horno parser(ifstream &arch){
+	int radio, cantAngulos, cantRadios, tint, text;
     char data[128];
     int cant = 0;
     int n = 0;
     int *radios = NULL;
-    Horno horno;
 
     cout << "levantando datos del Archivo........" << endl << endl;
     //agarro el comentario
     arch.getline(data, 100);
     //agarro radio exterior
     arch.getline(data, 100);
-    horno.setRadio(atoi(data));
-    cout << "radio exterior: " << horno.getRadio() << endl;
+    radio = atoi(data);
 
     //agarro el comentario
     arch.getline(data, 100);
     //agarro cantidad de angulos
     arch.getline(data, 100);
-    horno.setCantidadAngulos(atoi(data));
-    cout << "cant angulos: " << horno.getCantidadAngulos() << endl;
+    cantAngulos = atoi(data);
     //agarro el comentario
     arch.getline(data, 100);
     //agarro cantidad de radios
     arch.getline(data, 100);
-    horno.setCantidadRadios(atoi(data));
-    cout << "cant radios: " << horno.getCantidadRadios() << endl;
+    cantRadios = atoi(data);
     //agarro el comentario
     arch.getline(data, 100);
     //agarro temperatura interior
     arch.getline(data, 100);
-    horno.setTi(atoi(data));
-    cout << "temperatura interior: " << horno.getTi() << endl;
+    tint = atoi(data);
     //agarro el comentario
     arch.getline(data, 100);
     //agarro temperatura exterior
     arch.getline(data, 100);
-    horno.setTinf(atoi(data));
+    text = atoi(data);
+    Horno horno(radio, cantAngulos, cantRadios, tint, text);
+    cout << "radio exterior: " << horno.getRadio() << endl;
+    cout << "cant angulos: " << horno.getCantidadAngulos() << endl;
+    cout << "cant radios: " << horno.getCantidadRadios() << endl;
+    cout << "temperatura interior: " << horno.getTi() << endl;
     cout << "temp exterior: " << horno.getTinf() << endl;
     //agarro comentario
     arch.getline(data, 100);

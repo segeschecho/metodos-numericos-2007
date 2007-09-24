@@ -10,13 +10,8 @@ class Horno{
 	//friend ostream& operator<<(ostream&, const Matriz&);
     public:
         /* Constructor */
-        Horno();
+        Horno(int radio = 1, int angulos = 4, int radios = 5, int tint = 5000, int text = 30);
         /* interfaz */
-        void setRadio(int d);
-        void setCantidadAngulos(int ang);
-        void setCantidadRadios(int rad);
-        void setTi(int t);                 //Temperatura interior
-        void setTinf(int t);               //Temperatura exterior
         void setK(long double k);          //constante K
         void setH(long double h);          //constante H
         void setFuncionTemperatura(int* radios);
@@ -32,7 +27,7 @@ class Horno{
         /* Destructor */
         ~Horno();
     private:
-        int diam;
+        int rad;
         int angs;
         int rads;
         int ti;
