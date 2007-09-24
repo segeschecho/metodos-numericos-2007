@@ -1,37 +1,17 @@
 #include "Horno.h"
 
-Horno :: Horno(){
-    diam = 0;
-    angs = 0;
-    rads = 0;
-    ti = 0;
-    tinf = 0;
-    k = 0;
-    h = 0;
+Horno :: Horno(int radio, int angulos, int radios, int tint, int text){
+    rad = radio;
+    angs = angulos;
+    rads = radios;
+    ti = tint;
+    tinf = text;
+    k = 1;
+    h = 0.05;
     radiosLimite = NULL;
 }
 
 /* interfaz */
-
-void Horno :: setRadio(int d){
-    diam = d;
-}
-
-void Horno :: setCantidadAngulos(int ang){
-    angs = ang;
-}
-
-void Horno :: setCantidadRadios(int rad){
-    rads = rad;
-}
-
-void Horno :: setTi(int t){
-    ti = t;
-}
-
-void Horno :: setTinf(int t){
-    tinf = t;
-}
 
 void Horno :: setK(long double k){
     this->k = k;
@@ -55,7 +35,7 @@ void Horno :: setFuncionTemperatura(int* radios){
 }
 
 int Horno :: getRadio(){
-    return diam;
+    return rad;
 }
 
 int Horno :: getCantidadAngulos(){
@@ -87,5 +67,5 @@ int Horno :: getRadioLimite(int angulo){
 }
 /* Destructor */
 Horno :: ~Horno(){
-    delete(radiosLimite);
+    delete radiosLimite;
 }
