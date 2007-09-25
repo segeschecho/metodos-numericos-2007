@@ -24,9 +24,11 @@ Matriz :: Matriz(int f, int c){
 			m[i][j] = 0;
 	}
 }
+
 int Matriz :: filas(){
     return fil;
 }
+
 int Matriz :: columnas(){
     return col;
 }
@@ -34,6 +36,7 @@ int Matriz :: columnas(){
 long double Matriz :: ver(int fila, int columna){
     return m[fila][columna];
 }
+
 void Matriz :: asignar(int fila, int columna, long double valor){
     m[fila][columna] = valor;
 }
