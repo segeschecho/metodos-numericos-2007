@@ -50,7 +50,20 @@ Horno parser(ifstream &arch){
     //agarro constante H
     arch.getline(data, 100);
     h = atof(data);
-    Horno horno(radio, cantAngulos, cantRadios, tint, text);
+    //agarro comentario
+    arch.getline(data, 100);
+    //agarro funcion de temperatura
+    radios = new int(cantAngulos);
+
+    while(cant < n){
+        // agarro el radio para el angulo cant
+        arch.getline(data, 100);
+        radios[cant] = atoi(data);
+//        cout << "temperatura para el radio: " << cant << " es: "<< radios[cant] << endl;
+        cant++;
+    }
+
+    Horno horno(radio, cantAngulos, cantRadios, tint, text, k, h, &radios[0]);
     cout << "radio exterior: " << horno.getRadio() << endl;
     cout << "cant angulos: " << horno.getCantidadAngulos() << endl;
     cout << "cant radios: " << horno.getCantidadRadios() << endl;
@@ -58,22 +71,7 @@ Horno parser(ifstream &arch){
     cout << "temp exterior: " << horno.getTinf() << endl;
     cout << "K: " << horno.getK() << endl;
     cout << "H: " << horno.getH() << endl;
-    //agarro comentario
-    arch.getline(data, 100);
-    //agarro funcion de temperatura
-    n = horno.getCantidadAngulos();
-    radios = new int(n);
-
-    while(cant < n){
-        // agarro el radio para el angulo cant
-        arch.getline(data, 100);
-        radios[cant] = atoi(data);
-        cout << "temperatura para el radio: " << cant << " es: "<< radios[cant] << endl;
-        cant++;
-    }
-
     cout << endl;
-    horno.setFuncionTemperatura(radios);
 
     return horno;
 }
@@ -81,7 +79,7 @@ Horno parser(ifstream &arch){
 
 int main(){
     ifstream arch("datos-entrada.txt");
-    Horno h;
+    Horno h();
     Matriz mat(6,6);
 
     if(arch.is_open())
