@@ -59,30 +59,43 @@ void Matriz :: triangular(void){
     }
 }
 
+/*
+ * PRECONDICION: Suponemos que la matriz implicita
+ * es triangular superior
+ */
+
 const Matriz& Matriz :: resolver(const Matriz &b){
-	long double resPorFil;
-	int filXcol = filDeRes*colDeRes;
+	long double resPorFil;  //resultado correspondiente al Xij
+	int filXcol = (this->col)*(b.col);
 	long double sumaPorFil = 0;
-	Matriz temp(filXcol,0);
+	Matriz res(filXcol,0);
 
-	//temp.asignar(filDeRes-1,colDeRes-1, m.ver(filXcol-1,filXcol-1))
-
-	for (int i = filXcol-1; i >= 0, i--){
-		resPorFil = (b.ver(i,0) - sumaPorFil)/ver.m(i,i);
-		temp.asignar(i,0,resPorFil);
+	for (int i = filXcol-1; i >= 0; i--){
+		resPorFil = (b.m[i][0] - sumaPorFil)/m[i][i];
+		res.m[i][0] = resPorFil;
 		for (int j = filXcol-1; j > i; j--){
-			sumaPorFil += ver.m(i,j)*temp[j];
+			sumaPorFil += m[i][j]*res.m[j][0];
 			}
 		}
-	/*    
-	Matriz matRes(filDeRes, colDeRes);
+	return res;
+}
 
-	for (int i = 0; i<filDeRes; i++) {
-		for (int j = 0; j< colDeRes; j++) {
-			matRes.asignar(i,j, temp[j+filDeRes*i]);
-			}
-		}*/
-	return matRes;
+void Matriz :: operator =(const Matriz &m1){
+    fil = m1.fil;
+    col = m1.col;
+
+    cout << fil << endl;
+    cout << col << endl;
+    m = new long double *[fil];
+
+    for(int i = 0; i < fil; i++){
+		m[i] = new long double[col];
+		for(int j = 0; j < col; j++){
+		    cout << "ciclo numero : " << j << endl;
+		    cout << m1.m[i][j];
+			m[i][j] = m1.m[i][j];
+		}
+	}
 }
 
 Matriz :: ~Matriz(){

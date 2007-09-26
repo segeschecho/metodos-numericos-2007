@@ -79,11 +79,13 @@ Horno parser(ifstream &arch){
 
 int main(){
     ifstream arch("datos-entrada.txt");
-    Horno h();
+    Horno h;
     Matriz mat(6,6);
 
-    if(arch.is_open())
+    if(arch.is_open()){
         h = parser(arch);
+        cout << "holssssssss" << endl;
+    }
     else
     {
         cout << "error no se pudo abrir el archivo:" << endl;
