@@ -59,6 +59,32 @@ void Matriz :: triangular(void){
     }
 }
 
+const Matriz& Matriz :: resolver(const Matriz &b){
+	long double resPorFil;
+	int filXcol = filDeRes*colDeRes;
+	long double sumaPorFil = 0;
+	Matriz temp(filXcol,0);
+
+	//temp.asignar(filDeRes-1,colDeRes-1, m.ver(filXcol-1,filXcol-1))
+
+	for (int i = filXcol-1; i >= 0, i--){
+		resPorFil = (b.ver(i,0) - sumaPorFil)/ver.m(i,i);
+		temp.asignar(i,0,resPorFil);
+		for (int j = filXcol-1; j > i; j--){
+			sumaPorFil += ver.m(i,j)*temp[j];
+			}
+		}
+	/*    
+	Matriz matRes(filDeRes, colDeRes);
+
+	for (int i = 0; i<filDeRes; i++) {
+		for (int j = 0; j< colDeRes; j++) {
+			matRes.asignar(i,j, temp[j+filDeRes*i]);
+			}
+		}*/
+	return matRes;
+}
+
 Matriz :: ~Matriz(){
 	for(int i = 0; i < fil; i++)
 			delete [] m[i];

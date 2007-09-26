@@ -11,31 +11,32 @@ class Horno{
 	//friend ostream& operator<<(ostream&, const Matriz&);
     public:
         /* Constructor */
-        Horno(int radio = 1, int angulos = 4, int radios = 5, int tint = 5000, int text = 30, long double k = 1, long double h = 0.05, int* radiosLimite);
+        Horno(int radio = 1, int angulos = 4, int radios = 5, int tint = 5000, int text = 30, long double k = 1, long double h = 0.05, int* radiosLimite = NULL);
         /* interfaz */
 
         int getRadio();
         int getCantidadAngulos();
         int getCantidadRadios();
-        int getTi();                       //Temperatura interior
-        int getTinf();                     //Temperatura exterior
-        long double getK();                        //constante K
-        long double getH();                        //constante H
+        int getTi();
+        int getTinf();
+        long double getK();
+        long double getH();
         int getBordeInterno(int angulo);
-        /* Destructor */
+
+		/* Destructor */
         ~Horno();
     private:
-        Matriz* temperaturas;
-        int rad;
-        int angs;
-        int rads;
-        long double deltaR;
+        Matriz* temperaturas;       //temperatura en cada punto discretizado del horno
+        int rad;                    //radio del horno desde el centro al borde exterior
+        int angs;                   //angulos en los que se divide el horno
+        int rads;                   //cantidad de radios por angulo
+        long double deltaR;         //delta Radio
         long double deltaT;         //delta Theeta
-        int ti;
-        int tinf;
-        long double k;
-        long double h;
-        int *bordeInterno;                 //valores conocidos.
+        int ti;                     //temperatura interior
+        int tinf;                   //temperatura en el infinito
+        long double k;              //constante k
+        long double h;              //constante h
+        int *bordeInterno;          //borde interno del horno.
 };
 
 #endif /*_HORNO_H*/

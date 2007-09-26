@@ -15,6 +15,7 @@ class Matriz{
       long double ver(int fila, int columna);
       void asignar(int fila, int columna, long double valor);
       void triangular(void);
+      const Matriz& resolver(const Matriz &b);
 
       ~Matriz();
 //  private:
