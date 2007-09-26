@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <math.h>
 #include "Matriz.h"
 
 using namespace std;
@@ -23,6 +24,7 @@ class Horno{
         long double getH();
         int getBordeInterno(int angulo);
 
+        void operator=(const Horno &h1);
 		/* Destructor */
         ~Horno();
     private:

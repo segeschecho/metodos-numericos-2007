@@ -1,7 +1,7 @@
 #include "Horno.h"
+#define PI 3.1415926535897932484626433832795
 
 Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, long double k, long double h, int* radiosLimite){
-
     rad = radio;
     angs = cantAngulos;
     rads = cantRadios;
@@ -87,7 +87,7 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
 	X = temp.resolver(b);
 	for(int r = 0; r < rad; r++)
 		for(int a = 0; a < angs; a++)
-			temperatura->asignar(r,a,X.ver(0, r*angs + a));
+			temperaturas->asignar(r,a,X.ver(0, r*angs + a));
 }
 
 /* interfaz */
@@ -120,10 +120,32 @@ long double Horno :: getH(){
     return h;
 }                        //constante H
 
+void Horno :: operator=(const Horno &h1){
+    int i = 0;
+
+    rad = h1.rad;
+    angs = h1.angs;
+    rads = h1.rads;
+    deltaR = h1.deltaR;
+    deltaT = h1.deltaT;         //delta Theeta
+    ti = h1.ti;
+    tinf = h1.tinf;
+    k = h1.k;
+    h = h1.h;
+
+    temperaturas = new Matriz(rad, angs);
+    *temperaturas = *(h1.temperaturas);
+
+    bordeInterno = new int(angs);
+    while(i < angs){
+        bordeInterno[i] = h1.bordeInterno[i];
+    }
+}
+
 int Horno :: getBordeInterno(int angulo){
-    return BordeInterno[angulo];
+    return bordeInterno[angulo];
 }
 /* Destructor */
 Horno :: ~Horno(){
-    delete BordeInterno;
+    delete bordeInterno;
 }
