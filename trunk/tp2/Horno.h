@@ -12,7 +12,8 @@ class Horno{
 	//friend ostream& operator<<(ostream&, const Matriz&);
     public:
         /* Constructor */
-        Horno(int radio = 1, int angulos = 4, int radios = 5, int tint = 5000, int text = 30, long double k = 1, long double h = 0.05, int* radiosLimite = NULL);
+        Horno(){};
+        Horno(int radio, int angulos, int radios, int tint, int text, long double k, long double h, int* radiosLimite);
         /* interfaz */
 
         int getRadio();

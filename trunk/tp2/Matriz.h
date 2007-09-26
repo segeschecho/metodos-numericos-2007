@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <assert.h>
 using namespace std;
 
 class Matriz{
@@ -14,8 +15,8 @@ class Matriz{
 
     long double ver(int fila, int columna);
     void asignar(int fila, int columna, long double valor);
-    void triangular(void);
-    const Matriz& resolver(const Matriz &b);
+    void triangular(Matriz &b);
+    void resolver(Matriz &X, Matriz &b);
     void operator =(const Matriz &m1);
     ~Matriz();
   private:
@@ -23,9 +24,9 @@ class Matriz{
     int fil;
     int col;
     /* metodos privados */
-    void permutar(int fila1, int fila2);
-    void pivotear(int);
-    void restarFilas(long double coef, int filaAanular, int filaActual);
+    void permutar(int fila1, int fila2, Matriz &b);
+    void pivotear(int, Matriz &b);
+    void restarFilas(long double coef, int filaAanular, int filaActual, Matriz &b);
 };
 
 

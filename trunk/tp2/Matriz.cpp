@@ -13,7 +13,7 @@ ostream& operator<<(ostream& os, const Matriz& matriz){
 
 Matriz :: Matriz(int f, int c){
 	//f = filas, c = columnas
-//	assert((f > 0) && (c > 0));
+	assert((f > 0) && (c > 0));
     fil = f;
     col = c;
 
@@ -38,6 +38,8 @@ long double Matriz :: ver(int fila, int columna){
 }
 
 void Matriz :: asignar(int fila, int columna, long double valor){
+	assert((fila >= 0) && (columna >= 0));
+	assert((fila < fil) && (columna < col));
     m[fila][columna] = valor;
 }
 
@@ -45,17 +47,16 @@ void Matriz :: asignar(int fila, int columna, long double valor){
  *  triangular: triangula la matriz mediante el metodo de eliminacion gaussiana
  *              con pivoteo parcial.
  */
-void Matriz :: triangular(void){
+void Matriz :: triangular(Matriz &b){
     int filaActual = 0; //notar que filaActual = columnaActual ya que es la que recorre la matriz en diagonal
 
     for(filaActual = 0 ; filaActual < fil ; filaActual++){
-        pivotear(filaActual); //hago pivoteo parcial
+        pivotear(filaActual, b); //hago pivoteo parcial
 
         for(int filatemp = filaActual + 1 ; filatemp < fil ; filatemp++){
             long double coeficiente = m[filatemp][filaActual]/m[filaActual][filaActual];
-            restarFilas(coeficiente, filatemp, filaActual);
+            restarFilas(coeficiente, filatemp, filaActual, b);
         }
-
     }
 }
 
@@ -64,20 +65,17 @@ void Matriz :: triangular(void){
  * es triangular superior
  */
 
-const Matriz& Matriz :: resolver(const Matriz &b){
-	long double resPorFil;  //resultado correspondiente al Xij
-	int filXcol = (this->col)*(b.col);
-	long double sumaPorFil = 0;
-	Matriz res(filXcol,0);
+void Matriz :: resolver(Matriz &X, Matriz &b){
+	assert(X.fil == col);
+	assert((b.fil == this->fil) && (b.col == X.col));
 
-	for (int i = filXcol-1; i >= 0; i--){
-		resPorFil = (b.m[i][0] - sumaPorFil)/m[i][i];
-		res.m[i][0] = resPorFil;
-		for (int j = filXcol-1; j > i; j--){
-			sumaPorFil += m[i][j]*res.m[j][0];
-			}
-		}
-	return res;
+	for (int i = fil-1; i >= 0; i--){
+		long double sumaPorFil = 0;
+
+		for (int j = col-1; j > i; j--)
+			sumaPorFil += m[i][j]*X.m[j][0];
+		X.m[i][0] = (b.m[i][0] - sumaPorFil)/m[i][i];
+	}
 }
 
 void Matriz :: operator =(const Matriz &m1){
@@ -91,7 +89,6 @@ void Matriz :: operator =(const Matriz &m1){
     for(int i = 0; i < fil; i++){
 		m[i] = new long double[col];
 		for(int j = 0; j < col; j++){
-		    cout << "ciclo numero : " << j << endl;
 		    cout << m1.m[i][j];
 			m[i][j] = m1.m[i][j];
 		}
@@ -99,27 +96,33 @@ void Matriz :: operator =(const Matriz &m1){
 }
 
 Matriz :: ~Matriz(){
+	cout << *this << endl;
 	for(int i = 0; i < fil; i++)
-			delete [] m[i];
-	delete [] m;
+		delete m[i];
+	delete m;
 }
 
-void Matriz :: permutar(int fila1, int fila2){
+void Matriz :: permutar(int fila1, int fila2, Matriz &b){
 	long double* tmp;
 
 	tmp = m[fila1];
 	m[fila1] = m[fila2];
 	m[fila2] = tmp;
+
+	tmp = b.m[fila1];
+	b.m[fila1] = b.m[fila2];
+	b.m[fila2] = tmp;
 }
 
-void Matriz :: pivotear(int c){
+void Matriz :: pivotear(int c, Matriz &b){
 	int max = c;
 
-	for(int i = c; i < fil; i++)
+	for(int i = c; i < fil; i++){
 		if(MOD(m[i][c]) > MOD(m[max][c]))
 			max = i;
+	}
 
-	permutar(c, max);
+	permutar(c, max, b);
 }
 
 /*
@@ -127,10 +130,12 @@ void Matriz :: pivotear(int c){
  *                y resta las filas por el coeficiente.
  */
 
-void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual){
+void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual, Matriz &b){
     for(int i = filaActual; i < fil; i++){
         m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
 		if(MOD(m[filaAanular][i]) < 1e-10) //10^(-10)
 			m[filaAanular][i] = 0;
     }
+
+    b.m[filaAanular][0] = b.m[filaAanular][0] - coef*b.m[filaActual][0];
 }
