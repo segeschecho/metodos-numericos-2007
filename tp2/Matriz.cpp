@@ -5,7 +5,7 @@ ostream& operator<<(ostream& os, const Matriz& matriz){
 	for(int i = 0; i < matriz.fil; i++){
 		cout << "FILA" << i << ": ";
 		for(int j = 0; j < matriz.col; j++)
-			cout << matriz.m[i][j] << "\t";
+			cout << matriz.m[i][j] << " ";
 		cout << endl;
 	}
 	return os;
