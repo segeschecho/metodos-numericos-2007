@@ -2,6 +2,7 @@
 #define PI 3.1415926535897932484626433832795
 
 Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, long double k, long double h, int* radiosLimite){
+  
     rad = radio;
     angs = cantAngulos;
     rads = cantRadios;
@@ -12,8 +13,10 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
     this->k = k;
     this->h = h;
 
-    bordeInterno = new int(angs);
+      
+    bordeInterno = new int[angs];
 
+//system("PAUSE");
     // guardo los radios para cada angulo
     // asi queda definida la funcion de temperatura.
     for(int cant = 0; cant < angs; cant++)
@@ -22,9 +25,11 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
     Matriz temp(rads*angs, rads*angs);
 	Matriz b(rads*angs, 1);
 	Matriz X(rads*angs, 1);
+
     temperaturas = new Matriz(rads, angs);
 
     int filaALlenar = 0;
+    
 	for(int r = 0; r < rads; r++){
         for(int a = 0; a < angs; a++)
         {
@@ -135,7 +140,7 @@ void Horno :: operator=(const Horno &h1){
     temperaturas = new Matriz(rad, angs);
     *temperaturas = *(h1.temperaturas);
 
-    bordeInterno = new int(angs);
+    bordeInterno = new int[angs];
     for(int i = 0; i < angs; i++)
         bordeInterno[i] = h1.bordeInterno[i];
 }
@@ -145,5 +150,7 @@ int Horno :: getBordeInterno(int angulo){
 }
 /* Destructor */
 Horno :: ~Horno(){
+      
     delete bordeInterno;
+    
 }
