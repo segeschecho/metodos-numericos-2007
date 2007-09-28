@@ -28,7 +28,7 @@ class Horno{
         void operator=(const Horno &h1);
 		/* Destructor */
         ~Horno();
-    private:
+//    private:
         Matriz* temperaturas;       //temperatura en cada punto discretizado del horno
         int rad;                    //radio del horno desde el centro al borde exterior
         int angs;                   //angulos en los que se divide el horno

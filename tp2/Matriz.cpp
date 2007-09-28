@@ -5,7 +5,7 @@ ostream& operator<<(ostream& os, const Matriz& matriz){
 	for(int i = 0; i < matriz.fil; i++){
 		cout << "FILA" << i << ": ";
 		for(int j = 0; j < matriz.col; j++)
-			cout << matriz.m[i][j] << "     ";
+			cout << matriz.m[i][j] << "\t";
 		cout << endl;
 	}
 	return os;
@@ -82,21 +82,17 @@ void Matriz :: operator =(const Matriz &m1){
     fil = m1.fil;
     col = m1.col;
 
-    //cout << fil << endl;
-    //cout << col << endl;
-    m = new long double *[fil];
+    m = new long double*[fil];
 
     for(int i = 0; i < fil; i++){
 		m[i] = new long double[col];
 		for(int j = 0; j < col; j++){
-	//	    cout << m1.m[i][j];
 			m[i][j] = m1.m[i][j];
 		}
 	}
 }
 
 Matriz :: ~Matriz(){
-//	cout << *this << endl;
 	for(int i = 0; i < fil; i++)
 		delete m[i];
 	delete m;
