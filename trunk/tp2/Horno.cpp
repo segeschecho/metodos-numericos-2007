@@ -5,7 +5,7 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
     rad = radio;
     angs = cantAngulos;
     rads = cantRadios;
-    deltaR = (long double)rad/(long double)rads;
+    deltaR = (long double)rad/((long double)rads - 1);
     deltaT = 2*PI/(long double)angs;
     ti = tint;
     tinf = text;
@@ -24,13 +24,15 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
 	Matriz X(rads*angs, 1);
 
     temperaturas = new Matriz(rads, angs);
+//	cout << "temperaturas->filas() = " << temperaturas->filas() << endl;
+//	cout << "temperaturas->columnas() = " << temperaturas->columnas() << endl;
 
     int filaALlenar = 0;
 
 	for(int r = 0; r < rads; r++){
         for(int a = 0; a < angs; a++)
         {
-            if ((r == 0) || (r <= bordeInterno[a])){           //si es un punto del borde interno
+            if (r <= bordeInterno[a]){           //si es un punto del borde interno
 			//sabemos que por la 2da ecuacion, la temperatura de los puntos
 			//dentro de este borde es 5000, entonces se que el coeficiente
 			//del punto en cuestion sera 1, y su correspondiente
@@ -68,7 +70,7 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
 					temp.asignar(filaALlenar, (r + 1)*angs + a, coef5);
                 }
 				else{	//si el punto es del borde externo
-					long double coef = -k/(h*deltaR);
+					long double coef = k/(h*deltaR);
 					//coef cubre los 2 coeficientes que resultan de discretizar
 					//la 3er ecuacion en cuestion
 
@@ -77,8 +79,8 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
 					//dentro de la fila a llenar:
 					//T[r][a] = coef
 					//T[r-1][a] = coef + 1
-					temp.asignar(filaALlenar, r*angs + a, coef);
-					temp.asignar(filaALlenar, (r - 1)*angs + a, coef + 1);
+					temp.asignar(filaALlenar, r*angs + a, -coef - 1);
+					temp.asignar(filaALlenar, (r - 1)*angs + a, coef);
 					b.asignar(filaALlenar, 0, tinf*k/h);
 				}
             }
@@ -91,6 +93,7 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
 	for(int r = 0; r < rads; r++)
 		for(int a = 0; a < angs; a++)
 			temperaturas->asignar(r,a,X.ver(r*angs + a, 0));
+	cout << *temperaturas;
 }
 
 /* interfaz */
