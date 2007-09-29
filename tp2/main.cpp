@@ -5,6 +5,8 @@
 
 using namespace std;
 
+#define PI 3.1415926535897932484626433832795
+
 Horno parser(ifstream &arch){
 	int radio, cantAngulos, cantRadios, tint, text;
 	long double h, k;
@@ -113,7 +115,8 @@ int main(){
 
     if(archivo.is_open()){
         h.cargar(archivo);
-		cout << *(h.temperaturas);
+		cout << *(h.temperaturas) << endl;
+//		cout << h.getTemperatura((long double)1,PI/2) << endl;
     }
     else{
 		cout << "Error! No se pudo abrir el archivo" << endl;

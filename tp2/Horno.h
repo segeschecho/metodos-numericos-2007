@@ -12,27 +12,28 @@ class Horno{
 	//friend ostream& operator<<(ostream&, const Matriz&);
     public:
         /* Constructor */
-        Horno(){temperaturas = NULL; bordeInterno = NULL;}
+		Horno(){temperaturas = NULL; bordeInterno = NULL;}
         Horno(int radio, int angulos, int radios, int tint, int text, long double k, long double h, int* radiosLimite);
 
         /* interfaz */
-		void cargar(istream& archivo);
-        int getRadio();
-        int getCantidadAngulos();
-        int getCantidadRadios();
-        int getTi();
-        int getTinf();
-        long double getK();
-        long double getH();
-        int getBordeInterno(int angulo);
+		void            cargar(istream& archivo);
+		long double		getTemperatura(long double radio, long double theeta);
+        long double     getRadio();
+        int             getCantidadAngulos();
+        int             getCantidadRadios();
+        int             getTi();
+        int             getTinf();
+        long double     getK();
+        long double     getH();
+        int	            funcionRadio(int angulo);
+        void            operator=(const Horno &h1);
 
-        void operator=(const Horno &h1);
 		/* Destructor */
         ~Horno();
 //    private:
 		//Atributos
         Matriz* temperaturas;       //temperatura en cada punto discretizado del horno
-        int rad;                    //radio del horno desde el centro al borde exterior
+        long double rad;            //radio del horno desde el centro al borde exterior
         int angs;                   //angulos en los que se divide el horno
         int rads;                   //cantidad de radios por angulo
         long double deltaR;         //delta Radio
