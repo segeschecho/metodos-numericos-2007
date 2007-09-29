@@ -5,76 +5,6 @@
 
 using namespace std;
 
-Horno parser(ifstream &arch){
-	int radio, cantAngulos, cantRadios, tint, text;
-	long double h, k;
-    char data[128];
-    int cant = 0;
-    int *radios = NULL;
-
-    cout << "levantando datos del Archivo........" << endl << endl;
-    //agarro el comentario
-    arch.getline(data, 100);
-    //agarro radio exterior
-    arch.getline(data, 100);
-    radio = atoi(data);
-
-    //agarro el comentario
-    arch.getline(data, 100);
-    //agarro cantidad de angulos
-    arch.getline(data, 100);
-    cantAngulos = atoi(data);
-    //agarro el comentario
-    arch.getline(data, 100);
-    //agarro cantidad de radios
-    arch.getline(data, 100);
-    cantRadios = atoi(data);
-    //agarro el comentario
-    arch.getline(data, 100);
-    //agarro temperatura interior
-    arch.getline(data, 100);
-    tint = atoi(data);
-    //agarro el comentario
-    arch.getline(data, 100);
-    //agarro temperatura exterior
-    arch.getline(data, 100);
-    text = atoi(data);
-    //agarro comentario
-    arch.getline(data, 100);
-    //agarro cosntante K
-    arch.getline(data, 100);
-    k = atof(data);
-    //agarro comentario
-    arch.getline(data, 100);
-    //agarro constante H
-    arch.getline(data, 100);
-    h = atof(data);
-    //agarro comentario
-    arch.getline(data, 100);
-    //agarro funcion de temperatura
-    radios = new int [cantAngulos];
-
-    while(cant < cantAngulos){
-        // agarro el radio para el angulo cant
-        arch.getline(data, 100);
-        radios[cant] = atoi(data);
-//        cout << "temperatura para el radio: " << cant << " es: "<< radios[cant] << endl;
-        cant++;
-    }
-
-    Horno horno(radio, cantAngulos, cantRadios, tint, text, k, h, &radios[0]);
-    cout << "radio exterior: " << horno.getRadio() << endl;
-    cout << "cant angulos: " << horno.getCantidadAngulos() << endl;
-    cout << "cant radios: " << horno.getCantidadRadios() << endl;
-    cout << "temperatura interior: " << horno.getTi() << endl;
-    cout << "temp exterior: " << horno.getTinf() << endl;
-    cout << "K: " << horno.getK() << endl;
-    cout << "H: " << horno.getH() << endl;
-    cout << endl;
-
-    return horno;
-}
-
 void guardarParaGrafico(ostream &out, Horno &h){
     Matriz m = *(h.temperaturas);
 
@@ -88,7 +18,7 @@ void guardarParaGrafico(ostream &out, Horno &h){
 
     for(int i = 0 ; i < m.filas(); i++){
         for(int j = 0 ; j < m.columnas(); j++){
-            X = (int)( i*(h.rad)/(h.rads) )*cos(j*2*PI/centroR);       //cuanto me muevo en "X" = Rcos(tita)
+            X = (int)((i*(h.rad)/(h.rads))*cos(j*2*PI/centroR));       //cuanto me muevo en "X" = Rcos(tita)
 
             out << " " << X;
         }
@@ -99,7 +29,7 @@ void guardarParaGrafico(ostream &out, Horno &h){
     out << "Y =[ ";
     for(int i = 0 ; i < m.filas(); i++){
         for(int j = 0 ; j < m.columnas(); j++){
-            Y = (int)( i*(h.rad)/(h.rads) )*sin(j*2*PI/centroR);       //cuanto me muevo en "X"
+            Y = (int)((i*(h.rad)/(h.rads))*sin(j*2*PI/centroR));       //cuanto me muevo en "X"
 
             out << " " << Y;
         }
@@ -113,55 +43,64 @@ void guardarParaGrafico(ostream &out, Horno &h){
 }
 
 int main(){
-/*
-	Matriz mat(3,3);
-	Matriz b(3,1);
-	Matriz X(3,1);
-	mat.asignar(0,0,1);
-	mat.asignar(0,1,4);
-	mat.asignar(0,2,1);
-	mat.asignar(1,0,1);
-	mat.asignar(1,1,6);
-	mat.asignar(1,2,-1);
-	mat.asignar(2,0,2);
-	mat.asignar(2,1,-1);
-	mat.asignar(2,2,2);
+    Horno h;
+	unsigned int opcion = 0;
 
-	b.asignar(0,0,7);
-	b.asignar(1,0,13);
-	b.asignar(2,0,5);
+	cout << "Simulador para hornos de altas temperaturas\n";
+	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
 
-	cout << "mat = \n"<< mat << endl << endl;
-	cout << "b = \n" << b << endl << endl;
-	mat.triangular(b);
-	cout << "mat = \n"<< mat << endl << endl;
-	cout << "X = \n" << X << endl << endl;
-	cout << "b = \n" << b << endl << endl;
+	while(opcion != 4){
+		cout << "\n\n1. Cargar un horno\n";
+		cout << "2. Guardar datos del horno actual para realizar graficos\n";
+		cout << "3. Ver temperatura en un punto\n";
+		cout << "4. Salir\n\n";
+		cout << "Ingresar opcion: ";
+		cin >> opcion;
 
-	mat.resolver(X, b);
-	cout << "mat = \n"<< mat << endl << endl;
-	cout << "X = \n" << X << endl << endl;
-	cout << "b = \n" << b << endl << endl;
-*/
-    ifstream archivo("datos-entrada.txt");
+		if(opcion == 1){
+			char nombreDelArchivo[256];
+			cout << "\n\nIngrese el nombre del archivo: ";
+			cin >> nombreDelArchivo;
+
+			ifstream archivoEntrada;
+			archivoEntrada.open(nombreDelArchivo, ifstream::in);
+			while(archivoEntrada.fail()){
+				cout << "\n\nEl archivo no se encuentra. Ingrese el nombre del archivo: ";
+				cin >> nombreDelArchivo;
+			}
+
+			h.cargar(archivoEntrada);
+			archivoEntrada.close();
+		}
+
+		if(opcion == 2){
+			char nombreDelArchivo[256];
+			cout << "\n\nIngrese el nombre del archivo: ";
+			cin >> nombreDelArchivo;
+
+			ofstream archivoSalida;
+			archivoSalida.open(nombreDelArchivo, ofstream::out);
+			guardarParaGrafico(archivoSalida,h);
+			archivoSalida.close();
+		}
+
+		if(opcion == 3){
+			long double radio, angulo;
+			cout << "Los datos deben ser ingresados en coordenadas polares\n";
+			cout << "\nIngresar radio: ";
+			cin >> radio;
+			cout << "\nIngresar angulo(Radianes)";
+			cin >> angulo;
+			cout << h.getTemperatura(radio, angulo);
+		}
+	}
+
+
+	ifstream archivo("datos-entrada.txt");
     ofstream salida("datos-salida.txt");
 
-    Horno h;
     Matriz mat(6,6);
 
-    if(archivo.is_open()){
-        h.cargar(archivo);
-		cout << *(h.temperaturas) << endl;
-
-		guardarParaGrafico(salida, h);
-
-//		cout << h.getTemperatura((long double)1,PI/2) << endl;
-    }
-    else{
-		cout << "Error! No se pudo abrir el archivo" << endl;
-		system("PAUSE");
-        return -1;
-    }
 
     archivo.close();
 
