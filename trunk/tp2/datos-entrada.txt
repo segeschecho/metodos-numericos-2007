@@ -7,7 +7,7 @@
 //temperatura interior
 5000
 //temperatura infinito
-30
+16
 //constante K
 1
 //constante H
