@@ -12,10 +12,11 @@ class Horno{
 	//friend ostream& operator<<(ostream&, const Matriz&);
     public:
         /* Constructor */
-        Horno(){};
+        Horno(){temperaturas = NULL; bordeInterno = NULL;}
         Horno(int radio, int angulos, int radios, int tint, int text, long double k, long double h, int* radiosLimite);
         /* interfaz */
 
+		void cargar(istream& archivo);
         int getRadio();
         int getCantidadAngulos();
         int getCantidadRadios();
@@ -29,6 +30,7 @@ class Horno{
 		/* Destructor */
         ~Horno();
 //    private:
+		//Atributos
         Matriz* temperaturas;       //temperatura en cada punto discretizado del horno
         int rad;                    //radio del horno desde el centro al borde exterior
         int angs;                   //angulos en los que se divide el horno
@@ -40,6 +42,9 @@ class Horno{
         long double k;              //constante k
         long double h;              //constante h
         int *bordeInterno;          //borde interno del horno.
+
+		//Metodos privados
+		void calcular_temperaturas(void);
 };
 
 #endif /*_HORNO_H*/

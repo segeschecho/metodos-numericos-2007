@@ -1,20 +1,31 @@
 //radio exterior
-1
+30
 //cantidad de angulos
-5
+16
 //cantidad de radios(contando el centro)
-6
+15
 //temperatura interior
 5000
-//tenperatura infinito
+//temperatura infinito
 30
 //constante K
 1
 //constante H
 0.05
 //definicion de la funcion de temperatura. t(gk,k) = Ti, num angulo, num radio
-1
-1
-1
-1
-1
+10
+9
+8
+7
+6
+5
+4
+4
+5
+6
+7
+8
+9
+10
+11
+10
