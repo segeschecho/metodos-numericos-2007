@@ -178,8 +178,6 @@ void Horno :: calcular_temperaturas(void){
 
 	delete temperaturas;
     temperaturas = new Matriz(rads, angs);
-//	cout << "temperaturas->filas() = " << temperaturas->filas() << endl;
-//	cout << "temperaturas->columnas() = " << temperaturas->columnas() << endl;
 
     int filaALlenar = 0;
 
@@ -242,8 +240,6 @@ void Horno :: calcular_temperaturas(void){
 			filaALlenar++;
         }
 	}
-//	cout << temp << endl << endl;
-//	cout << b << endl << endl;
 
 	temp.triangular(b);
 	temp.resolver(X,b);
