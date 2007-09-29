@@ -14,8 +14,8 @@ class Horno{
         /* Constructor */
         Horno(){temperaturas = NULL; bordeInterno = NULL;}
         Horno(int radio, int angulos, int radios, int tint, int text, long double k, long double h, int* radiosLimite);
-        /* interfaz */
 
+        /* interfaz */
 		void cargar(istream& archivo);
         int getRadio();
         int getCantidadAngulos();

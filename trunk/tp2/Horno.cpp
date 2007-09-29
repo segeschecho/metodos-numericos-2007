@@ -189,10 +189,10 @@ void Horno :: calcular_temperaturas(void){
             }
             else{
                 if(r != rads - 1){          //si no es un punto del borde interno
-                    long double coef1 = 1/(deltaR*deltaR) - 1/(r*deltaR*deltaR);
-                    long double coef2 = 1/((deltaT*deltaT)*(r*r*deltaR*deltaR));
-                    long double coef3 = -2/(deltaR*deltaR) + 1/(r*deltaR*deltaR) - 2/(r*deltaR*r*deltaR*deltaT*deltaT);
-                    long double coef4 = 1/((r*deltaR*r*deltaR)*(deltaT*deltaT));
+                    long double coef1 = 1/(deltaR*deltaR) - 1/(r*deltaR);
+                    long double coef2 = 1/((deltaT*deltaT)*(r*r));
+                    long double coef3 = -2/(deltaR*deltaR) + 1/(r*deltaR) - 2/(r*r*deltaT*deltaT);
+                    long double coef4 = 1/((r*r)*(deltaT*deltaT));
                     long double coef5 = 1/(deltaR*deltaR);
 					//coef 1 a 5 son los 5 coeficientes de las incognitas que quedan
 					//luego de la discretizacion del Laplaciano

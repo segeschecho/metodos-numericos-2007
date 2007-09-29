@@ -3,10 +3,10 @@
 
 ostream& operator<<(ostream& os, const Matriz& matriz){
 	for(int i = 0; i < matriz.fil; i++){
-		cout << "FILA" << i << ": ";
+		os << "FILA" << i << ": ";
 		for(int j = 0; j < matriz.col; j++)
-			cout << matriz.m[i][j] << " ";
-		cout << endl;
+			os << matriz.m[i][j] << " ";
+		os << endl;
 	}
 	return os;
 }
