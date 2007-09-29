@@ -6,6 +6,8 @@
 #include <math.h>
 #include "Matriz.h"
 
+#define PI 3.1415926535897932484626433832795
+
 using namespace std;
 
 class Horno{
