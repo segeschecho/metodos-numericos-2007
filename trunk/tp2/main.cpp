@@ -5,8 +5,6 @@
 
 using namespace std;
 
-#define PI 3.1415926535897932484626433832795
-
 Horno parser(ifstream &arch){
 	int radio, cantAngulos, cantRadios, tint, text;
 	long double h, k;
@@ -77,6 +75,42 @@ Horno parser(ifstream &arch){
     return horno;
 }
 
+void guardarParaGrafico(ostream &out, Horno &h){
+    Matriz m = *(h.temperaturas);
+
+    int centroR = m.filas() - 1;             //radios
+
+    int X = 0;
+    int Y = 0;
+
+    // guardo las X
+    out << "X = [ ";
+
+    for(int i = 0 ; i < m.filas(); i++){
+        for(int j = 0 ; j < m.columnas(); j++){
+            X = (int)( i*(h.rad)/(h.rads) )*cos(j*2*PI/centroR);       //cuanto me muevo en "X" = Rcos(tita)
+
+            out << " " << X;
+        }
+    }
+
+    out << "]; " << endl << endl;
+    // guardo las Y
+    out << "Y =[ ";
+    for(int i = 0 ; i < m.filas(); i++){
+        for(int j = 0 ; j < m.columnas(); j++){
+            Y = (int)( i*(h.rad)/(h.rads) )*sin(j*2*PI/centroR);       //cuanto me muevo en "X"
+
+            out << " " << Y;
+        }
+    }
+
+
+    out << "]; " << endl << endl;
+
+    //guardo los resultados del sistema
+    out << *(h.temperaturas) << endl;
+}
 
 int main(){
 /*
@@ -110,12 +144,17 @@ int main(){
 	cout << "b = \n" << b << endl << endl;
 */
     ifstream archivo("datos-entrada.txt");
+    ofstream salida("datos-salida.txt");
+
     Horno h;
     Matriz mat(6,6);
 
     if(archivo.is_open()){
         h.cargar(archivo);
 		cout << *(h.temperaturas) << endl;
+
+		guardarParaGrafico(salida, h);
+
 //		cout << h.getTemperatura((long double)1,PI/2) << endl;
     }
     else{

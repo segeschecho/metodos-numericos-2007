@@ -1,5 +1,5 @@
 #include "Horno.h"
-#define PI 3.1415926535897932484626433832795
+
 
 /*************************************/
 /*          METODOS PUBLICOS         */
@@ -145,7 +145,6 @@ void Horno :: operator=(const Horno &h1){
     k = h1.k;
     h = h1.h;
 
-	*this;
 	delete temperaturas;
     temperaturas = new Matriz(rads, angs);
     *temperaturas = *(h1.temperaturas);

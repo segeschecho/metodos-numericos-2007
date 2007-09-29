@@ -2,12 +2,14 @@
 #define MOD(a) ((a < 0) ? (-a) : (a))
 
 ostream& operator<<(ostream& os, const Matriz& matriz){
+    os << "A = [";
 	for(int i = 0; i < matriz.fil; i++){
-		os << "FILA" << i << ": ";
 		for(int j = 0; j < matriz.col; j++)
 			os << matriz.m[i][j] << " ";
-		os << endl;
 	}
+
+	os << "];";
+
 	return os;
 }
 
