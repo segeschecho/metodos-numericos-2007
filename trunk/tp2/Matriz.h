@@ -10,6 +10,7 @@ class Matriz{
 	friend ostream& operator<<(ostream&, const Matriz&);
   public:
     Matriz(int = 4, int = 4);
+    Matriz(const Matriz& mat);
     int filas();
     int columnas();
 

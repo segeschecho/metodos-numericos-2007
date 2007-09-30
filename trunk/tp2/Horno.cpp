@@ -255,7 +255,7 @@ void cargar(istream& archivo, Horno &h){
 }
 
 void guardarParaGrafico(ostream &out, const Horno &h){
-    Matriz m = *(h.temperaturas);
+	Matriz m(*(h.temperaturas));
 
     int centroR = m.filas() - 1;             //radios
 

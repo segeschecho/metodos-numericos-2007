@@ -2,7 +2,6 @@
 #include <fstream>
 #include "Matriz.h"
 #include "Horno.h"
-#include "memorymgr.h"
 
 using namespace std;
 
