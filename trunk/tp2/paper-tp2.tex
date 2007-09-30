@@ -1,0 +1,88 @@
+\documentclass[10pt]{article}
+\usepackage[spanish]{babel} %pone palabras en español
+\usepackage[latin1]{inputenc}
+\begin{document}
+\title{\fbox{\fbox{\bf Trabajo Práctico 2: Estamos en el horno}}}
+\author{\bf{Universidad de Buenos Aires}\\
+		 \bf{Facultad de Ciencias Exáctas y Naturales}\\
+		 \bf{(FCEyN)}\\
+		 \bf{Departamento de Computación}\\ \\
+		 González Sergio (gonzalezsergio2003@yahoo.com.ar)\\
+		 González Emiliano (XJesse\_JamesX@hotmail.com)\\
+		 Ferro Mariano (eltrencitomasverde@gmail.com)}
+\date{29 de Septiembre, 2007}
+\maketitle
+\begin{abstract} % comienzo del resumen. Opcional
+RESUMEN.
+\end{abstract}
+\medskip
+\medskip
+{\LARGE \bf{Palábras clave:}}
+\begin{itemize}
+\item Error relativo.
+\item Aproximación.
+\item Aritmetica finita.
+\item e\^{}(-x).
+\end{itemize}
+
+\pagebreak %nueva pagina.
+
+\leftline{\LARGE {\bf Introducción:}}
+\medskip
+
+Si bien la matemática no es una ciencia aplicada, es frecuentemente utilizada en la resolución de problemas de la industria o la ingeniería, entre otras disciplinas. Estas utilizan herramientas matemáticas para modelar problemas de la vida real, que frecuentemente involucran enormes cantidades de datos y variables, además de tener que obedecer comportamientos específicos según
+cada caso.
+
+Para reproducir fielmente estos problemas la matemática emplea funciones, expresadas en sistemas de ecuaciones sobre las que se vuelcan todos los datos, y de las que se pretende obtener valores de incógnitas que permitan la proyección hacia el futuro de los comportamientos emulados.
+
+Dadas las dimensiones de estos sistemas, es normal la utilización de herramientas informáticas en su manejo. Cuando los problemas son demasiado grandes o se manifiestan en conjuntos densos de valores, se lleva a cabo una discretización, que los vuelve resolubles para una computadora.
+
+Los métodos que se emplean en dichas resoluciones pueden ser de dos tipos: directos o iterativos.
+
+En este trabajo se utilizo un metodo directo, en particular el método de Gauss, uno de eliminación, y para obtener los valores se empleo la sustitución hacia atras.
+
+Los métodos directos de resolución de sistemas lineales de ecuaciones son aquellos que permiten obtener la solución después de un número finito de operaciones aritméticas. Este número de operaciones es, obviamente, función del tamaño de la matriz.
+
+Si las computadoras pudieran almacenar y operar con todas las cifras de los números reales, es decir, si emplearan una aritmética exacta, con los métodos directos se obtendría la solución exacta del sistema en un número finito de pasos.
+
+Debido a que las computadoras trabajan con precisión finita, los errores de redondeo se propagan y la solución numérica obtenida siempre difiere de la solución exacta.
+
+La cota del error, para una matriz y término independiente dados, se asocia por lo general al número de operaciones de cada método. Se pretende, por lo tanto, obtener métodos con el mínimo número de operaciones posible.
+
+Una particularidad de los métodos directos es que siempre conducen, después de ciertas operaciones, a la resolución de uno o varios sistemas con solución inmediata. Es decir, sistemas donde la matriz es diagonal o triangular.
+
+En el método de eliminación de Gauss el problema original, Ax = b, se transforma mediante permutaciones adecuadas y combinaciones lineales de cada una de las ecuaciones en un sistema de la forma Ux = c donde U es una matriz triangular superior. Los elementos en la diagonal son llamados pivotes y se utilizan para eliminar a los elementos que se encuentran en su misma columna pero en filas mayores (es decir, los elementos bajo el pivote). Para esto se realiza el siguiente algoritmo:
+
+ACA VA LA CUENTITA DE GAUSS
+
+Como se puede apreciar cuando el pivote es cero el algoritmo no puede llevarse a cabo, con lo que es necesaria una permutación entre las filas por anular para obtener un pivote distinto de cero.
+
+Esta permutación de filas no sólo tiene interés cuando el pivote es exactamente cero. Es obvio que valores pequeños del pivote pueden producir grandes errores de redondeo, ya que siempre se divide por el valor del pivote.
+
+Por consiguiente, para reducir los errores de redondeo conviene escoger el pivote máximo en valor absoluto. Para ello, hay dos técnicas posibles:
+
+Se toma como pivote el coeficiente mayor en valor absoluto de la columna k situado por debajo de la fila k inclusive. Para ello es necesario permutar las filas k y la correspondiente al pivote escogido en la matriz y su término independiente. Esta técnica se denomina método de Gauss con pivoteo parcial.
+
+Existen otras metodologías de pivoteo pero esta fue la empleada durante el presente trabajo.
+
+La variante es extender la busqueda del coeficiente de mayor módulo no solo a la columna k, sino a toda la matriz no triangulada, es por ello que esta tecnica se conoce como pivoteo total.
+
+Tras aplicar el algoritmo de Gauss a todas las filas del sistema nos queda una matriz triangular superior. Este nuevo sistema equivalente al original es de resolución inmediata, sólo es necesario aplicar el algoritmo de sustitución hacia atrás.
+
+En cuanto a los métodos iterativos para resolver ecuaciones son aquellos en los cuales una primera aproximación es usada para calcular una segunda aproximación, la cual a su vez es usada para calcular una tercera aproximación, y así sucesivamente.
+
+Desde un punto de vista general las matrices más usuales en las ciencias aplicadas y en ingeniería pueden englobarse en dos grandes categorías:
+
+\begin{itemize}
+\item Matrices llenas, pero no muy grandes. Por llenas se entiende que poseen pocos elementos nulos y por no muy grandes que el número de ecuaciones es de unos pocos miles a lo sumo. Estas matrices aparecen en problemas estadísticos, matemáticos, físicos e ingenieriles.
+
+\item Matrices vacías (ralas) y muy grandes. En oposición al caso anterior, vacías indica que hay pocos elementos no nulos y además están situados con una cierta regularidad. En la mayoría de estos casos el número de ecuaciones supera los miles y puede llegar en ocasiones a los millones.
+\end{itemize}
+
+
+Estas matrices son comunes en la resolución de ecuaciones diferenciales de problemas de ingeniería.
+
+Parece lógico que los métodos para resolver sistemas lineales de ecuaciones se adecuen a las categorías de matrices anteriormente expuestas. En general los métodos directos se aplican al primer tipo de matrices, mientras que los métodos iterativos se emplean con el segundo grupo. Es importante observar que no existen reglas absolutas y que todavía en la actualidad existe cierta
+controversia sobre los métodos óptimos a aplicar en cada caso.
+
+\end{document}
