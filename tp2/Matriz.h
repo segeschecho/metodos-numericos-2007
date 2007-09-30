@@ -13,7 +13,7 @@ class Matriz{
     int filas();
     int columnas();
 
-    long double ver(int fila, int columna);
+    long double ver(int fila, int columna) const;
     void asignar(int fila, int columna, long double valor);
     void triangular(Matriz &b);
     void resolver(Matriz &X, Matriz &b);

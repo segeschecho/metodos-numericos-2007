@@ -2,45 +2,9 @@
 #include <fstream>
 #include "Matriz.h"
 #include "Horno.h"
+#include "memorymgr.h"
 
 using namespace std;
-
-void guardarParaGrafico(ostream &out, Horno &h){
-    Matriz m = *(h.temperaturas);
-
-    int centroR = m.filas() - 1;             //radios
-
-    int X = 0;
-    int Y = 0;
-
-    // guardo las X
-    out << "X = [ ";
-
-    for(int i = 0 ; i < m.filas(); i++){
-        for(int j = 0 ; j < m.columnas(); j++){
-            X = (int)((i*(h.rad)/(h.rads))*cos(j*2*PI/centroR));       //cuanto me muevo en "X" = Rcos(tita)
-
-            out << " " << X;
-        }
-    }
-
-    out << "]; " << endl << endl;
-    // guardo las Y
-    out << "Y =[ ";
-    for(int i = 0 ; i < m.filas(); i++){
-        for(int j = 0 ; j < m.columnas(); j++){
-            Y = (int)((i*(h.rad)/(h.rads))*sin(j*2*PI/centroR));       //cuanto me muevo en "X"
-
-            out << " " << Y;
-        }
-    }
-
-
-    out << "]; " << endl << endl;
-
-    //guardo los resultados del sistema
-    out << *(h.temperaturas) << endl;
-}
 
 int main(){
     Horno h;
@@ -65,11 +29,13 @@ int main(){
 			ifstream archivoEntrada;
 			archivoEntrada.open(nombreDelArchivo, ifstream::in);
 			while(archivoEntrada.fail()){
+				archivoEntrada.clear();
 				cout << "\n\nEl archivo no se encuentra. Ingrese el nombre del archivo: ";
 				cin >> nombreDelArchivo;
+				archivoEntrada.open(nombreDelArchivo, ifstream::in);
 			}
 
-			h.cargar(archivoEntrada);
+			cargar(archivoEntrada, h);
 			archivoEntrada.close();
 		}
 
