@@ -95,15 +95,6 @@ int main(){
 		}
 	}
 
-
-	ifstream archivo("datos-entrada.txt");
-    ofstream salida("datos-salida.txt");
-
-    Matriz mat(6,6);
-
-
-    archivo.close();
-
 	system("PAUSE");
 	return EXIT_SUCCESS;
 }
