@@ -29,69 +29,7 @@ Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text, l
 	calcular_temperaturas();
 }
 
-void Horno :: cargar(istream& archivo){
-    char data[128];
-
-    //agarro el comentario
-    archivo.getline(data, 100);
-    //agarro radio exterior
-    archivo.getline(data, 100);
-    rad = atoi(data);
-
-    //agarro el comentario
-    archivo.getline(data, 100);
-    //agarro cantidad de angulos
-    archivo.getline(data, 100);
-    angs = atoi(data);
-
-	//agarro el comentario
-    archivo.getline(data, 100);
-    //agarro cantidad de radios
-    archivo.getline(data, 100);
-    rads = atoi(data);
-
-    deltaR = (long double)rad/((long double)rads - 1);
-    deltaT = 2*PI/(long double)angs;
-
-	//agarro el comentario
-    archivo.getline(data, 100);
-    //agarro temperatura interior
-    archivo.getline(data, 100);
-    ti = atoi(data);
-
-	//agarro el comentario
-    archivo.getline(data, 100);
-    //agarro temperatura exterior
-    archivo.getline(data, 100);
-    tinf = atoi(data);
-
-	//agarro comentario
-    archivo.getline(data, 100);
-    //agarro cosntante K
-    archivo.getline(data, 100);
-    k = atof(data);
-
-	//agarro comentario
-    archivo.getline(data, 100);
-    //agarro constante H
-    archivo.getline(data, 100);
-    h = atof(data);
-
-	//agarro comentario
-    archivo.getline(data, 100);
-    //agarro funcion de temperatura
-	delete [] bordeInterno;
-    bordeInterno = new int [angs];
-
-    for(int ang = 0 ; ang < angs ; ang++){
-        // agarro el radio para el angulo cant
-        archivo.getline(data, 100);
-        bordeInterno[ang] = atoi(data);
-    }
-
-	calcular_temperaturas();
-}
-long double	Horno :: getTemperatura(long double radio, long double theeta){
+long double	Horno :: getTemperatura(long double radio, long double theeta) const{
 	int i = (int)fabs(radio/deltaR);
 	if ( i > rads - 1 )
 		i = rads - 1;
@@ -106,31 +44,31 @@ long double	Horno :: getTemperatura(long double radio, long double theeta){
 	return temperaturas->ver(i, j);
 }
 
-long double Horno :: getRadio(){
+long double Horno :: getRadio() const{
     return rad;
 }
 
-int Horno :: getCantidadAngulos(){
+int Horno :: getCantidadAngulos() const{
     return angs;
 }
 
-int Horno :: getCantidadRadios(){
+int Horno :: getCantidadRadios() const{
     return rads;
 }
 
-int Horno :: getTi(){
+int Horno :: getTi() const{
     return ti;
 }                       //Temperatura interior
 
-int Horno :: getTinf(){
+int Horno :: getTinf() const{
     return tinf;
 }                     //Temperatura exterior
 
-long double Horno :: getK(){
+long double Horno :: getK() const{
     return k;
 }                        //constante K
 
-long double Horno :: getH(){
+long double Horno :: getH() const{
     return h;
 }                        //constante H
 
@@ -155,16 +93,14 @@ void Horno :: operator=(const Horno &h1){
         bordeInterno[i] = h1.bordeInterno[i];
 }
 
-int Horno :: funcionRadio(int angulo){
+int Horno :: funcionRadio(int angulo) const{
     return bordeInterno[angulo];
 }
 /* Destructor */
 Horno :: ~Horno(){
+	delete temperaturas;
     delete [] bordeInterno;
 }
-
-
-
 
 /*************************************/
 /*          METODOS PRIVADOS         */
@@ -249,4 +185,108 @@ void Horno :: calcular_temperaturas(void){
 			temperaturas->asignar(r,a,X.ver(r*angs + a, 0));
 		}
 	}
+}
+
+/*************************************/
+/*          FUNCIONES FRIEND         */
+/*************************************/
+
+void cargar(istream& archivo, Horno &h){
+    char data[128];
+
+    //agarro el comentario
+    archivo.getline(data, 100);
+    //agarro radio exterior
+    archivo.getline(data, 100);
+    h.rad = atoi(data);
+
+    //agarro el comentario
+    archivo.getline(data, 100);
+    //agarro cantidad de angulos
+    archivo.getline(data, 100);
+    h.angs = atoi(data);
+
+	//agarro el comentario
+    archivo.getline(data, 100);
+    //agarro cantidad de radios
+    archivo.getline(data, 100);
+    h.rads = atoi(data);
+
+    h.deltaR = (long double)h.rad/((long double)h.rads - 1);
+    h.deltaT = 2*PI/(long double)h.angs;
+
+	//agarro el comentario
+    archivo.getline(data, 100);
+    //agarro temperatura interior
+    archivo.getline(data, 100);
+    h.ti = atoi(data);
+
+	//agarro el comentario
+    archivo.getline(data, 100);
+    //agarro temperatura exterior
+    archivo.getline(data, 100);
+    h.tinf = atoi(data);
+
+	//agarro comentario
+    archivo.getline(data, 100);
+    //agarro cosntante K
+    archivo.getline(data, 100);
+    h.k = atof(data);
+
+	//agarro comentario
+    archivo.getline(data, 100);
+    //agarro constante H
+    archivo.getline(data, 100);
+    h.h = atof(data);
+
+	//agarro comentario
+    archivo.getline(data, 100);
+    //agarro funcion de temperatura
+	delete [] h.bordeInterno;
+    h.bordeInterno = new int [h.angs];
+
+    for(int ang = 0 ; ang < h.angs ; ang++){
+        // agarro el radio para el angulo cant
+        archivo.getline(data, 100);
+        h.bordeInterno[ang] = atoi(data);
+    }
+
+	h.calcular_temperaturas();
+}
+
+void guardarParaGrafico(ostream &out, const Horno &h){
+    Matriz m = *(h.temperaturas);
+
+    int centroR = m.filas() - 1;             //radios
+
+    int X = 0;
+    int Y = 0;
+
+    // guardo las X
+    out << "X = [ ";
+
+    for(int i = 0 ; i < m.filas(); i++){
+        for(int j = 0 ; j < m.columnas(); j++){
+            X = (int)((i*(h.rad)/(h.rads))*cos(j*2*PI/centroR));       //cuanto me muevo en "X" = Rcos(tita)
+
+            out << " " << X;
+        }
+    }
+
+    out << "]; " << endl << endl;
+    // guardo las Y
+    out << "Y =[ ";
+    for(int i = 0 ; i < m.filas(); i++){
+        for(int j = 0 ; j < m.columnas(); j++){
+            Y = (int)((i*(h.rad)/(h.rads))*sin(j*2*PI/centroR));       //cuanto me muevo en "X"
+
+            out << " " << Y;
+        }
+    }
+
+
+    out << "]; " << endl << endl;
+
+    //guardo los resultados del sistema
+    out << *(h.temperaturas) << endl;
 }

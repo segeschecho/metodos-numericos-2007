@@ -35,7 +35,7 @@ int Matriz :: columnas(){
     return col;
 }
 
-long double Matriz :: ver(int fila, int columna){
+long double Matriz :: ver(int fila, int columna) const{
 	assert((fila < fil) && (columna < col));
     return m[fila][columna];
 }
