@@ -27,6 +27,11 @@ Matriz :: Matriz(int f, int c){
 	}
 }
 
+Matriz :: Matriz(const Matriz& mat){
+	m = NULL;
+	*this = mat;
+}
+
 int Matriz :: filas(){
     return fil;
 }
@@ -86,9 +91,11 @@ void Matriz :: operator =(const Matriz &m1){
     col = m1.col;
 
 	//primero borro la matriz que ya estaba
-	for(int i = 0; i < fil; i++)
-		delete m[i];
-	delete m;
+	if (m != NULL){
+		for(int i = 0; i < fil; i++)
+			delete m[i];
+		delete m;
+	}
 
 	m = new long double*[fil];
 
