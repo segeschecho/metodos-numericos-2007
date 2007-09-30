@@ -3,3 +3,12 @@ indexamos desde (0,0)
 angulo(i) = 2*PI*i/#angulos
 
 radio(i) = i/(#radios - 1)
+
+//para hacer los graficos
+una vez cargados X, Y y A
+
+[meshX,meshY] = meshgrid(X,Y);
+
+meshZ=griddata(X ,Y,A,meshX,meshY);
+
+surf(meshX, meshY, meshZ),shading interp,colormap(jet(256)), lighting phong,colorbar,title 'Difusion del calor en un Alto Horno para Acero',zlabel('temperatura *C'),xlabel('X = R*cos(Theta)'), ylabel('Y = R*sin(theta)');
