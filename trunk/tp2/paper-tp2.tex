@@ -412,7 +412,19 @@ Radio exterior = 30
 
 \centerline{\includegraphics[scale=0.25]{prueba5-b.jpg}\includegraphics[scale=0.25]{prueba5-c.jpg}}
 \pagebreak
-En estos gr\'aficos se puede visualizar la temperatura del horno de una manera muy descriptiva. Por ejemplo, podemos ver que el horno de la prueba 4 es el que en mejores condiciones esta, a diferencia de los dem\'as.
+En estos gr\'aficos se puede visualizar la temperatura del horno de una manera muy descriptiva. A juzgar por todos los gr\'aficos, queda automaticamente confirmada la hipotesis de observar un descenso progresivo de las temperaturas conforme los puntos se alejan del horno.
+Como esperabamos, se observa que la temperatura de la pared del horno depende fuertemente de la forma que tenga la pared interior y su grosor. Como vemos en la prueba 1, la forma de la pared interior es bastante circular y regular, sin embargo la diferencia de grosor entre las paredes hace que sea uno de los hornos en que peores condiciones esta. Su calor se centra sobre un costado del horno, a diferencia de la prueba 4 que tiene su forma de la pared interior muy similar pero una mejor distribuci\'on homogenea del grosor de la pared exterior.
+La forma empinada en la que cae la temperatura a medida que nos alejamos del centro, como se puede ver en los gr\'aficos vistos en funci\'on de 'x' y 'temperatura', es debido a las constantes K, H y la diferencia de temperaturas entre el interior y el exterior del horno.
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Discusiones:}}
+En este caso la discucion no fue muy extensa, ya que en vista a los graficos generados en las diferentes pruebas, no se produjeron resultados sorpresa respecto del comportamiento que debia tener el horno frente a los diferentes parametros probados.
+Consideramos que los graficos expresan muy claramente el estado del horno en cada prueba, esto nos llevo a decidir que solo tendriamos que describirlos y mensionar los resultados obtenidos.
+Hablando de la implementacion, en un principio tuvimos problemas al tratar de comprender el enunciado del trabajo practico y de como se podria volcar esto en sistema que simulara el estado del horno. Consultado con los profesores de la materia, pudimos comprender como comenzar con la implementacion y los diferentes pensamientos que debiamos tener en cuenta.
+Ademas, las ecuaciones que se describen en el enunciado, no nos habian resultado tan claras, el tratar de comprenderlas en su totalidad nos llevo algun tiempo. El problema fue solucionado discutiendo dichos significados con los integrantes del grupo y con la ayuda de los profesores.
+Una vez solucionados esos problemas para interpretar el problema, solo quedaron discusiones de implementacion. La mas importante, fue la de decidir que comportamiento debiamos darle al horno, ya que se implemento sobre una clase. Al principio se le dio un comportamiento que luego consideramos que era equivocado, se trata de que el horno tenia la capacidad de transformarse en su totalidad por medio de metodos publicos que permitian modificar todos los parametros del mismo. Luego de hablarlo un tiempo, decidimos que ese comportamiento no reflejaba un horno real, pero sin embargo facilita la investigacion, por lo que decidimos dejar dos metodos que transforman el horno en su completitud: operator= y cargar.
+
 
 \pagebreak
 \leftline{{\LARGE{\bf Apendice A:}}}
