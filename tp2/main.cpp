@@ -6,6 +6,7 @@
 using namespace std;
 
 int main(){
+
     Horno h;
 	unsigned int opcion = 0;
 
