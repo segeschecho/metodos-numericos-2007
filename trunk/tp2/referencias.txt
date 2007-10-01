@@ -1,12 +1,17 @@
+http://www.cplusplus.com/
+
 http://www.paginasprodigy.com/campechedigital/arielmedina1978/matrix.h.htm
+
 http://148.204.224.249/esimetic/seminario2007/mod_01/graficasconmatlab933.pdf //graficos con matlab
 
 http://www.mathworks.com/matlabcentral/files/8998/content/gridfitdir/demo/html/gridfit_demo.html   //mas graficos en mathlab GROSO
 
 
-http://www.mathworks.com/access/helpdesk/help/techdoc/index.html?/access/helpdesk/help/techdoc/ref/lighting.html&http://www.google.com.ar/search?hl=es&q=lighting+/matlab.html
-
+webs.uvigo.es/mat.avanzadas/PracME_1.pdf //introduccion a matlab
 
 http://www.mathworks.com/matlabcentral/newsreader/view_thread/155703
+
+pcmap.unizar.es/~pilar/latex.pdf	//introduccion a latex
+
 
 http://oc.wikipedia.org/wiki/Ajuda:Formulas_TeX_e_LaTeX
