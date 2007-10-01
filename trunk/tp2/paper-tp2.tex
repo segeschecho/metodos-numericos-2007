@@ -102,21 +102,24 @@ Por ser el horno circular (con radio conocido), para su representación se utiliz
 Se sabe que la temperatura se corresponde con una función T, para cualquier ángulo y radio. La función es desconocida, con lo que para conocer la temperatura de la pared exterior es necesario hallarla. De T se sabe que cumple con tres ecuaciones:
 \medskip
 
+
+
 \centerline{
+1.
 $
 \frac{\partial ^2 T(r,\theta)}{\partial r^2} + \frac{1}{r}\frac{\partial T(r,\theta)}{\partial r} + \frac{1}{r^2}\frac{\partial ^2 T(r,\theta)}{\partial \theta^2} = 0
 $
 }
 \medskip
-
 \centerline{
+2.\qquad\qquad\qquad\qquad\quad
 $
 T(r_i(\theta), \theta) = T_i
 $
 }
 \medskip
-
 \centerline{
+3.\qquad
 $
 -K\frac{\partial T(r_e, \theta)}{\partial r} = h(T(r_e, \theta) - T\infty)
 $
@@ -154,13 +157,32 @@ Con estas aproximaciones y las ecuaciones antes detalladas se realizó el cálculo
 Los puntos de la pared interior se presentan como los más complicados de manejar ya que luego de algunas manipulaciones algebraicas se encuentran expresados en función de otros cuatro puntos aledaños.
 \medskip
 
-ECUACIONES DESPEJADAS PARA QUE SE NOTE LO DE ARRIBA
+\centerline{
+$
+t_(j,k)(\frac{-2}{(\Delta r)^2} + \frac{1}{r\Delta r} - \frac{2}{r^2 \Delta\theta^2}) 
++ t_(j-1,k)(\frac{1}{(\Delta r)^2} - \frac{1}{r\Delta r})
++ t_(j+1,k)\frac{1}{(\Delta r)^2} 
+$
+}
+
+\centerline{
+$
++ t_(j,k+1)(\frac{1}{r^2(\Delta\theta)^2}) 
++ t_(j,k-1)(\frac{1}{r^2(\Delta\theta)^2}) = 0
+$
+}
 \medskip
 
 En cuanto a los puntos dentro del horno, ya se encuentran 'resueltos', expresados solo en función de la temperatura interior. Los puntos de la pared exterior quedan determinados por la ecuación de flujo, en función de un punto anterior, la temperatura exterior y las constantes térmicas H y K.
 \medskip
 
-ECUACION CORRESPONDIENTE
+\centerline{
+$
+t_(r_e,\theta) = \frac{ \frac{K*t_(r_e-1,\theta)}{H\Delta r} + T_\infty }
+                      {1 + \frac{K}{H*\Delta r}}
+$
+}
+
 \medskip
 
 \item Tras esta caracterización de cada punto interviniente se construye una matriz donde se vuelca toda esta información, con una ecuación para cada punto. La matriz, que será el eje de la resolución del problema, tiene dimensión cantidadDePuntosDiscretizados*cantidadDePuntosDiscretizados, y recopila todas las ecuaciones despejadas en el punto anterior.
