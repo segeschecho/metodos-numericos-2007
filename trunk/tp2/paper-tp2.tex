@@ -102,20 +102,47 @@ Por ser el horno circular (con radio conocido), para su representación se utiliz
 Se sabe que la temperatura se corresponde con una función T, para cualquier ángulo y radio. La función es desconocida, con lo que para conocer la temperatura de la pared exterior es necesario hallarla. De T se sabe que cumple con tres ecuaciones:
 \medskip
 
+\centerline{
 $
-\frac{\partial ^2 x(r,\theta)}{\partial r^2} + 
+\frac{\partial ^2 T(r,\theta)}{\partial r^2} + \frac{1}{r}\frac{\partial T(r,\theta)}{\partial r} + \frac{1}{r^2}\frac{\partial ^2 T(r,\theta)}{\partial \theta^2} = 0
 $
-LAPLACIANO IGUAL A CERO
+}
+\medskip
 
-TEMPERATURA DEL INTERIOR
+\centerline{
+$
+T(r_i(\theta), \theta) = T_i
+$
+}
+\medskip
 
-ECUACION DE FLUJO
+\centerline{
+$
+-K\frac{\partial T(r_e, \theta)}{\partial r} = h(T(r_e, \theta) - T\infty)
+$
+}
 \medskip
 
 Siendo el dominio de T las coordenadas polares y R su imagen, se procede a realizar una discretización de la función, para poder aproximar las derivadas de las ecuaciones 1 y 3 por el método de las diferencias finitas. Como resultados, se obtuvieron las siguientes aproximaciones de las derivadas de T:
 \medskip
 
-INSERTAR APROXIMACIONES DE LAS DERIVADAS
+\centerline{
+$
+\frac{\partial ^2 T(r, \theta)}{\partial r^2}(r_j, \theta_k) \cong \frac{t_(j-1, k) - 2t_(j, k) + t_(j+1, k)}{(\Delta r)^2}
+$
+}
+
+\centerline{
+$
+\frac{\partial T(r, \theta)}{\partial r}(r_j, \theta_k) \cong \frac{t_(j, k) - t_(j-1, k)}{\Delta r}
+$
+}
+
+\centerline{
+$
+\frac{\partial ^2 T(r, \theta)}{\partial \theta^2}(r_j, \theta_k) \cong \frac{t_(j, k-1) - 2t_(j, k) + t_(j, k+1)}{(\Delta \theta)^2}
+$
+}
 \medskip
 
 Con estas aproximaciones y las ecuaciones antes detalladas se realizó el cálculo de la función T en cada punto de la discretización de la siguiente manera:
