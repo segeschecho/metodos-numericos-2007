@@ -201,6 +201,10 @@ Nótese que el "b" de nuestro sistema se representa en otra matriz, organizada de
 Con esto se obtiene un vector columna que responde al x (en una tercera matriz) de nuestro sistema Ax = b, que se utiliza para realizar los gráficos de distribución de la temperatura pertinentes.
 \end{enumerate}
 
+Tras algunas consideraciones y teniendo en cuenta la totalidad de la implementación es de esperarse que el modelo programado tenga un comportamiento fuertemente dependiente del grosor de las paredes del horno, asi como tambien de la forma que presenta en su pared interior.
+
+Ademas, es deseable observar un descenso progresivo de las temperaturas conforme los puntos se alejan del horno propiamente dicho.
+
 \medskip
 \medskip
 \leftline{\LARGE{\bf Detalles de la implementación:}}
@@ -377,42 +381,34 @@ Radio exterior = 30
 \paperwidth=800pt
 \paperheight=950pt
 
-\centerline{\scriptsize Prueba 1}
+\centerline{\large{\bf Prueba 1}}
 \centerline{\includegraphics[scale=0.5]{prueba1-a.jpg}}
 
-{\includegraphics[scale=0.45]{prueba1-b.jpg}}{\includegraphics[scale=0.5]{prueba1-c.jpg}}
+\centerline{\includegraphics[scale=0.25]{prueba1-b.jpg}\includegraphics[scale=0.25]{prueba1-c.jpg}}
 
 \pagebreak
-\centerline{\scriptsize Prueba 2}
+\centerline{\large{\bf Prueba 2}}
 \centerline{\includegraphics[scale=0.5]{prueba2-a.jpg}}
 
-{\includegraphics[scale=0.5]{prueba2-b.jpg}}
-
-{\includegraphics[scale=0.5]{prueba2-c.jpg}}
+\centerline{\includegraphics[scale=0.25]{prueba2-b.jpg}\includegraphics[scale=0.25]{prueba2-c.jpg}}
 
 \pagebreak
-\centerline{\scriptsize Prueba 3}
+\centerline{\large{\bf Prueba 3}}
 \centerline{\includegraphics[scale=0.5]{prueba3-a.jpg}}
 
-{\includegraphics[scale=0.5]{prueba3-b.jpg}}
-
-{\includegraphics[scale=0.5]{prueba3-c.jpg}}
+\centerline{\includegraphics[scale=0.25]{prueba3-b.jpg}\includegraphics[scale=0.25]{prueba3-c.jpg}}
 
 \pagebreak
-\centerline{\scriptsize Prueba 4}
+\centerline{\large{\bf Prueba 4}}
 \centerline{\includegraphics[scale=0.5]{prueba4-a.jpg}}
 
-{\includegraphics[scale=0.5]{prueba4-b.jpg}}
-
-{\includegraphics[scale=0.5]{prueba4-c.jpg}}
+\centerline{\includegraphics[scale=0.25]{prueba4-b.jpg}\includegraphics[scale=0.25]{prueba4-c.jpg}}
 
 \pagebreak
-\centerline{\scriptsize Prueba 5}
+\centerline{\large{\bf Prueba 5}}
 \centerline{\includegraphics[scale=0.5]{prueba5-a.jpg}}
 
-{\includegraphics[scale=0.5]{prueba5-b.jpg}}
-
-{\includegraphics[scale=0.5]{prueba5-c.jpg}}
+\centerline{\includegraphics[scale=0.25]{prueba5-b.jpg}\includegraphics[scale=0.25]{prueba5-c.jpg}}
 \pagebreak
 En estos gr\'aficos se puede visualizar la temperatura del horno de una manera muy descriptiva. Por ejemplo, podemos ver que el horno de la prueba 4 es el que en mejores condiciones esta, a diferencia de los dem\'as.
 
