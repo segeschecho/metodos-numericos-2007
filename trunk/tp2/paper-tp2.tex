@@ -55,7 +55,11 @@ En el método de eliminación de Gauss el problema original, Ax = b, se transforma
 \medskip
 \medskip
 
-ACA VA LA CUENTITA DE GAUSS
+\centerline{
+$
+E_j = E_j - \frac{a_(i,j)}{a_(i,i)}*E_i
+$
+}
 
 \medskip
 \medskip
@@ -91,13 +95,16 @@ Parece lógico que los métodos para resolver sistemas lineales de ecuaciones se a
 \leftline{\LARGE{\bf Desarrollo:}}
 \medskip
 
-El problema particular a resolver en este trabajo es el comportamiento de un horno de acero, en lo que corresponde a la temperatura de su parte exterior. Este horno puede dividirse en tres "capas", la primera, el horno propiamente dicho, esta a una temperatura constante y esta es un dato conocido; la segunda es la parte intermedia, la pared interior, su forma es arbitraria y viene dada por una función r, también conocida; la última capa es la pared exterior, y de ésta se desea conocer la temperatura.
+El problema particular a resolver en este trabajo es el comportamiento de un horno de acero, en lo que corresponde a la temperatura de su parte exterior. Este horno puede dividirse en tres 'capas', la primera, el horno propiamente dicho, esta a una temperatura constante y esta es un dato conocido; la segunda es la parte intermedia, la pared interior, su forma es arbitraria y viene dada por una función r, también conocida; la última capa es la pared exterior, y de ésta se desea conocer la temperatura.
 
 Por ser el horno circular (con radio conocido), para su representación se utilizaron coordenadas polares.
 
 Se sabe que la temperatura se corresponde con una función T, para cualquier ángulo y radio. La función es desconocida, con lo que para conocer la temperatura de la pared exterior es necesario hallarla. De T se sabe que cumple con tres ecuaciones:
 \medskip
 
+$
+\frac{\partial ^2 x(r,\theta)}{\partial r^2} + 
+$
 LAPLACIANO IGUAL A CERO
 
 TEMPERATURA DEL INTERIOR
@@ -123,7 +130,7 @@ Los puntos de la pared interior se presentan como los más complicados de manejar
 ECUACIONES DESPEJADAS PARA QUE SE NOTE LO DE ARRIBA
 \medskip
 
-En cuanto a los puntos dentro del horno, ya se encuentran "resueltos", expresados solo en función de la temperatura interior. Los puntos de la pared exterior quedan determinados por la ecuación de flujo, en función de un punto anterior, la temperatura exterior y las constantes térmicas H y K.
+En cuanto a los puntos dentro del horno, ya se encuentran 'resueltos', expresados solo en función de la temperatura interior. Los puntos de la pared exterior quedan determinados por la ecuación de flujo, en función de un punto anterior, la temperatura exterior y las constantes térmicas H y K.
 \medskip
 
 ECUACION CORRESPONDIENTE
@@ -150,7 +157,7 @@ Para este trabajo se implementaron dos clases (de C++):
 
 La clase Matriz, que modela un sistema de ecuaciones en forma de matriz de long doubles, con los métodos necesarios para crear matrices (que se inicializan con sus coeficientes en cero), asignarles valores a cada posición, ver dichos valores, triangular (incluye un método privado para el pivoteo parcial) una matriz ya creada, así como resolverla mediante la sustitución hacia atrás.
 
-En su estructura esta clase esta sustentada por un arreglo de arreglos de long double, creados en forma dinámica durante la ejecución del programa. En cuanto al lenguaje C++, un arreglo no es más que un puntero a un espacio de memoria contiguo, con lo que esta implementación, bien puede pasar por un puntero a un puntero a long double. De hecho, esta es la forma en que C++ implementa su propio tipo nativo "matriz", como un arreglo que tiene dos índices, uno de los cuales se utiliza con un multiplicador (para moverse por las filas) y otro como "off set" (para ubicar elementos en las columnas). Se decidió implementar una nueva clase para lograr una mayor abstracción y modularidad en el código, además de un ocultamiento de información delimitado por la parte pública y la privada.
+En su estructura esta clase esta sustentada por un arreglo de arreglos de long double, creados en forma dinámica durante la ejecución del programa. En cuanto al lenguaje C++, un arreglo no es más que un puntero a un espacio de memoria contiguo, con lo que esta implementación, bien puede pasar por un puntero a un puntero a long double. De hecho, esta es la forma en que C++ implementa su propio tipo nativo "matriz", como un arreglo que tiene dos índices, uno de los cuales se utiliza con un multiplicador (para moverse por las filas) y otro como 'off set' (para ubicar elementos en las columnas). Se decidió implementar una nueva clase para lograr una mayor abstracción y modularidad en el código, además de un ocultamiento de información delimitado por la parte pública y la privada.
 Además de este puntero a puntero la clase cuenta con otros atributos, fil y col que denotan el número de filas y columnas respectivamente. Recordar que en C++ no se puede conocer en forma directa la dimensión de un arreglo.
 \medskip
 
@@ -167,15 +174,14 @@ Nota: a partir de este punto siempre que se emplee el término 'matriz', éste se 
 
 Se cuenta también con un constructor por copia y un operator=, el primero utiliza fuertemente al segundo. El operador, copia los atributos fil y col de la matriz de la derecha en los de la izquierda, elimina la matriz "pisada" por la igualación y luego crea una nueva, en la que copia los valores de la original.
 
-\item filas() y columnas(): se implementaron sendos métodos para conocer tanto el número de filas como de columnas de la matriz creada. Tan solo devuelven una copia de los atributos privados de la clase.
+\item filas() y columnas(): se implementaron sendos métodos para conocer tanto el número de filas como de columnas de la matriz creada. Tan solo devuelven una copia de los atributos privados de la clase. Lleva una cláusula const de forma que no se pueda modificar la matriz con este método.
 
 \item Ver(): este método requiere dos parámetros que se utilizan, el primero para indexar una fila, y el segundo para hacer lo propio sobre una columna y se devuelve el elemento correspondiente de la matriz. Lleva una cláusula const de forma que no se pueda modificar la matriz con este método.
 
 \item Asignar(): éste también requiere dos parámetros iguales a los de Ver, y un tercero, un long double que será el nuevo valor de la posición seleccionada.
 Tanto este método como Ver, lanzan una excepción si se le pasan parámetros por fuera del rango de filas o de columnas de la matriz.
 
-\item Triangular(): recibe una matriz 'b' por referencia, que es el vector columna de la solución. Utiliza los métodos privados pivotear y restarFilas, para emular el método de resolución de sistemas de ecuaciones lineales conocido como eliminación gaussiana. De esta manera transforma nuestro sistema en uno triangular superior, susceptible de ser despejado por "sustitución hacia atrás".
-Se comentan primero los métodos pivotear y restarFilas para luego volver sobre éste.
+\item Triangular(): recibe un puntero a una matriz 'b', con lo que la triangulación se puede llevar a cabo solo con la matriz o extenderlo para sistemas con una solucion b. Utiliza los métodos privados pivotear y restarFilas, para emular el método de resolución de sistemas de ecuaciones lineales conocido como eliminación gaussiana. De esta manera transforma nuestro sistema en uno triangular superior, susceptible de ser despejado por "sustitución hacia atrás". Se comentan primero los métodos pivotear y restarFilas para luego volver sobre éste.
 
 \item Pivotear(): recibe un entero que denota la fila en la que se encuentra el algoritmo de Gauss, y busca mediante pivoteo parcial (ya explicado en la introducción) el mejor pivote disponible.
 
@@ -183,7 +189,8 @@ Se implementó este algoritmo en lugar del pivoteo total por ser más sencillo, ad
 
 \item RestarFilas(): recibe un long double que es el coeficiente del pivote, y dos enteros, la fila a la que hay que anularle el valor de la columna del pivote, y la fila donde se encuentra el pivote. Este procedimiento se corresponde con el algoritmo enunciado en la introducción.
 
-Este método se limita aplicar restarFilas con los elementos de la diagonal, hasta que algún pivote tiene valor cero, momento en el que se emplea pivotear.
+Este método se limita aplicar restarFilas luego de aplicar pivotear en la fila que se corresponde con el i-esimo paso de la triangulación.
+
 Se eligió la eliminación gaussiana para obtener un sistema de resolución directa porque es el más conocido y estudiado, además, no tiene un costo temporal exagerado (es de orden cúbico), ni requiere memoria adicional a la necesaria para almacenar la matriz, tiene una implementación sencilla y se adapta perfectamente a cualquier matriz cuadrada.
 \end{itemize}
 \medskip
@@ -231,50 +238,86 @@ Por ello, este método fue el que mayor discrepancias suscitó al momento de su im
 
 Nótese que el método calcular\_temperaturas así como rellena la matriz A del sistema también completa, con los valores correspondientes, la matriz b.
 
-Una vez que todos los valores de A y b están seteados correctamente, se procede con la resolución del sistema utilizando los métodos de la clase matriz, triangular y resolver. Como resultado de la aplicación de éstos, se obtiene finalmente el vector columna x, solución del sistema planteado. Este vector es trasladado a una matriz de dimensión angs*rads para facilitar su manejo, y copiado a la matriz-atributo temperaturas. Así queda finalizada la construcción de una variable de tipo Horno.
+Una vez que todos los valores de A y b están seteados correctamente, se procede con la resolución del sistema utilizando los métodos de la clase matriz, triangular y resolver. Como resultado de la aplicación de éstos, se obtiene finalmente el vector columna x, solución del sistema planteado. Este vector es trasladado a una matriz de dimensión angs*rads para facilitar su manejo, y copiado a la matriz-atributo temperaturas. Así queda finalizada la construcción del objeto Horno.
 
 \item getTemperatura(): recibe un ángulo y un radio, ambos long double, calcula los subíndices correspondientes y muestra el valor de la matriz temperaturas que coincide con ellos.
 
 \item getRadio(), getCantidadAngulos(), getCantidadRadios(), getTi(), getTinf(), getH(), getK(): Ninguno recibe parámetros, cada uno es un proyector del atributo de la clase correspondiente a su nombre.
 
 \item funcionRadio(): devuelve la cantidad de radios que hay entre el centro y el borde interno, en el número de ángulo que le pasen como parámetro.
-operator=: copia la variable de la derecha en la de la izquierda y luego libera la memoria correspondiente a la primera. 
+
+\item operator=: copia el objeto de la derecha en la de la izquierda.
 \end{itemize}
 
 
+\pagebreak
+\leftline{{\LARGE{\bf Apendice A:}}}
+\medskip
+\medskip
+\leftline{{\bf enunciado:}}
 
+Se debe implementar un programa que tome como entrada los datos del problema y que calcule la temperatura en la pared del horno utilizando la técnica de resolución descripta en la sección anterior.
 
+El programa debe tomar los datos de entrada desde un archivo de texto, cuyo formato queda a criterio del grupo. Es importante mencionar que los parámetros n y m de la discretización forman parte de los datos de entrada. Un elemento importante a definir es la especificación de la función ri($\theta$) en este archivo de entrada, se sugiere que el programa tome los valores ya discretizados de esta función.
 
+El programa debe generar el sistema de ecuaciones lineales planteado en la sección anterior, procediendo a su resolución por medio de cualquier método directo para la resolución de sistemas de ecuaciones lineales (es decir, un método no iterativo). El programa debe escribir la solución en un archivo, con un formato adecuado para su posterior graficación.
 
+Se pide realizar experimentos con al menos dos instancias de prueba para Ti = 5000, T$\infty$ = 30 y h/K = 0.05, generando distintas discretizaciones para cada una. Se recomienda fijar Re = 1 en estas instancias. Se sugiere que se presenten los resultados de estos experimentos en forma de gráficos de temperatura o gr´aficos de curvas de nivel, para ayudar a la visualización de los resultados.
 
+Agradecemos el asesoramiento de Gabriel Acosta para la preparación de este trabajo práctico.
+Fecha de entrega: Lunes 1 de Octubre
+\medskip
+\medskip
+\medskip
 
-
-\LARGE{\bf Apendice C:}
+\leftline{{\LARGE{\bf Apendice C:}}}
+\medskip
+\medskip
 
 En este apartado se tratará el tema de la interfaz del usuario con el programa. En particular interesa el parser utilizado para obtener información de un archivo de texto con cierto formato. Además se cuenta con una función que permite guardar un horno creado por el usuario en un archivo de texto con el formato indicado.
+
 Estas son funciones friend de la clase Horno, 'cargar', que ejecuta un parser sobre el archivo pasado como parámetro y 'guardarParaGrafico', que almacena el horno creado por el usuario en un formato cómodo para realizar los gráficos.
 En particular nos interesa el parser, ya que la otra función se limita a guardar las matrices del sistema de ecuaciones modelado.
 
 Nuestro parser es una función que recorre un archivo de texto esperando encontrar cierta información alamecenada en un formato fijo. Si el contenido respeta esa forma particular, entonces el parser recopila en distintas variables (en nuestro caso strings o cadenas de caracteres) las piezas de información para generar con ellas un horno que responda a los valores del archivo.
+
 Para que el parser funcione correctamente es indispensable que el archivo de texto mantenga una estructura fija y conocida.
-El formato reconocido por el parser es el siguiente:
+
+\leftline{El formato reconocido por el parser es el siguiente:}
+\medskip
 
 //comentario (radio exterior)
+
 numero
+
 // comentario (cantidad de angulos)
+
 numero
+
 // comentario (cantidad de radios contando el centro)
+
 numero
+
 // comentario	(temperatura interior)
+
 numero
+
 // comentario (temperatura infinito)
+
 numero
+
 // comentario	(constante K)
+
 numero
+
 // comentario (cosntante H)
+
 numero
+
 // comentario  (definicion discretizada de la funcion r)
+
 cantidad de numeros igual a cantidad de angulos
+\medskip
 
 Es indispensable pasar los datos en el orden correcto, ya que el parser toma linea por linea (considerando los comentarios) el contenido, y lo transforma en valores numericos nativos de C++, para asignarselos a cada atributo de la clase Horno.
 
