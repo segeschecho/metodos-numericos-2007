@@ -177,7 +177,7 @@ void Horno :: calcular_temperaturas(void){
         }
 	}
 
-	temp.triangular(b);
+	temp.triangular(&b);
 	temp.resolver(X,b);
 
 	for(int r = 0; r < rads; r++){
