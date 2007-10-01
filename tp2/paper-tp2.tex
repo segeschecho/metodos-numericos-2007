@@ -1,6 +1,7 @@
 \documentclass[10pt]{article}
 \usepackage[spanish]{babel} %pone palabras en español
 \usepackage[latin1]{inputenc}
+\usepackage{graphicx}
 \begin{document}
 \title{\fbox{\fbox{\bf Trabajo Práctico 2: Estamos en el horno}}}
 \author{\bf{Universidad de Buenos Aires}\\
@@ -302,6 +303,118 @@ Una vez que todos los valores de A y b están seteados correctamente, se procede 
 \item operator=: copia el objeto de la derecha en la de la izquierda.
 \end{itemize}
 
+\medskip
+\medskip
+\leftline{\LARGE{\bf Resultados:}}
+\medskip
+Se hicieron diversas pruebas y graficos para demostrar el funcionamiento del algoritmo y la temperatura del horno en cada punto:
+
+\begin{itemize}
+\item Para realizar el gráfico 1 se tomaron los siguientes parámetros:
+
+Radio exterior= 30
+Cantidad de angulos =16
+Cantidad de radios(contando el centro) = 16
+Temperatura interior = 5000
+Temperatura infinito = 30
+Constante K = 1
+Constante H = 0.05
+Definicion de la funcion de temperatura. t(gk,k) = Ti, num angulo, num radio
+[10, 9, 8, 7, 6, 5, 4, 4, 5, 6, 7, 8, 9, 10, 11, 10]
+
+\item Para realizar el gráfico 2 se tomaron los siguientes parámetros:
+
+Radio exterior = 30
+\newline Cantidad de angulos = 29
+\newline Cantidad de radios(contando el centro) = 29
+\newline Temperatura interior = 5000
+\newline Temperatura infinito = 30
+\newline Constante K = 1
+\newline Constante H = 0.05
+\newline Definicion de la funcion de temperatura. t(gk,k) = Ti, num angulo, num radio
+\newline [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 19, 18, 17, 16, 14 ,12, 14, 16, 17, 18, 19, 20, 18, 17, 15, 13, 12, 10]
+
+\item Para realizar el gráfico 3 se tomaron los siguientes parámetros:
+
+Radio exterior = 30
+\newline Cantidad de angulos = 39
+\newline Cantidad de radios(contando el centro) = 39
+\newline Temperatura interior = 5000
+\newline Temperatura infinito = 30
+\newline Constante K = 1
+\newline Constante H = 0.05
+\newline Definicion de la funcion de temperatura. t(gk,k) = Ti, num angulo, num radio
+\newline [10, 11, 12, 13, 15, 17, 20, 22, 24, 26, 26, 26, 24, 22, 20, 22, 22, 20,18, 17, 18, 19, 20, 22, 24, 26, 26, 26, 22, 20, 18, 17, 16, 15, 14, 13, 12, 11, 10]
+
+
+\item Para realizar el gráfico 4 se tomaron los siguientes parámetros:
+
+Radio exterior = 30
+\newline Cantidad de angulos = 15
+\newline Cantidad de radios(contando el centro) = 15
+\newline Temperatura interior = 5000
+\newline Temperatura infinito = 30
+\newline Constante K = 1
+\newline Constante H = 0.05
+\newline Definicion de la funcion de temperatura. t(gk,k) = Ti, num angulo, num radio
+\newline [5, 5, 5, 6, 6, 6, 5, 5, 5, 6, 6, 7, 6, 5, 5]
+
+\item Para realizar el gráfico 4 se tomaron los siguientes parámetros:
+
+Radio exterior = 30
+\newline Cantidad de angulos = 39
+\newline Cantidad de radios(contando el centro) = 39
+\newline Temperatura interior = 5000
+\newline Temperatura infinito = 16
+\newline Constante K = 1
+\newline Constante H = 0.05
+\newline Definicion de la funcion de temperatura. t(gk,k) = Ti, num angulo, num radio
+\newline [10, 11, 12, 13, 15, 17, 20, 22, 24, 26, 26, 26, 24, 22, 20, 22, 22, 20, 18, 17, 18, 19, , 20, 22, 24, 26, 26, 26, 22, 20, 18, 17, 16, 15, 14, 13, 12, 11, 10]
+\end{itemize}
+
+\pagebreak
+\raggedbottom
+\paperwidth=800pt
+\paperheight=950pt
+
+\centerline{\scriptsize Prueba 1}
+\centerline{\includegraphics[scale=0.5]{prueba1-a.jpg}}
+
+{\includegraphics[scale=0.45]{prueba1-b.jpg}}{\includegraphics[scale=0.5]{prueba1-c.jpg}}
+
+\pagebreak
+\centerline{\scriptsize Prueba 2}
+\centerline{\includegraphics[scale=0.5]{prueba2-a.jpg}}
+
+{\includegraphics[scale=0.5]{prueba2-b.jpg}}
+
+{\includegraphics[scale=0.5]{prueba2-c.jpg}}
+
+\pagebreak
+\centerline{\scriptsize Prueba 3}
+\centerline{\includegraphics[scale=0.5]{prueba3-a.jpg}}
+
+{\includegraphics[scale=0.5]{prueba3-b.jpg}}
+
+{\includegraphics[scale=0.5]{prueba3-c.jpg}}
+
+\pagebreak
+\centerline{\scriptsize Prueba 4}
+\centerline{\includegraphics[scale=0.5]{prueba4-a.jpg}}
+
+{\includegraphics[scale=0.5]{prueba4-b.jpg}}
+
+{\includegraphics[scale=0.5]{prueba4-c.jpg}}
+
+\pagebreak
+\centerline{\scriptsize Prueba 5}
+\centerline{\includegraphics[scale=0.5]{prueba5-a.jpg}}
+
+{\includegraphics[scale=0.5]{prueba5-b.jpg}}
+
+{\includegraphics[scale=0.5]{prueba5-c.jpg}}
+\pagebreak
+En estos gr\'aficos se puede visualizar la temperatura del horno de una manera muy descriptiva. Por ejemplo, podemos ver que el horno de la prueba 4 es el que en mejores condiciones esta, a diferencia de los dem\'as.
 
 \pagebreak
 \leftline{{\LARGE{\bf Apendice A:}}}
