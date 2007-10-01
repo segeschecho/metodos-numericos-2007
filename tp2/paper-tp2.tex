@@ -323,6 +323,691 @@ Fecha de entrega: Lunes 1 de Octubre
 \medskip
 \medskip
 
+\leftline{{\LARGE{\bf Apendice B:}}}
+\medskip
+\medskip
+\begin{enumerate}
+
+\item
+\bf Horno.h
+{\small
+\begin{verbatim}
+#ifndef _HORNO_H
+#define _HORNO_H
+
+#include <iostream>
+#include <string.h>
+#include <math.h>
+#include "Matriz.h"
+
+#define PI 3.1415926535897932484626433832795
+
+using namespace std;
+
+class Horno{
+        friend void cargar(istream& archivo, Horno &h);
+        friend void guardarParaGrafico(ostream &out, const Horno &h);
+    public:
+        /* Constructor */
+        Horno(){temperaturas = NULL; bordeInterno = NULL;}
+        Horno(int radio, int angulos, int radios, int tint, int text, 
+              long double k, long double h, int* radiosLimite);
+
+        /* interfaz */
+        long double		getTemperatura(long double radio, long double theeta) const;
+        long double     getRadio() const;
+        int             getCantidadAngulos() const;
+        int             getCantidadRadios() const;
+        int             getTi() const;
+        int             getTinf() const;
+        long double     getK() const;
+        long double     getH() const;
+        int	            funcionRadio(int angulo) const;
+        void            operator=(const Horno &h1);
+
+        /* Destructor */
+        ~Horno();
+    private:
+        //Atributos
+        Matriz* temperaturas;       //temperatura en cada punto discretizado del
+                                    //horno
+        long double rad;            //radio del horno desde el centro al borde
+                                    //exterior
+        int angs;                   //angulos en los que se divide el horno
+        int rads;                   //cantidad de radios por angulo
+        long double deltaR;         //delta Radio
+        long double deltaT;         //delta Theeta
+        int ti;                     //temperatura interior
+        int tinf;                   //temperatura en el infinito
+        long double k;              //constante k
+        long double h;              //constante h
+        int *bordeInterno;          //borde interno del horno.
+
+        //Metodos privados
+        void calcular_temperaturas(void);
+};
+
+#endif /*_HORNO_H*/
+\end{verbatim}
+}
+
+\item
+\bf Horno.cpp
+{\small
+\begin{verbatim}
+
+#include "Horno.h"
+
+
+/*************************************/
+/*          METODOS PUBLICOS         */
+/*************************************/
+
+
+
+Horno :: Horno(int radio, int cantAngulos, int cantRadios, int tint, int text,
+               long double k, long double h, int* radiosLimite){
+    rad = radio;
+    angs = cantAngulos;
+    rads = cantRadios;
+    deltaR = (long double)rad/((long double)rads - 1);
+    deltaT = 2*PI/(long double)angs;
+    ti = tint;
+    tinf = text;
+    this->k = k;
+    this->h = h;
+    temperaturas = NULL;
+
+    bordeInterno = new int [angs];
+
+    // guardo los radios para cada angulo
+    // asi queda definida la funcion de temperatura.
+    for(int ang = 0; ang < angs; ang++)
+        bordeInterno[ang] = radiosLimite[ang];
+
+    calcular_temperaturas();
+}
+
+
+long double	Horno :: getTemperatura(long double radio, long double theeta) const{
+    int i = (int)fabs(radio/deltaR);
+    if ( i > rads - 1 )
+        i = rads - 1;
+
+     while (theeta >= 2*PI){
+        theeta -= 2*PI;
+     }
+     int j = (int)fabs(theeta/deltaT);
+     if ( j > rads - 1 )
+        j = rads - 1;
+
+     return temperaturas->ver(i, j);
+}
+
+
+long double Horno :: getRadio() const{
+    return rad;
+}
+
+int Horno :: getCantidadAngulos() const{
+    return angs;
+}
+
+int Horno :: getCantidadRadios() const{
+    return rads;
+}
+
+int Horno :: getTi() const{
+    return ti;
+}                       //Temperatura interior
+
+int Horno :: getTinf() const{
+    return tinf;
+}                     //Temperatura exterior
+
+long double Horno :: getK() const{
+    return k;
+}                        //constante K
+
+long double Horno :: getH() const{
+    return h;
+}                        //constante H
+
+void Horno :: operator=(const Horno &h1){
+    rad = h1.rad;
+    angs = h1.angs;
+    rads = h1.rads;
+    deltaR = h1.deltaR;
+    deltaT = h1.deltaT;         //delta Theeta
+    ti = h1.ti;
+    tinf = h1.tinf;
+    k = h1.k;
+    h = h1.h;
+
+    delete temperaturas;
+    temperaturas = new Matriz(rads, angs);
+    *temperaturas = *(h1.temperaturas);
+
+    delete [] bordeInterno;
+    bordeInterno = new int[angs];
+    for(int i = 0; i < angs; i++)
+        bordeInterno[i] = h1.bordeInterno[i];
+}
+
+int Horno :: funcionRadio(int angulo) const{
+    return bordeInterno[angulo];
+}
+
+/* Destructor */
+Horno :: ~Horno(){
+    delete temperaturas;
+    delete [] bordeInterno;
+}
+
+/*************************************/
+/*          METODOS PRIVADOS         */
+/*************************************/
+
+void Horno :: calcular_temperaturas(void){
+
+    Matriz temp(rads*angs, rads*angs);
+    Matriz b(rads*angs, 1);
+    Matriz X(rads*angs, 1);
+
+    delete temperaturas;
+    temperaturas = new Matriz(rads, angs);
+
+    int filaALlenar = 0;
+
+    for(int r = 0; r < rads; r++){
+        for(int a = 0; a < angs; a++){
+            if (r <= bordeInterno[a]){           //si es un punto del borde
+                                                 //interno
+                //sabemos que por la 2da ecuacion, la temperatura de los puntos
+                //dentro de este borde es 5000, entonces se que el coeficiente
+                //del punto en cuestion sera 1, y su correspondiente
+                //resultado en b es 5000
+
+                //ahora asigno el coeficiente en la matriz
+                //viendo la matriz como un arreglo de filas,
+                //dentro de la fila a llenar:
+                //T[r][a] = 1
+                temp.asignar(filaALlenar, r*angs + a, 1);
+                b.asignar(filaALlenar, 0, ti);
+            }
+            else{
+                if(r != rads - 1){          //si no es un punto del borde interno
+                    long double coef1 = 1/(deltaR*deltaR) - 1/(r*deltaR*deltaR);
+                    long double coef2 = 1/((deltaT*deltaT)*(r*r*deltaR*deltaR));
+                    long double coef3 = -2/(deltaR*deltaR) + 1/(r*deltaR*deltaR)
+                                        -2/(r*deltaR*r*deltaR*deltaT*deltaT);
+                    long double coef4 = 1/((r*deltaR*r*deltaR)*(deltaT*deltaT));
+                    long double coef5 = 1/(deltaR*deltaR);
+                    //coef 1 a 5 son los 5 coeficientes de las incognitas que
+                    //quedan
+                    //luego de la discretizacion del Laplaciano
+
+                    //ahora asigno los coeficientes en la matriz
+                    //viendo la matriz como un arreglo de filas,
+                    //dentro de la fila a llenar:
+                    //T[r-1][a] = coef1
+                    //T[r][a-1] = coef2
+                    //T[r][a]   = coef3
+                    //T[r][a+1] = coef4
+                    //T[r+1][a] = coef5
+                    temp.asignar(filaALlenar, (r - 1)*angs + a, coef1);
+                    temp.asignar(filaALlenar, r*angs + a - 1, coef2);
+                    temp.asignar(filaALlenar, r*angs + a, coef3);
+                    temp.asignar(filaALlenar, r*angs + a + 1, coef4);
+                    temp.asignar(filaALlenar, (r + 1)*angs + a, coef5);
+                }
+                else{	//si el punto es del borde externo
+                    long double coef = k/(h*deltaR);
+                    //coef cubre los 2 coeficientes que resultan de discretizar
+                    //la 3er ecuacion en cuestion
+
+                    //ahora asigno los coeficientes en la matriz
+                    //viendo la matriz como un arreglo de filas,
+                    //dentro de la fila a llenar:
+                    //T[r][a] = coef
+                    //T[r-1][a] = coef + 1
+                    temp.asignar(filaALlenar, r*angs + a, -coef - 1);
+                    temp.asignar(filaALlenar, (r - 1)*angs + a, coef);
+                    b.asignar(filaALlenar, 0, -tinf);
+                }
+            }
+            //ahora avanzo en la fila
+            filaALlenar++;
+        }
+    }
+
+    temp.triangular(&b);
+    temp.resolver(X,b);
+
+     for(int r = 0; r < rads; r++){
+         for(int a = 0; a < angs; a++){
+             temperaturas->asignar(r,a,X.ver(r*angs + a, 0));
+         }
+     }
+}
+
+/*************************************/
+/*          FUNCIONES FRIEND         */
+/*************************************/
+
+void cargar(istream& archivo, Horno &h){
+    char data[128];
+
+    //agarro el comentario
+    archivo.getline(data, 100);
+    //agarro radio exterior
+    archivo.getline(data, 100);
+    h.rad = atoi(data);
+
+    //agarro el comentario
+    archivo.getline(data, 100);
+    //agarro cantidad de angulos
+    archivo.getline(data, 100);
+    h.angs = atoi(data);
+
+    //agarro el comentario
+    archivo.getline(data, 100);
+    //agarro cantidad de radios
+    archivo.getline(data, 100);
+    h.rads = atoi(data);
+
+    h.deltaR = (long double)h.rad/((long double)h.rads - 1);
+    h.deltaT = 2*PI/(long double)h.angs;
+
+    //agarro el comentario
+    archivo.getline(data, 100);
+    //agarro temperatura interior
+    archivo.getline(data, 100);
+    h.ti = atoi(data);
+
+    //agarro el comentario
+    archivo.getline(data, 100);
+    //agarro temperatura exterior
+    archivo.getline(data, 100);
+    h.tinf = atoi(data);
+
+    //agarro comentario
+    archivo.getline(data, 100);
+    //agarro cosntante K
+    archivo.getline(data, 100);
+    h.k = atof(data);
+
+    //agarro comentario
+    archivo.getline(data, 100);
+    //agarro constante H
+    archivo.getline(data, 100);
+    h.h = atof(data);
+
+    //agarro comentario
+    archivo.getline(data, 100);
+    //agarro funcion de temperatura
+    delete [] h.bordeInterno;
+    h.bordeInterno = new int [h.angs];
+
+    for(int ang = 0 ; ang < h.angs ; ang++){
+        // agarro el radio para el angulo cant
+        archivo.getline(data, 100);
+        h.bordeInterno[ang] = atoi(data);
+    }
+
+    h.calcular_temperaturas();
+}
+
+void guardarParaGrafico(ostream &out, const Horno &h){
+    Matriz m(*(h.temperaturas));
+
+    int centroR = m.filas() - 1;             //radios
+
+    int X = 0;
+    int Y = 0;
+
+    // guardo las X
+    out << "X = [ ";
+
+    for(int i = 0 ; i < m.filas(); i++){
+        for(int j = 0 ; j < m.columnas(); j++){
+            X = (int)((i*(h.rad)/(h.rads))*cos(j*2*PI/centroR));
+            //cuanto me muevo en "X" = Rcos(tita)
+
+            out << " " << X;
+        }
+    }
+
+    out << "];" << endl << endl;
+    // guardo las Y
+    out << "Y = [ ";
+    for(int i = 0 ; i < m.filas(); i++){
+        for(int j = 0 ; j < m.columnas(); j++){
+            Y = (int)((i*(h.rad)/(h.rads))*sin(j*2*PI/centroR));
+            //cuanto me muevo en "Y"
+
+            out << " " << Y;
+        }
+    }
+
+
+    out << "];" << endl << endl;
+
+    //guardo los resultados del sistema
+    out << "A = ";
+    mostrarParaGraficar(out, *(h.temperaturas));
+}
+
+\end{verbatim}
+}
+
+\item
+\bf Matriz.h
+{\small
+\begin{verbatim}
+
+#ifndef _MATRIZ_H
+#define _MATRIZ_H
+
+#include <iostream>
+#include <string.h>
+#include <assert.h>
+using namespace std;
+
+class Matriz{
+    friend ostream& operator<<(ostream&, const Matriz&);
+    friend ostream& mostrarParaGraficar(ostream&, const Matriz&);
+  public:
+    Matriz(int = 4, int = 4);
+    Matriz(const Matriz& mat);
+    int filas() const;
+    int columnas() const;
+
+    long double ver(int fila, int columna) const;
+    void asignar(int fila, int columna, long double valor);
+    void triangular(Matriz *b = NULL);
+    void resolver(Matriz &X, Matriz &b);
+    void operator =(const Matriz &m1);
+    ~Matriz();
+  private:
+    long double **m;
+    int fil;
+    int col;
+    /* metodos privados */
+    void permutar(int fila1, int fila2, Matriz *b);
+    void pivotear(int, Matriz *b);
+    void restarFilas(long double coef, int filaAanular, int filaActual,
+                     Matriz *b);
+};
+
+#endif /*_MATRIZ_H*/
+
+\end{verbatim}
+}
+
+\item
+\bf Matriz.cpp
+{\small
+\begin{verbatim}
+
+#include "Matriz.h"
+#define MOD(a) ((a < 0) ? (-a) : (a))
+
+/*************************************/
+/*          METODOS PUBLICOS         */
+/*************************************/
+
+Matriz :: Matriz(int f, int c){
+    //f = filas, c = columnas
+    assert((f > 0) && (c > 0));
+    fil = f;
+    col = c;
+
+    m = new long double* [f];
+    for(int i = 0; i < f; i++){
+        m[i] = new long double[c];
+        for(int j = 0; j < c; j++)
+            m[i][j] = 0;
+    }
+}
+
+Matriz :: Matriz(const Matriz& mat){
+    m = NULL;
+    *this = mat;
+}
+
+int Matriz :: filas() const{
+    return fil;
+}
+
+int Matriz :: columnas() const{
+    return col;
+}
+
+long double Matriz :: ver(int fila, int columna) const{
+    assert((fila < fil) && (columna < col));
+    return m[fila][columna];
+}
+
+void Matriz :: asignar(int fila, int columna, long double valor){
+    assert((fila >= 0) && (columna >= 0));
+    assert((fila < fil) && (columna < col));
+    m[fila][columna] = valor;
+}
+
+/*
+ *  triangular: triangula la matriz mediante el metodo de eliminacion gaussiana
+ *              con pivoteo parcial.
+ */
+void Matriz :: triangular(Matriz *b){
+    int filaActual = 0; //notar que filaActual = columnaActual ya que es la que
+                        //recorre la matriz en diagonal
+
+    for(filaActual = 0 ; filaActual < fil ; filaActual++){
+        pivotear(filaActual, b); //hago pivoteo parcial
+
+        for(int filatemp = filaActual + 1 ; filatemp < fil ; filatemp++){
+            long double coeficiente = m[filatemp][filaActual]/
+                                      m[filaActual][filaActual];
+            restarFilas(coeficiente, filatemp, filaActual, b);
+        }
+    }
+}
+
+/*
+ * PRECONDICION: Suponemos que la matriz implicita
+ * es triangular superior
+ */
+
+void Matriz :: resolver(Matriz &X, Matriz &b){
+    assert(X.fil == col);
+    assert((b.fil == this->fil) && (b.col == X.col));
+
+    for (int i = fil-1; i >= 0; i--){
+        long double sumaPorFil = 0;
+
+        for (int j = col-1; j > i; j--)
+            sumaPorFil += m[i][j]*X.m[j][0];
+        X.m[i][0] = (b.m[i][0] - sumaPorFil)/m[i][i];
+    }
+}
+
+void Matriz :: operator =(const Matriz &m1){
+    fil = m1.fil;
+    col = m1.col;
+
+    //primero borro la matriz que ya estaba
+    if (m != NULL){
+        for(int i = 0; i < fil; i++)
+            delete m[i];
+        delete m;
+    }
+
+    m = new long double*[fil];
+
+    for(int i = 0; i < fil; i++){
+        m[i] = new long double[col];
+        for(int j = 0; j < col; j++){
+            m[i][j] = m1.m[i][j];
+        }
+    }
+}
+
+Matriz :: ~Matriz(){
+    for(int i = 0; i < fil; i++)
+        delete m[i];
+    delete m;
+}
+
+/*************************************/
+/*          METODOS PRIVADOS         */
+/*************************************/
+
+void Matriz :: permutar(int fila1, int fila2, Matriz *b){
+    long double* tmp;
+
+    tmp = m[fila1];
+    m[fila1] = m[fila2];
+    m[fila2] = tmp;
+
+    if(b != NULL){
+        tmp = b->m[fila1];
+        b->m[fila1] = b->m[fila2];
+        b->m[fila2] = tmp;
+    }
+}
+
+void Matriz :: pivotear(int c, Matriz *b){
+    int max = c;
+
+    for(int i = c; i < fil; i++){
+        if(MOD(m[i][c]) > MOD(m[max][c]))
+            max = i;
+    }
+
+    permutar(c, max, b);
+}
+
+/*
+ *  restarfilas: recibe un coeficiente, una fila a anular y la fila de pivote.
+ *                y resta las filas por el coeficiente.
+ */
+
+void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual,
+                           Matriz *b){
+    for(int i = filaActual; i < fil; i++){
+        m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
+        if(MOD(m[filaAanular][i]) < 1e-10) //10^(-10)
+            m[filaAanular][i] = 0;
+    }
+
+    if(b != NULL)
+        b->m[filaAanular][0] = b->m[filaAanular][0] - coef*b->m[filaActual][0];
+}
+
+/*************************************/
+/*          FUNCIONES FRIEND         */
+/*************************************/
+
+ostream& operator<<(ostream& os, const Matriz& matriz){
+    for(int i = 0; i < matriz.fil; i++){
+        os << "\nFila" << i << ": ";
+        for(int j = 0; j < matriz.col; j++)
+            os << matriz.m[i][j] << " ";
+    }
+    return os;
+}
+
+ostream& mostrarParaGraficar(ostream& os, const Matriz& matriz){
+    os << "[ ";
+    for(int i = 0; i < matriz.fil; i++){
+        for(int j = 0; j < matriz.col; j++)
+            os << matriz.m[i][j] << " ";
+    }
+    os << "];";
+    return os;
+}
+
+\end{verbatim}
+}
+
+\item
+\bf main.cpp
+{\small
+\begin{verbatim}
+
+#include <iostream>
+#include <fstream>
+#include "Matriz.h"
+#include "Horno.h"
+
+using namespace std;
+
+int main(){
+
+    Horno h;
+    unsigned int opcion = 0;
+
+    cout << "Simulador para hornos de altas temperaturas\n";
+    cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+
+    while(opcion != 4){
+        cout << "\n\n1. Cargar un horno\n";
+        cout << "2. Guardar datos del horno actual para realizar graficos\n";
+        cout << "3. Ver temperatura en un punto\n";
+        cout << "4. Salir\n\n";
+        cout << "Ingresar opcion: ";
+        cin >> opcion;
+
+        if(opcion == 1){
+            char nombreDelArchivo[256];
+            cout << "\n\nIngrese el nombre del archivo: ";
+            cin >> nombreDelArchivo;
+
+            ifstream archivoEntrada;
+            archivoEntrada.open(nombreDelArchivo, ifstream::in);
+            while(archivoEntrada.fail()){
+                archivoEntrada.clear();
+                cout << "\n\nEl archivo no se encuentra.
+                         Ingrese el nombre del archivo: ";
+                cin >> nombreDelArchivo;
+                archivoEntrada.open(nombreDelArchivo, ifstream::in);
+            }
+
+            cargar(archivoEntrada, h);
+            archivoEntrada.close();
+        }
+
+        if(opcion == 2){
+            char nombreDelArchivo[256];
+            cout << "\n\nIngrese el nombre del archivo: ";
+            cin >> nombreDelArchivo;
+
+            ofstream archivoSalida;
+            archivoSalida.open(nombreDelArchivo, ofstream::out);
+            guardarParaGrafico(archivoSalida,h);
+            archivoSalida.close();
+        }
+
+        if(opcion == 3){
+            long double radio, angulo;
+            cout << "Los datos deben ser ingresados en coordenadas polares\n";
+            cout << "\nIngresar radio: ";
+            cin >> radio;
+            cout << "\nIngresar angulo(Radianes)";
+            cin >> angulo;
+            cout << h.getTemperatura(radio, angulo);
+        }
+    }
+
+    system("PAUSE");
+    return EXIT_SUCCESS;
+}
+
+\end{verbatim}
+}
+\end{enumerate}
+
 \leftline{{\LARGE{\bf Apendice C:}}}
 \medskip
 \medskip
@@ -377,5 +1062,29 @@ Es indispensable pasar los datos en el orden correcto, ya que el parser toma lin
 
 
 
+\pagebreak
+\begin{thebibliography}{11}
+\bibitem{grifhig} http://www.cplusplus.com/ .
+Referencia y consulta para C++
+
+\bibitem{grifhig} http://148.204.224.249/esimetic/seminario2007/mod\_01/graficasconmatlab933.pdf 
+
+Graficos con Matlab.
+
+\bibitem{grifhig} http://www.mathworks.com/matlabcentral/files/8998/content/gridfitdir/demo/html/gridfit\_demo.html
+Graficos avanzados en Matlab.
+
+\bibitem{grifhig} http://www.mathworks.com/matlabcentral/newsreader/view\_thread/155703
+Hacer graficos en 3d con diferentes colores en Matlab (foro).
+
+\bibitem{grifhig} pcmap.unizar.es/~pilar/latex.pdf .
+Introduccion a latex.
+
+\bibitem{grifhig} http://oc.wikipedia.org/wiki/Ajuda:Formulas\_TeX\_e\_LaTeX
+Formulas Latex.
+
+\bibitem{grifhig} webs.uvigo.es/mat.avanzadas/PracME\_1.pdf .
+Introducción a MatLab.
+\end{thebibliography}
 
 \end{document}
