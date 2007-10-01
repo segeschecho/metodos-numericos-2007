@@ -8,3 +8,5 @@ http://www.mathworks.com/access/helpdesk/help/techdoc/index.html?/access/helpdes
 
 
 http://www.mathworks.com/matlabcentral/newsreader/view_thread/155703
+
+http://oc.wikipedia.org/wiki/Ajuda:Formulas_TeX_e_LaTeX
