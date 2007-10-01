@@ -57,7 +57,7 @@ En el método de eliminación de Gauss el problema original, Ax = b, se transforma
 
 \centerline{
 $
-E_j = E_j - \frac{a_(i,j)}{a_(i,i)}*E_i
+E_j = E_j - \frac{a_{i,j}}{a_{i,i}}*E_i
 $
 }
 
@@ -131,19 +131,19 @@ Siendo el dominio de T las coordenadas polares y R su imagen, se procede a reali
 
 \centerline{
 $
-\frac{\partial ^2 T(r, \theta)}{\partial r^2}(r_j, \theta_k) \cong \frac{t_(j-1, k) - 2t_(j, k) + t_(j+1, k)}{(\Delta r)^2}
+\frac{\partial ^2 T(r, \theta)}{\partial r^2}(r_j, \theta_k) \cong \frac{t_{j-1, k} - 2t_{j, k} + t_{j+1, k}}{(\Delta r)^2}
 $
 }
 
 \centerline{
 $
-\frac{\partial T(r, \theta)}{\partial r}(r_j, \theta_k) \cong \frac{t_(j, k) - t_(j-1, k)}{\Delta r}
+\frac{\partial T(r, \theta)}{\partial r}(r_j, \theta_k) \cong \frac{t_{j, k} - t_{j-1, k}}{\Delta r}
 $
 }
 
 \centerline{
 $
-\frac{\partial ^2 T(r, \theta)}{\partial \theta^2}(r_j, \theta_k) \cong \frac{t_(j, k-1) - 2t_(j, k) + t_(j, k+1)}{(\Delta \theta)^2}
+\frac{\partial ^2 T(r, \theta)}{\partial \theta^2}(r_j, \theta_k) \cong \frac{t_{j, k-1} - 2t_{j, k} + t_{j, k+1}}{(\Delta \theta)^2}
 $
 }
 \medskip
@@ -159,16 +159,16 @@ Los puntos de la pared interior se presentan como los más complicados de manejar
 
 \centerline{
 $
-t_(j,k)(\frac{-2}{(\Delta r)^2} + \frac{1}{r\Delta r} - \frac{2}{r^2 \Delta\theta^2}) 
-+ t_(j-1,k)(\frac{1}{(\Delta r)^2} - \frac{1}{r\Delta r})
-+ t_(j+1,k)\frac{1}{(\Delta r)^2} 
+t_{j,k}(\frac{-2}{(\Delta r)^2} + \frac{1}{r\Delta r} - \frac{2}{r^2 \Delta\theta^2}) 
++ t_{j-1,k}(\frac{1}{(\Delta r)^2} - \frac{1}{r\Delta r})
++ t_{j+1,k}\frac{1}{(\Delta r)^2} 
 $
 }
 
 \centerline{
 $
-+ t_(j,k+1)(\frac{1}{r^2(\Delta\theta)^2}) 
-+ t_(j,k-1)(\frac{1}{r^2(\Delta\theta)^2}) = 0
++ t_{j,k+1}(\frac{1}{r^2(\Delta\theta)^2}) 
++ t_{j,k-1}(\frac{1}{r^2(\Delta\theta)^2}) = 0
 $
 }
 \medskip
@@ -178,7 +178,7 @@ En cuanto a los puntos dentro del horno, ya se encuentran 'resueltos', expresado
 
 \centerline{
 $
-t_(r_e,\theta) = \frac{ \frac{K*t_(r_e-1,\theta)}{H\Delta r} + T_\infty }
+t_{r_e,\theta} = \frac{ \frac{K*t_{r_{e-1},\theta}}{H\Delta r} + T_\infty }
                       {1 + \frac{K}{H*\Delta r}}
 $
 }
