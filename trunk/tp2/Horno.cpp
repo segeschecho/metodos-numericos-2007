@@ -273,9 +273,9 @@ void guardarParaGrafico(ostream &out, const Horno &h){
         }
     }
 
-    out << "]; " << endl << endl;
+    out << "];" << endl << endl;
     // guardo las Y
-    out << "Y =[ ";
+    out << "Y = [ ";
     for(int i = 0 ; i < m.filas(); i++){
         for(int j = 0 ; j < m.columnas(); j++){
             Y = (int)((i*(h.rad)/(h.rads))*sin(j*2*PI/centroR));       //cuanto me muevo en "X"
@@ -285,8 +285,9 @@ void guardarParaGrafico(ostream &out, const Horno &h){
     }
 
 
-    out << "]; " << endl << endl;
+    out << "];" << endl << endl;
 
     //guardo los resultados del sistema
-    out << *(h.temperaturas) << endl;
+    out << "A = ";
+	mostrarParaGraficar(out, *(h.temperaturas));
 }

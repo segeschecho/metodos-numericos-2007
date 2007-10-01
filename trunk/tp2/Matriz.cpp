@@ -1,14 +1,9 @@
 #include "Matriz.h"
 #define MOD(a) ((a < 0) ? (-a) : (a))
 
-ostream& operator<<(ostream& os, const Matriz& matriz){
-	for(int i = 0; i < matriz.fil; i++){
-		os << "\nFila" << i << ": ";
-		for(int j = 0; j < matriz.col; j++)
-			os << matriz.m[i][j] << " ";
-	}
-	return os;
-}
+/*************************************/
+/*          METODOS PUBLICOS         */
+/*************************************/
 
 Matriz :: Matriz(int f, int c){
 	//f = filas, c = columnas
@@ -110,6 +105,10 @@ Matriz :: ~Matriz(){
 	delete m;
 }
 
+/*************************************/
+/*          METODOS PRIVADOS         */
+/*************************************/
+
 void Matriz :: permutar(int fila1, int fila2, Matriz *b){
 	long double* tmp;
 
@@ -149,4 +148,27 @@ void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual, Ma
 
 	if(b != NULL)
 	    b->m[filaAanular][0] = b->m[filaAanular][0] - coef*b->m[filaActual][0];
+}
+
+/*************************************/
+/*          FUNCIONES FRIEND         */
+/*************************************/
+
+ostream& operator<<(ostream& os, const Matriz& matriz){
+	for(int i = 0; i < matriz.fil; i++){
+		os << "\nFila" << i << ": ";
+		for(int j = 0; j < matriz.col; j++)
+			os << matriz.m[i][j] << " ";
+	}
+	return os;
+}
+
+ostream& mostrarParaGraficar(ostream& os, const Matriz& matriz){
+	os << "[ ";
+	for(int i = 0; i < matriz.fil; i++){
+		for(int j = 0; j < matriz.col; j++)
+			os << matriz.m[i][j] << " ";
+	}
+	os << "];";
+	return os;
 }
