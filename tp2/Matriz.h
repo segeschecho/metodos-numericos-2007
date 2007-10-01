@@ -8,6 +8,7 @@ using namespace std;
 
 class Matriz{
 	friend ostream& operator<<(ostream&, const Matriz&);
+	friend ostream& mostrarParaGraficar(ostream&, const Matriz&);
   public:
     Matriz(int = 4, int = 4);
     Matriz(const Matriz& mat);
