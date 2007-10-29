@@ -4,64 +4,13 @@
 
 using namespace std;
 
-void tirarSenal(long double a, long double b, Matriz<long double> &m, int n, int filaALlenar);
-void ordenarPares(long double pares[][2], int filas);
-long double menor(long double a, long double b);
-void anularRepetidos(long double pares[][2], int cantPares);
-
-int main()
-{
-    long double temp = 2.5;
-    int redondeo = (int)temp;
-    Matriz<long double> m(4,16);
-
-    m.asignar(0,0,4);
-    m.asignar(0,1,3);
-    m.asignar(0,2,4);
-    m.asignar(0,3,6);
-    m.asignar(0,4,4);
-
-    m.asignar(1,0,1);
-    m.asignar(1,1,4);
-    m.asignar(1,2,0);
-    m.asignar(1,3,1);
-    m.asignar(1,4,2);
-
-    m.asignar(2,0,2);
-    m.asignar(2,1,3);
-    m.asignar(2,2,7);
-    m.asignar(2,3,8);
-    m.asignar(2,4,6);
-
-    m.asignar(3,0,9);
-    m.asignar(3,1,3);
-    m.asignar(3,2,6);
-    m.asignar(3,3,1);
-    m.asignar(3,4,1);
-
-
-    long double pend = -1;
-    long double ptoPase = 0.12;
-
-    cout << m << endl;
-
-    tirarSenal(pend,ptoPase,m,4,1);
-
-    cout << m << endl;
-	cout << "valor en double " << temp <<  endl;
-	cout << "valor en entero " << redondeo <<  endl;
-
-
-
-	return 0;
-}
-
 /*
  *  tirarSeñal: Toma una pendiente, un punto de pase para generar una recta
  *              una matriz, un n que representa la dimension de la matriz
  *              imagen y el numero de la matriz a llenar
  */
-void tirarSenal(long double a, long double b, Matriz<long double> &m, int n, int filaALlenar){
+void tirarSenal(long double a, long double b, Matriz<long double> &m, int filaALlenar){
+    int n = sqrt(m.columnas());
     assert((b <= 0 && a >= 0) || (b >= n && a <= 0) || (b > 0 && b < n));
     long double pares[2*(n+1)][2];  //2*(n+1) lo peor es que pase por la
                                     //diagonal entonces va a haber 2*(n+1) pares
@@ -237,4 +186,84 @@ void anularRepetidos(long double pares[][2], int cantPares){
     }
 
 
+}
+
+void metodo1(long double pendientes[], long double puntos[], Matriz<long double> &D)
+{
+    for(int i = 0; i < D.filas(); i++)
+        tirarSenal(pendientes[i], puntos[i], D, i);
+}
+
+int main(int argc, char* argv[])
+{
+   	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
+	char* archivoEntrada = argv[1];
+	char* archivoSalida = argv[2];
+	char* factorRuido = argv[3];
+
+    cout << "Levantando archivo " << archivoEntrada << " ... ";
+	FILE* pfile;
+	pfile = fopen(archivoEntrada,"r");
+	assert (pfile != NULL);
+
+    char h1[16];
+	char size[4];
+	char bm[2];
+	fscanf(pfile, "%2c", bm);
+	assert(bm[0] == 'B');	// me fijo si es un bmp
+	assert(bm[1] == 'M');
+
+	fscanf(pfile, "%16c", h1);			//lo guardo para despues reconstruir el header
+	fscanf(pfile, "%4c", size);
+	unsigned int* ptr;				// leerlo de nuevo, me parece que basta con poner &size
+	ptr = (unsigned int*) size;
+	unsigned int ancho;
+	ancho = *ptr;					// leerlo de nuevo, me parece que basta con poner &ancho
+	                         		// fijarse en cplusplus
+	char h2[32];
+	fscanf(pfile, "%32c", h2);
+
+	int offset;
+	offset = ancho % 4; // calculo los bytes de basura que hay en cada fila
+
+    Matriz<char> matriz(ancho,ancho);
+    int temp;
+
+    for (unsigned int i = 0; i < ancho; i++){
+        for (unsigned int j = 0; j < ancho; j++){
+            temp = fgetc(pfile);
+            matriz.asignar(i,j,(char) temp);
+            fscanf(pfile, "%*2c");  //salteo el GB del RGB pues
+                                    //la imagen es monocromatica
+        }
+        pfile += offset;
+    }
+	fclose(pfile);
+    cout << "OK" << endl << endl;
+
+    cout << "Guardando archivo " << archivoSalida << " ... ";
+	FILE* pAsalida;
+	pAsalida = fopen(archivoSalida, "w"); //crea un nuevo archivo para escritura
+	assert (pAsalida != 0);
+
+    //construyo el header del archivo de salida
+	fwrite(bm,1,2,pAsalida);
+	fwrite(h1,1,16,pAsalida);
+	fwrite(size,1,4,pAsalida);
+	fwrite(h2,1,32,pAsalida);
+
+    for(int i = 0; i < 20*20*3; i++)
+        fprintf(pAsalida, "%c", 0);
+	fclose(pAsalida);
+    cout << "OK" << endl << endl;
+
+    Matriz<long double> m(4,16);
+    long double pendientes[4] = {1, 0, -1, -2};
+    long double puntos[4] = {1.5, 2, 2.5, 3};
+
+    metodo1(pendientes, puntos, m);
+
+    cout << m << endl;
+
+	return 0;
 }
