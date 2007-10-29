@@ -40,8 +40,8 @@ int main()
     m.asignar(3,4,1);
 
 
-    long double pend = 1;
-    long double ptoPase = 0;
+    long double pend = -1;
+    long double ptoPase = 0.12;
 
     cout << m << endl;
 
@@ -126,12 +126,15 @@ void tirarSenal(long double a, long double b, Matriz<long double> &m, int n, int
         long double fil = 0;
         long double col = 0;
 
+        //veo si no es un valor duplicado
         if( (pares[i][0] != -1)){
+            //si no es duplicado, veo si el que sigue es un duplicado y el
+            //siguiente a este es un valor valido(si no me pase de rango)
             if( (pares[i+1][0] == -1) && (i+2 < cantPares) ){
                 //menor en x
-                fil = (int)pares[i][0];
+                col = (int)pares[i][0];
                 //menor en y, arreglo para coordenadas de la matriz
-                col = n - 1 - (int)menor(pares[i][1], pares[i+2][1]);
+                fil = n - 1 - (int)menor(pares[i][1], pares[i+2][1]);
 
                 //calculo la distancia recorrida por la señal en cada cuadrado por
                 //donde paso
@@ -141,14 +144,16 @@ void tirarSenal(long double a, long double b, Matriz<long double> &m, int n, int
 
                 m.asignar(filaALlenar, fil*n + col, distancia);
 
-                i = i + 2;
+                i += 2;
             }
-            else if(pares[i+1][0] != -1)
+            //si no, veo si fallo la primer guarda
+            //si el siguiente no es un duplicado y es una posicion valida
+            else if((pares[i+1][0] != -1) && (i+1 < cantPares))
             {
                 //menor en x
-                fil = (int)pares[i][0];
+                col = (int)pares[i][0];
                 //menor en y, arreglo para coordenadas de la matriz
-                col = n - 1 - (int)menor(pares[i][1], pares[i+1][1]);
+                fil = n - 1 - (int)menor(pares[i][1], pares[i+1][1]);
 
                 //calculo la distancia recorrida por la señal en cada cuadrado por
                 //donde paso
@@ -160,11 +165,13 @@ void tirarSenal(long double a, long double b, Matriz<long double> &m, int n, int
 
                 i++;
             }
+            //si no paso nada de lo anterior, entonces estoy llegando al final
+            //hago que llegue al final
             else
                 i++;
         }
         else
-            i = i + 2;
+            i++;
     }
 }
 
