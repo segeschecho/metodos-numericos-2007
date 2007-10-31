@@ -1,206 +1,23 @@
 #include <iostream>
-#include "matriz.h"
-#include <math.h>
+#include <time.h>
+#include "Matriz.h"
+#include "Senales.h"
 
 using namespace std;
 
-/*
- *  tirarSeñal: Toma una pendiente, un punto de pase para generar una recta
- *              una matriz, un n que representa la dimension de la matriz
- *              imagen y el numero de la matriz a llenar
- */
-void tirarSenal(long double a, long double b, Matriz<long double> &m, int filaALlenar){
-    int n = sqrt(m.columnas());
-    assert((b <= 0 && a >= 0) || (b >= n && a <= 0) || (b > 0 && b < n));
-    long double pares[2*(n+1)][2];  //2*(n+1) lo peor es que pase por la
-                                    //diagonal entonces va a haber 2*(n+1) pares
-    long double temp = 0;
-    int cantPares = 0;
-
-    int i = 0;
-
-
-    //genero el vector pares donde estan los resultados de aplicar
-    // y = a*x + b
-    // x = (y - b)/a
-    // y lo guardo en pares x,y
-
-    while(i <= n){
-        long double temp = a*i + b;
-
-        if((temp >= 0) && (temp <= n)){
-            pares[cantPares][0] = i;
-            pares[cantPares][1] = temp;
-            cantPares++;
-        }
-
-        i++;
-    }
-
-    i = 0;
-    while((i <= n) && (a != 0)){
-        temp = (i - b)/a;
-
-        if(temp >= 0 && temp <= n){
-            pares[cantPares][0] = temp;
-            pares[cantPares][1] = i;
-            cantPares++;
-        }
-        i++;
-    }
-
-    //ordeno por la primer componente
-    ordenarPares(pares, cantPares);
-
-    for(i = 0; i<cantPares; i++){
-        cout << "(" << pares[i][0] << "," << pares[i][1] << ")" << ", ";
-    }
-    cout << endl;
-    //anulo los pares repetidos
-    anularRepetidos(pares, cantPares);
-
-    i = 0;
-
-    while(i < m.columnas()){
-        m.asignar(filaALlenar, i, 0);
-        i++;
-    }
-
-    i = 0;
-
-    while(i < cantPares){
-        long double x = 0;
-        long double y = 0;
-        long double distancia = 0;
-        long double fil = 0;
-        long double col = 0;
-
-        //veo si no es un valor duplicado
-        if( (pares[i][0] != -1)){
-            //si no es duplicado, veo si el que sigue es un duplicado y el
-            //siguiente a este es un valor valido(si no me pase de rango)
-            if( (pares[i+1][0] == -1) && (i+2 < cantPares) ){
-                //menor en x
-                col = (int)pares[i][0];
-                //menor en y, arreglo para coordenadas de la matriz
-                fil = n - 1 - (int)menor(pares[i][1], pares[i+2][1]);
-
-                //calculo la distancia recorrida por la señal en cada cuadrado por
-                //donde paso
-                x = pares[i][0] - pares[i+2][0];
-                y = pares[i][1] - pares[i+2][1];
-                distancia = sqrt(pow(x,2) + pow(y,2));
-
-                m.asignar(filaALlenar, fil*n + col, distancia);
-
-                i += 2;
-            }
-            //si no, veo si fallo la primer guarda
-            //si el siguiente no es un duplicado y es una posicion valida
-            else if((pares[i+1][0] != -1) && (i+1 < cantPares))
-            {
-                //menor en x
-                col = (int)pares[i][0];
-                //menor en y, arreglo para coordenadas de la matriz
-                fil = n - 1 - (int)menor(pares[i][1], pares[i+1][1]);
-
-                //calculo la distancia recorrida por la señal en cada cuadrado por
-                //donde paso
-                x = pares[i][0] - pares[i+1][0];
-                y = pares[i][1] - pares[i+1][1];
-                distancia = sqrt(pow(x,2) + pow(y,2));
-
-                m.asignar(filaALlenar, fil*n + col, distancia);
-
-                i++;
-            }
-            //si no paso nada de lo anterior, entonces estoy llegando al final
-            //hago que llegue al final
-            else
-                i++;
-        }
-        else
-            i++;
-    }
-}
-
-long double menor(long double a, long double b){
-    if(a < b)
-        return a;
-    else
-        return b;
-}
-/*
- * ordenarPares: ordena un vector de tuplas por su primer componente
- */
-void ordenarPares(long double pares[][2], int filas){
-    int topeInf = 0;
-    long double temp1;  //variable temporal para el primer componente de la tupla
-    long double temp2;  //variable temporal para el segundo componente de la tupla
-
-
-    while (topeInf < (filas - 1)){
-        int i = topeInf;
-        int posMenor = i;
-        long double menor = pares[i][0];
-
-        while (i < filas){
-            if(pares[i][0] < menor){
-                menor = pares[i][0];
-                posMenor = i;
-            }
-            i++;
-        }
-
-        /* hago el swap de los elementos */
-        temp1 = pares[topeInf][0];
-        temp2 = pares[topeInf][1];
-
-        pares[topeInf][0] = pares[posMenor][0];
-        pares[topeInf][1] = pares[posMenor][1];
-
-        pares[posMenor][0] = temp1;
-        pares[posMenor][1] = temp2;
-
-        topeInf++;
-
-    }
-}
-
-/*
- * anularRepetidos: recorre el vector de pares de coordenadas y anula los
- *                  repetidos poniendo un -1 en la coordenada x, indicando que
- *                  esta repetida.
- */
-void anularRepetidos(long double pares[][2], int cantPares){
-    int cant = cantPares;
-    int i = 0;
-
-    while (i < (cant - 1)){
-        if(pares[i][0] == pares[i+1][0]){
-            pares[i+1][0] = -1;
-            i = i + 2;           //salteo el anulado
-        }
-        else
-           i++;
-    }
-
-
-}
-
-void metodo1(long double pendientes[], long double puntos[], Matriz<long double> &D)
-{
-    for(int i = 0; i < D.filas(); i++)
-        tirarSenal(pendientes[i], puntos[i], D, i);
-}
-
 int main(int argc, char* argv[])
 {
+    srand(time(NULL));
    	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
 	char* archivoEntrada = argv[1];
 	char* archivoSalida = argv[2];
 	char* factorRuido = argv[3];
 
+    /*
+     *
+     *  Levanto el archivo de entrada para capturar la matriz de pixels en un vector
+     *
+     */
     cout << "Levantando archivo " << archivoEntrada << " ... ";
 	FILE* pfile;
 	pfile = fopen(archivoEntrada,"r");
@@ -226,17 +43,16 @@ int main(int argc, char* argv[])
 	int offset;
 	offset = ancho % 4; // calculo los bytes de basura que hay en cada fila
 
-    Matriz<char> matriz(ancho,ancho);
-    int temp;
+    Matriz velocidadesInversas(ancho*ancho,1);
 
-    for (unsigned int i = 0; i < ancho; i++){
-        for (unsigned int j = 0; j < ancho; j++){
-            temp = fgetc(pfile);
-            matriz.asignar(i,j,(char) temp);
-            fscanf(pfile, "%*2c");  //salteo el GB del RGB pues
-                                    //la imagen es monocromatica
-        }
-        pfile += offset;
+    for (unsigned int i = 0; i < ancho*ancho; i++){
+        long double inverso = 1 / (fgetc(pfile) + 1);
+        velocidadesInversas.asignar(i,0,inverso);
+        fscanf(pfile, "%*2c");  //salteo el GB del RGB pues
+                                //la imagen es monocromatica
+
+        if(i % ancho == 0)
+            pfile += offset;
     }
 	fclose(pfile);
     cout << "OK" << endl << endl;
@@ -252,18 +68,42 @@ int main(int argc, char* argv[])
 	fwrite(size,1,4,pAsalida);
 	fwrite(h2,1,32,pAsalida);
 
-    for(int i = 0; i < 20*20*3; i++)
-        fprintf(pAsalida, "%c", 0);
+//    for(int i = 0; i < 20*20*3; i++)
+//        fprintf(pAsalida, "%c", 0);
 	fclose(pAsalida);
     cout << "OK" << endl << endl;
 
-    Matriz<long double> m(4,16);
-    long double pendientes[4] = {1, 0, -1, -2};
-    long double puntos[4] = {1.5, 2, 2.5, 3};
+    /*
+     *  Ahora saco el vector de tiempos
+     */
 
-    metodo1(pendientes, puntos, m);
+    long double puntos1[20][2];
+    long double puntos2[20][2];
+    for (int i = 0; i < 20; i++){
+        puntos1[i][0] = 0;
+        puntos2[i][0] = 20;
+        puntos1[i][1] = i;
+        puntos2[i][1] = i;
+    }
 
-    cout << m << endl;
+    Senales D(20, 1, puntos1, puntos2, 50);
+    Matriz Dt(20*20, 20);
+    Matriz DDt(20*20, 20);
+    Matriz t(400,1);
+
+    t.multiplicar(D.MatrizSenales(), velocidadesInversas);
+
+    //ya tenemos la matriz t calculada, ahora tenemos que degenerarla y
+    //volver a calcular las velocidades (valores de los pixels) con
+    //cuadrados minimos, para reconstruir la imagen
+
+
+    for (int i = 0; i < t.filas(); i++){
+        t.asignar(i, 0, t.ver(i,0) + (rand() % 100)*atoi(factorRuido)/1000);
+    }
+
+    D.MatrizSenales().traspuesta(Dt);
+
 
 	return 0;
 }
