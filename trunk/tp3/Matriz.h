@@ -22,6 +22,8 @@ class Matriz{
     void multiplicar (const Matriz& A, const Matriz& B);
     void triangular (Matriz *b = NULL);
     void resolver (Matriz &X, Matriz &b);
+    void cuadradosMinimosLineales (const Matriz& A, const Matriz& b);
+
     void operator= (const Matriz &m1);
     ~Matriz();
   private:

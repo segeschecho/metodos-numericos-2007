@@ -82,9 +82,9 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
     //ordeno por la primer componente
     ordenarPares(pares, cantPares);
 
-    for(int i = 0; i < cantPares; i++){
-        cout << "(" << pares[i][0] << "," << pares[i][1] << ")" << ", ";
-    }
+//    for(int i = 0; i < cantPares; i++){
+//        cout << "(" << pares[i][0] << "," << pares[i][1] << ")" << ", ";
+//    }
     //anulo los pares repetidos
     anularRepetidos(pares, cantPares);
 
