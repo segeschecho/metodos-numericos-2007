@@ -4,7 +4,8 @@
 /*************************************/
 /*          METODOS PUBLICOS         */
 /*************************************/
-Matriz :: Matriz(int f, int c){
+Matriz :: Matriz(int f, int c)
+{
     //f = filas, c = columnas
     assert((f > 0) && (c > 0));
     fil = f;
@@ -18,25 +19,30 @@ Matriz :: Matriz(int f, int c){
 	}
 }
 
-Matriz :: Matriz(const Matriz& mat){
+Matriz :: Matriz(const Matriz& mat)
+{
     m = NULL;
     *this = mat;
 }
 
-int Matriz :: filas() const{
+int Matriz :: filas() const
+{
     return fil;
 }
 
-int Matriz :: columnas() const{
+int Matriz :: columnas() const
+{
     return col;
 }
 
-long double Matriz :: ver(int fila, int columna) const{
+long double Matriz :: ver(int fila, int columna) const
+{
     assert((fila < fil) && (columna < col));
     return (m[fila][columna]);
 }
 
-void Matriz :: asignar(int fila, int columna, const long double valor){
+void Matriz :: asignar(int fila, int columna, const long double valor)
+{
     assert((fila >= 0) && (columna >= 0));
     assert((fila < fil) && (columna < col));
     m[fila][columna] = valor;
@@ -93,7 +99,8 @@ void Matriz :: multiplicar (const Matriz& A, const Matriz& B)
  *  triangular: triangula la matriz mediante el metodo de eliminacion gaussiana
  *              con pivoteo parcial.
  */
-void Matriz :: triangular(Matriz *b){
+void Matriz :: triangular(Matriz *b)
+{
     int filaActual = 0; //notar que filaActual = columnaActual ya que es la que recorre la matriz en diagonal
 
     for(filaActual = 0 ; filaActual < fil ; filaActual++){
@@ -117,7 +124,8 @@ void Matriz :: triangular(Matriz *b){
  * es triangular superior
  */
 
-void Matriz :: resolver(Matriz &X, Matriz &b){
+void Matriz :: resolver(Matriz &X, Matriz &b)
+{
     assert(X.fil == col);
     assert((b.fil == this->fil) && (b.col == X.col));
 
@@ -134,7 +142,36 @@ void Matriz :: resolver(Matriz &X, Matriz &b){
 	}
 }
 
-void Matriz :: operator =(const Matriz &m1){
+void Matriz :: cuadradosMinimosLineales(const Matriz& A, const Matriz& b)
+{
+    //En este algoritmo se aprobecha que A(traspuesta)*A es simetrica
+    Matriz AtA(A.col, A.col);
+    Matriz Atb(A.col, 1);
+
+    for (int i = 0; i < AtA.fil; i++){
+        for (int j = 0; j <= i; j++){
+            long double temp = 0;
+            for (int c = 0; c < A.fil; c++){
+                temp += A.m[c][A.col - (i + 1)]*A.m[c][i];
+            }
+            AtA.m[i][j] = temp;
+            AtA.m[j][i] = temp;
+        }
+    }
+
+    for (int i = 0; i < Atb.fil; i++){
+        long double temp = 0;
+        for (int j = 0; j < A.fil; j++){
+            temp += A.m[j][i]*b.m[j][0];
+        }
+        Atb.m[i][0] = temp;
+    }
+
+    AtA.resolver(*this, Atb);
+}
+
+void Matriz :: operator =(const Matriz &m1)
+{
     fil = m1.fil;
     col = m1.col;
 
@@ -155,7 +192,8 @@ void Matriz :: operator =(const Matriz &m1){
     }
 }
 
-Matriz :: ~Matriz(){
+Matriz :: ~Matriz()
+{
     for(int i = 0; i < fil; i++)
         delete m[i];
     delete m;
@@ -165,7 +203,8 @@ Matriz :: ~Matriz(){
 /*          METODOS PRIVADOS         */
 /*************************************/
 
-void Matriz :: permutarFilas(int fila1, int fila2, Matriz *b){
+void Matriz :: permutarFilas(int fila1, int fila2, Matriz *b)
+{
     long double* tmp;
 
     tmp = m[fila1];
@@ -179,7 +218,8 @@ void Matriz :: permutarFilas(int fila1, int fila2, Matriz *b){
     }
 }
 
-void Matriz :: permutarColumnas(int columna1, int columna2){
+void Matriz :: permutarColumnas(int columna1, int columna2)
+{
     long double tmp;
 
     for (int i = 0; i < fil; i++) {
@@ -189,7 +229,8 @@ void Matriz :: permutarColumnas(int columna1, int columna2){
 	}
 }
 
-void Matriz :: pivoteoParcial(int c, Matriz *b){
+void Matriz :: pivoteoParcial(int c, Matriz *b)
+{
     int max = c;
 
     for(int i = c; i < fil; i++){
@@ -207,7 +248,8 @@ void Matriz :: pivoteoParcial(int c, Matriz *b){
 	}
 }
 
-void Matriz :: pivoteoTotal(int fila, Matriz *b){
+void Matriz :: pivoteoTotal(int fila, Matriz *b)
+{
     int maxI = fila;
     int maxJ = fila;
 
@@ -229,7 +271,8 @@ void Matriz :: pivoteoTotal(int fila, Matriz *b){
  *                y resta las filas por el coeficiente.
  */
 
-void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual, Matriz *b){
+void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual, Matriz *b)
+{
     for(int i = filaActual; i < fil; i++){
         m[filaAanular][i] = m[filaAanular][i] - coef*m[filaActual][i];
         if(MOD(m[filaAanular][i]) < 1e-10) //10^(-10)
@@ -244,7 +287,8 @@ void Matriz :: restarFilas(long double coef, int filaAanular, int filaActual, Ma
 /*          FUNCIONES FRIEND         */
 /*************************************/
 
-ostream& operator<<(ostream& os, const Matriz& matriz){
+ostream& operator<<(ostream& os, const Matriz& matriz)
+{
     for(int i = 0; i < matriz.fil; i++){
         os << "\nFila" << i << ": ";
         for(int j = 0; j < matriz.col; j++)
@@ -253,7 +297,8 @@ ostream& operator<<(ostream& os, const Matriz& matriz){
     return os;
 }
 
-ostream& mostrarParaGraficar(ostream& os, const Matriz& matriz){
+ostream& mostrarParaGraficar(ostream& os, const Matriz& matriz)
+{
     os << "[ ";
     for(int i = 0; i < matriz.fil; i++){
         for(int j = 0; j < matriz.col; j++)

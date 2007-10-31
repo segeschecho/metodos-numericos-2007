@@ -7,16 +7,18 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+// 	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
+//	char* archivoEntrada = argv[1];
+//	char* archivoSalida = argv[2];
+//	char* factorRuido = argv[3];
+	char* archivoEntrada = "a.bmp";
+    char* archivoSalida = "o.bmp";
+	char* factorRuido = "10";
+
     srand(time(NULL));
-   	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
-	char* archivoEntrada = argv[1];
-	char* archivoSalida = argv[2];
-	char* factorRuido = argv[3];
 
     /*
-     *
      *  Levanto el archivo de entrada para capturar la matriz de pixels en un vector
-     *
      */
     cout << "Levantando archivo " << archivoEntrada << " ... ";
 	FILE* pfile;
@@ -46,7 +48,7 @@ int main(int argc, char* argv[])
     Matriz velocidadesInversas(ancho*ancho,1);
 
     for (unsigned int i = 0; i < ancho*ancho; i++){
-        long double inverso = 1 / (fgetc(pfile) + 1);
+        long double inverso = (1 / (long double)(fgetc(pfile) + 1));
         velocidadesInversas.asignar(i,0,inverso);
         fscanf(pfile, "%*2c");  //salteo el GB del RGB pues
                                 //la imagen es monocromatica
@@ -57,10 +59,9 @@ int main(int argc, char* argv[])
 	fclose(pfile);
     cout << "OK" << endl << endl;
 
-    cout << "Guardando archivo " << archivoSalida << " ... ";
 	FILE* pAsalida;
 	pAsalida = fopen(archivoSalida, "w"); //crea un nuevo archivo para escritura
-	assert (pAsalida != 0);
+	assert (pAsalida != NULL);
 
     //construyo el header del archivo de salida
 	fwrite(bm,1,2,pAsalida);
@@ -71,7 +72,6 @@ int main(int argc, char* argv[])
 //    for(int i = 0; i < 20*20*3; i++)
 //        fprintf(pAsalida, "%c", 0);
 	fclose(pAsalida);
-    cout << "OK" << endl << endl;
 
     /*
      *  Ahora saco el vector de tiempos
@@ -87,11 +87,10 @@ int main(int argc, char* argv[])
     }
 
     Senales D(20, 1, puntos1, puntos2, 50);
-    Matriz Dt(20*20, 20);
-    Matriz DDt(20*20, 20);
     Matriz t(400,1);
 
     t.multiplicar(D.MatrizSenales(), velocidadesInversas);
+    cout << D.MatrizSenales();
 
     //ya tenemos la matriz t calculada, ahora tenemos que degenerarla y
     //volver a calcular las velocidades (valores de los pixels) con
@@ -99,11 +98,26 @@ int main(int argc, char* argv[])
 
 
     for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + (rand() % 100)*atoi(factorRuido)/1000);
+        t.asignar(i, 0, t.ver(i,0) + ((rand() % 100) - 50)*atoi(factorRuido)/1000);
     }
 
-    D.MatrizSenales().traspuesta(Dt);
+    velocidadesInversas.cuadradosMinimosLineales(D.MatrizSenales(), t);
 
+    //ya reconstrui la imagen, ahora la guardo
+    cout << "Guardando archivo " << archivoSalida << " ... ";
+	pAsalida = fopen(archivoSalida, "a");
+	assert (pAsalida != NULL);
 
+    for (unsigned  int i = 0; i < ancho*ancho; i++){
+        char valorPixel = (char)(1 / (velocidadesInversas.ver(i,0) - 1));
+        fprintf(pAsalida, "%c" ,valorPixel);
+        fprintf(pAsalida, "%c" ,valorPixel);
+        fprintf(pAsalida, "%c" ,valorPixel);
+
+        if(i % ancho == 0)
+            pAsalida += offset;
+    }
+	fclose(pAsalida);
+    cout << "OK" << endl << endl;
 	return 0;
 }
