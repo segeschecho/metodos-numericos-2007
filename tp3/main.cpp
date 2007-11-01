@@ -11,9 +11,9 @@ int main(int argc, char* argv[])
 //	char* archivoEntrada = argv[1];
 //	char* archivoSalida = argv[2];
 //	char* factorRuido = argv[3];
-	char* archivoEntrada = "a.bmp";
+	char* archivoEntrada = "Copia de a.bmp";
     char* archivoSalida = "o.bmp";
-	char* factorRuido = "10";
+	char* factorRuido = "0";
 
     srand(time(NULL));
 
@@ -42,19 +42,20 @@ int main(int argc, char* argv[])
 	char h2[32];
 	fscanf(pfile, "%32c", h2);
 
-	int offset;
-	offset = ancho % 4; // calculo los bytes de basura que hay en cada fila
+	int offset = ancho % 4; // calculo los bytes de basura que hay en cada fila
 
     Matriz velocidadesInversas(ancho*ancho,1);
 
     for (unsigned int i = 0; i < ancho*ancho; i++){
-        long double inverso = (1 / (long double)(fgetc(pfile) + 1));
+        int test = fgetc(pfile);
+        long double inverso = (1 / (long double)(test + 1));
         velocidadesInversas.asignar(i,0,inverso);
         fscanf(pfile, "%*2c");  //salteo el GB del RGB pues
                                 //la imagen es monocromatica
 
-        if(i % ancho == 0)
-            pfile += offset;
+        if ((i + 1) % ancho == 0)
+            for (int j = 0; j < offset; j++)
+                fscanf(pfile, "%*1c");  //salteo la "basura"
     }
 
 	fclose(pfile);
@@ -78,17 +79,17 @@ int main(int argc, char* argv[])
      *  Ahora saco el vector de tiempos
      */
 
-    long double puntos1[20][2];
-    long double puntos2[20][2];
-    for (int i = 0; i < 20; i++){
+    long double puntos1[40][2];
+    long double puntos2[40][2];
+    for (int i = 0; i < 40; i++){
         puntos1[i][0] = 0;
         puntos2[i][0] = 20;
-        puntos1[i][1] = i;
-        puntos2[i][1] = i;
+        puntos1[i][1] = i*0.125;
+        puntos2[i][1] = i*0.125;
     }
 
-    Senales D(20, 1, puntos1, puntos2, 20);
-    Matriz t(20,1);
+    Senales D(5, 1, puntos1, puntos2, 40);
+    Matriz t(40,1);
 
     t.multiplicar(D.MatrizSenales(), velocidadesInversas);
     //ya tenemos la matriz t calculada, ahora tenemos que degenerarla y
@@ -96,7 +97,7 @@ int main(int argc, char* argv[])
     //cuadrados minimos, para reconstruir la imagen
 
     for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + ((rand() % 100) - 50)*atof(factorRuido)/1000);
+        t.asignar(i, 0, t.ver(i,0) + (rand() % 100)*atof(factorRuido)/1000);
     }
 
     velocidadesInversas.cuadradosMinimosLineales(D.MatrizSenales(), t);
@@ -106,13 +107,14 @@ int main(int argc, char* argv[])
 	assert (pAsalida != NULL);
 
     for (unsigned  int i = 0; i < ancho*ancho; i++){
-        char valorPixel = (char)(1 / (velocidadesInversas.ver(i,0) - 1));
+        char valorPixel = (char)((1 / velocidadesInversas.ver(i,0)) - 1);
         fprintf(pAsalida, "%c" ,valorPixel);
         fprintf(pAsalida, "%c" ,valorPixel);
         fprintf(pAsalida, "%c" ,valorPixel);
 
-        if(i % ancho == 0)
-            pAsalida += offset;
+        if ((i + 1) % ancho == 0)
+            for (int j = 0; j < offset; j++)
+                fprintf(pAsalida, "%c", valorPixel);
     }
 	fclose(pAsalida);
     cout << "OK" << endl << endl;

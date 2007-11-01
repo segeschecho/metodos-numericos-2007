@@ -144,6 +144,12 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
             }
         }
     }
+
+    for(int i = 0; i < 2*(n+1); i++){
+        delete [] pares[i];
+    }
+    delete [] pares;
+
 }
 
 void Senales :: ordenarPares(long double** pares, int filas){

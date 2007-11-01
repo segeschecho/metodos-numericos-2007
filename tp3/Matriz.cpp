@@ -105,9 +105,9 @@ void Matriz :: triangular(Matriz *b)
     int filaActual = 0; //notar que filaActual = columnaActual ya que es la que recorre la matriz en diagonal
 
     for(filaActual = 0 ; filaActual < fil ; filaActual++){
-        pivoteoParcial(filaActual, b); //hago pivoteo parcial
+        pivoteoParcial(filaActual, b); //hago pivoteo parcial (o pivoteoTotal si se necesita)
 
-        //si luego de hacer pivoteoParcial (o pivoteoTotal si se necesita) encuentro un cero en la diagonal
+        //si luego de hacer pivoteo encuentro un cero en la diagonal
         //quiere decir que las filas de abajo son todas cero
         if (m[filaActual][filaActual] == 0) {
             break;
@@ -146,59 +146,34 @@ void Matriz :: resolver(Matriz &X, Matriz &b)
 void Matriz :: cuadradosMinimosLineales(const Matriz& A, const Matriz& b)
 {
     //En este algoritmo se aprobecha que A(traspuesta)*A es simetrica
-    Matriz caca(5, 3);
-    caca.asignar(0, 0, 1);
-    caca.asignar(0, 1, 2);
-    caca.asignar(0, 2, 3);
-    caca.asignar(1, 0, 1);
-    caca.asignar(1, 1, 2);
-    caca.asignar(1, 2, 3);
-    caca.asignar(2, 0, 1);
-    caca.asignar(2, 1, 2);
-    caca.asignar(2, 2, 3);
-    caca.asignar(3, 0, 1);
-    caca.asignar(3, 1, 2);
-    caca.asignar(3, 2, 3);
-    caca.asignar(4, 0, 1);
-    caca.asignar(4, 1, 2);
-    caca.asignar(4, 2, 3);
-    Matriz bb(5, 1);
-    bb.asignar(0, 0, 1);
-    bb.asignar(1, 0, 1);
-    bb.asignar(2, 0, 1);
-    bb.asignar(3, 0, 1);
-    bb.asignar(4, 0, 1);
-    Matriz res(3, 1);
 
-    Matriz AtA(caca.col, caca.col);
-    Matriz Atb(caca.col, 1);
+    Matriz AtA(A.col, A.col);
+    Matriz Atb(A.col, 1);
 
-    for (int i = 0; i < caca.fil; i++){
-        for (int j = i; j < caca.col; j++){
+    for (int i = 0; i < A.fil; i++){
+        for (int j = i; j < A.col; j++){
             long double temp = 0;
-            for (int c = 0; c < caca.fil; c++){
-                temp += caca.m[c][i]*caca.m[c][j];
+            for (int c = 0; c < A.fil; c++){
+                temp += A.m[c][i]*A.m[c][j];
             }
             AtA.m[i][j] = temp;
             AtA.m[j][i] = temp;
         }
     }
 
+    cout << A;
+    cout << AtA;
+
     for (int i = 0; i < Atb.fil; i++){
         long double temp = 0;
-        for (int j = 0; j < caca.fil; j++){
-            temp += caca.m[j][i]*bb.m[j][0];
+        for (int j = 0; j < A.fil; j++){
+            temp += A.m[j][i]*b.m[j][0];
         }
         Atb.m[i][0] = temp;
     }
 
-    cout << AtA << endl;
-    cout << Atb << endl;
     AtA.triangular(&Atb);
-    cout << AtA << endl;
-    cout << Atb << endl;
-    AtA.resolver(res, Atb);
-    cout << res;
+    AtA.resolver(*this, Atb);
 }
 
 void Matriz :: operator =(const Matriz &m1)
@@ -285,7 +260,7 @@ void Matriz :: pivoteoTotal(int fila, Matriz *b)
     int maxJ = fila;
 
     for (int i = fila; i < fil; i++) {
-        for (int j = 0; j < col; j++) {
+        for (int j = fila; j < col; j++) {
             if(MOD(m[i][j]) > MOD(m[maxI][maxJ])){
                 maxI = i;
                 maxJ = j;
