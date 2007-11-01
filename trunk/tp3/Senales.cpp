@@ -43,15 +43,22 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
     //primero construyo la recta
     //tengo un sistema de 2x2 que es: y1 = x1*a + b
     //                                y2 = x2*a + b
-    //entonces: a = (y1 - b) / x1
-    //          y2 = x2*(y1 - b)/x1 + b
-    //          b = (y2 - x2*y1/x1) / (x2/x1 + 1)
+    //entonces: b = y1 - x1*a
+    //          y2 = x2*a + y1 - x1*a
+    //          a = (y2 - y1) / (x2 - x1)
+    //          b = y1 - x1*((y2 - y1) / (x2 - x1))
+    //          x2 - x1 != 0 paratodo x2, x1 reales, salvo que sea una senial vertical, lo cual tratamos como caso particular
 
-    long double b = (y2 - x2*y1/x1) / (x2/x1 + 1);
-    long double a = (y1 - b) / x1;
-    int n = (int)sqrt(D->columnas()); //puedo hacer esto porque la matriz es de m*n^2
-    long double pares[2*(n+1)][2];   //2*(n+1) lo peor es que pase por la
-                                     //diagonal entonces va a haber 2*(n+1) pares
+    long double a = (y2 - y1) / (x2 - x1);
+    long double b = y1 - x1*((y2 - y1) / (x2 - x1));
+    int n = (int)sqrt((long double)D->columnas()); //puedo hacer esto porque la matriz es de m*n^2
+    long double** pares;
+    pares = new long double* [2*(n+1)];   //2*(n+1) lo peor es que pase por la
+                                          //diagonal entonces va a haber 2*(n+1) pares
+    for(int i = 0; i < 2*(n+1); i++){
+        pares[i] = new long double [2];
+    }
+
     int cantPares = 0;
 
     //genero el vector pares donde estan los resultados de aplicar
@@ -139,7 +146,7 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
     }
 }
 
-void Senales :: ordenarPares(long double pares[][2], int filas){
+void Senales :: ordenarPares(long double** pares, int filas){
     int topeInf = 0;
     long double temp1;  //variable temporal para el primer componente de la tupla
     long double temp2;  //variable temporal para el segundo componente de la tupla
@@ -173,7 +180,7 @@ void Senales :: ordenarPares(long double pares[][2], int filas){
     }
 }
 
-void Senales :: anularRepetidos(long double pares[][2], int cantPares){
+void Senales :: anularRepetidos(long double** pares, int cantPares){
     int cant = cantPares;
     int i = 0;
 
