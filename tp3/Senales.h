@@ -28,12 +28,12 @@ class Senales{
     void tirarSenal(long double x1, long double y1, long double x2, long double y2, int filaALlenar);
 
     //ordena un vector de tuplas por su primer componente
-    void ordenarPares(long double pares[][2], int filas);
+    void ordenarPares(long double** pares, int filas);
 
     //recorre el vector de pares de coordenadas y anula los
     //repetidos poniendo un -1 en la coordenada x, indicando que
     //esta repetida.
-    void anularRepetidos(long double pares[][2], int cantPares);
+    void anularRepetidos(long double** pares, int cantPares);
 };
 
 #endif /*_SENALES_H*/

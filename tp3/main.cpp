@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
         if(i % ancho == 0)
             pfile += offset;
     }
+
 	fclose(pfile);
     cout << "OK" << endl << endl;
 
@@ -86,11 +87,11 @@ int main(int argc, char* argv[])
         puntos2[i][1] = i;
     }
 
-    Senales D(20, 1, puntos1, puntos2, 50);
-    Matriz t(400,1);
+    Senales D(20, 1, puntos1, puntos2, 20);
+    Matriz t(20,1);
 
     t.multiplicar(D.MatrizSenales(), velocidadesInversas);
-    cout << D.MatrizSenales();
+    cout << t;
 
     //ya tenemos la matriz t calculada, ahora tenemos que degenerarla y
     //volver a calcular las velocidades (valores de los pixels) con
