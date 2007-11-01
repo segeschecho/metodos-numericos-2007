@@ -87,10 +87,11 @@ void Matriz :: multiplicar (const Matriz& A, const Matriz& B)
     for (int i = 0; i < fil; i++){
         m[i] = new long double [col];
         for (int j = 0; j < col; j++){
-            m[i][j] = 0;
+            long double suma = 0;
 		    for (int k = 0; k < A.col; k++){
-                m[i][j] += (A.m[i][k])*(B.m[k][i]);
+                suma += (A.m[i][k])*(B.m[k][j]);
             }
+            m[i][j] = suma;
         }
     }
 }
@@ -145,14 +146,38 @@ void Matriz :: resolver(Matriz &X, Matriz &b)
 void Matriz :: cuadradosMinimosLineales(const Matriz& A, const Matriz& b)
 {
     //En este algoritmo se aprobecha que A(traspuesta)*A es simetrica
-    Matriz AtA(A.col, A.col);
-    Matriz Atb(A.col, 1);
+    Matriz caca(5, 3);
+    caca.asignar(0, 0, 1);
+    caca.asignar(0, 1, 2);
+    caca.asignar(0, 2, 3);
+    caca.asignar(1, 0, 1);
+    caca.asignar(1, 1, 2);
+    caca.asignar(1, 2, 3);
+    caca.asignar(2, 0, 1);
+    caca.asignar(2, 1, 2);
+    caca.asignar(2, 2, 3);
+    caca.asignar(3, 0, 1);
+    caca.asignar(3, 1, 2);
+    caca.asignar(3, 2, 3);
+    caca.asignar(4, 0, 1);
+    caca.asignar(4, 1, 2);
+    caca.asignar(4, 2, 3);
+    Matriz bb(5, 1);
+    bb.asignar(0, 0, 1);
+    bb.asignar(1, 0, 1);
+    bb.asignar(2, 0, 1);
+    bb.asignar(3, 0, 1);
+    bb.asignar(4, 0, 1);
+    Matriz res(3, 1);
 
-    for (int i = 0; i < AtA.fil; i++){
-        for (int j = 0; j <= i; j++){
+    Matriz AtA(caca.col, caca.col);
+    Matriz Atb(caca.col, 1);
+
+    for (int i = 0; i < caca.fil; i++){
+        for (int j = i; j < caca.col; j++){
             long double temp = 0;
-            for (int c = 0; c < A.fil; c++){
-                temp += A.m[c][A.col - (i + 1)]*A.m[c][i];
+            for (int c = 0; c < caca.fil; c++){
+                temp += caca.m[c][i]*caca.m[c][j];
             }
             AtA.m[i][j] = temp;
             AtA.m[j][i] = temp;
@@ -161,13 +186,19 @@ void Matriz :: cuadradosMinimosLineales(const Matriz& A, const Matriz& b)
 
     for (int i = 0; i < Atb.fil; i++){
         long double temp = 0;
-        for (int j = 0; j < A.fil; j++){
-            temp += A.m[j][i]*b.m[j][0];
+        for (int j = 0; j < caca.fil; j++){
+            temp += caca.m[j][i]*bb.m[j][0];
         }
         Atb.m[i][0] = temp;
     }
 
-    AtA.resolver(*this, Atb);
+    cout << AtA << endl;
+    cout << Atb << endl;
+    AtA.triangular(&Atb);
+    cout << AtA << endl;
+    cout << Atb << endl;
+    AtA.resolver(res, Atb);
+    cout << res;
 }
 
 void Matriz :: operator =(const Matriz &m1)

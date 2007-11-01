@@ -91,19 +91,15 @@ int main(int argc, char* argv[])
     Matriz t(20,1);
 
     t.multiplicar(D.MatrizSenales(), velocidadesInversas);
-    cout << t;
-
     //ya tenemos la matriz t calculada, ahora tenemos que degenerarla y
     //volver a calcular las velocidades (valores de los pixels) con
     //cuadrados minimos, para reconstruir la imagen
 
-
     for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + ((rand() % 100) - 50)*atoi(factorRuido)/1000);
+        t.asignar(i, 0, t.ver(i,0) + ((rand() % 100) - 50)*atof(factorRuido)/1000);
     }
 
     velocidadesInversas.cuadradosMinimosLineales(D.MatrizSenales(), t);
-
     //ya reconstrui la imagen, ahora la guardo
     cout << "Guardando archivo " << archivoSalida << " ... ";
 	pAsalida = fopen(archivoSalida, "a");
