@@ -161,9 +161,6 @@ void Matriz :: cuadradosMinimosLineales(const Matriz& A, const Matriz& b)
         }
     }
 
-    cout << A;
-    cout << AtA;
-
     for (int i = 0; i < Atb.fil; i++){
         long double temp = 0;
         for (int j = 0; j < A.fil; j++){
