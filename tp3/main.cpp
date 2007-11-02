@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <time.h>
 #include "Matriz.h"
 #include "Senales.h"
@@ -15,63 +16,62 @@ int main(int argc, char* argv[])
     char* archivoSalida = "o.bmp";
 	char* factorRuido = "0";
 
-    srand(time(NULL));
+    srand((int)time(NULL));
 
     /*
      *  Levanto el archivo de entrada para capturar la matriz de pixels en un vector
      */
     cout << "Levantando archivo " << archivoEntrada << " ... ";
-	FILE* pfile;
-	pfile = fopen(archivoEntrada,"r");
-	assert (pfile != NULL);
+	ifstream pfile;
+    pfile.open(archivoEntrada, ifstream::in);
+    assert (pfile.is_open());
+//	pfile = fopen(archivoEntrada,"r");
+//	assert (pfile != NULL);
 
     char h1[16];
 	char size[4];
 	char bm[2];
-	fscanf(pfile, "%2c", bm);
+	pfile.read(bm, 2);
 	assert(bm[0] == 'B');	// me fijo si es un bmp
 	assert(bm[1] == 'M');
 
-	fscanf(pfile, "%16c", h1);			//lo guardo para despues reconstruir el header
-	fscanf(pfile, "%4c", size);
-	unsigned int* ptr;				// leerlo de nuevo, me parece que basta con poner &size
-	ptr = (unsigned int*) size;
-	unsigned int ancho;
-	ancho = *ptr;					// leerlo de nuevo, me parece que basta con poner &ancho
-	                         		// fijarse en cplusplus
-	char h2[32];
-	fscanf(pfile, "%32c", h2);
+	pfile.read(h1, 16);			//lo guardo para despues reconstruir el header
+	pfile.read(size, 4);
+    // leerlo de nuevo, me parece que basta con poner &size
+	unsigned int* ptr = (unsigned int*) size;
+	unsigned int ancho = *ptr;
+
+    char h2[32];
+	pfile.read(h2, 32);
 
 	int offset = ancho % 4; // calculo los bytes de basura que hay en cada fila
 
     Matriz velocidadesInversas(ancho*ancho,1);
 
     for (unsigned int i = 0; i < ancho*ancho; i++){
-        int test = fgetc(pfile);
-        long double inverso = (1 / (long double)(test + 1));
+        long double inverso = (1 / (long double)(pfile.get() + 1));
         velocidadesInversas.asignar(i,0,inverso);
-        fscanf(pfile, "%*2c");  //salteo el GB del RGB pues
-                                //la imagen es monocromatica
+    	pfile.ignore(2); //salteo el GB del RGB pues
+                         //la imagen es monocromatica
 
         if ((i + 1) % ancho == 0)
-            for (int j = 0; j < offset; j++)
-                fscanf(pfile, "%*c");  //salteo la "basura"
+          	pfile.ignore(offset); //salteo la basura
     }
 
-	fclose(pfile);
+	pfile.close();
     cout << "OK" << endl << endl;
 
-	FILE* pAsalida;
-	pAsalida = fopen(archivoSalida, "w"); //crea un nuevo archivo para escritura
-	assert (pAsalida != NULL);
+	ofstream pAsalida;
+    pAsalida.open(archivoSalida, ofstream::out); //crea un nuevo archivo para escritura
+	assert (pAsalida.is_open());
 
     //construyo el header del archivo de salida
-	fwrite(bm,1,2,pAsalida);
-	fwrite(h1,1,16,pAsalida);
-	fwrite(size,1,4,pAsalida);
-	fwrite(h2,1,32,pAsalida);
+	pAsalida.write(bm, 2);
+    pAsalida.write(h1, 16);
+    pAsalida.write(size, 4);
+    pAsalida.write(h2, 32);
     
-	fclose(pAsalida);
+	pAsalida.close();
 
     /*
      *  Ahora saco el vector de tiempos
@@ -142,20 +142,19 @@ int main(int argc, char* argv[])
     velocidadesInversas.cuadradosMinimosLineales(D.MatrizSenales(), t);
     //ya reconstrui la imagen, ahora la guardo
     cout << "Guardando archivo " << archivoSalida << " ... ";
-	pAsalida = fopen(archivoSalida, "a");
-	assert (pAsalida != NULL);
+    pAsalida.open(archivoSalida, ofstream::app);
+	assert (pAsalida.is_open());
+    pAsalida.seekp(18);
 
     for (unsigned  int i = 0; i < ancho*ancho; i++){
         char valorPixel = (char)((1 / velocidadesInversas.ver(i,0)) - 1);
-        fprintf(pAsalida, "%c" ,valorPixel);
-        fprintf(pAsalida, "%c" ,valorPixel);
-        fprintf(pAsalida, "%c" ,valorPixel);
+        pAsalida << valorPixel << valorPixel << valorPixel;
 
         if ((i + 1) % ancho == 0)
             for (int j = 0; j < offset; j++)
-                fprintf(pAsalida, "%c", valorPixel);
+                pAsalida << valorPixel; //lo relleno con basura donde debe ir
     }
-	fclose(pAsalida);
+	pAsalida.close();
     cout << "OK" << endl << endl;
 	return 0;
 }
