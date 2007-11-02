@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 //	char* archivoEntrada = argv[1];
 //	char* archivoSalida = argv[2];
 //	char* factorRuido = argv[3];
-	char* archivoEntrada = "Copia de a.bmp";
+	char* archivoEntrada = "a.bmp";
     char* archivoSalida = "o.bmp";
 	char* factorRuido = "0";
 
@@ -79,17 +79,38 @@ int main(int argc, char* argv[])
      *  Ahora saco el vector de tiempos
      */
 
-    long double puntos1[40][2];
-    long double puntos2[40][2];
-    for (int i = 0; i < 40; i++){
+    long double puntos1[800][2];
+    long double puntos2[800][2];
+    for (int i = 0; i < 200; i++){
         puntos1[i][0] = 0;
         puntos2[i][0] = 20;
-        puntos1[i][1] = i*0.125;
-        puntos2[i][1] = i*0.125;
+        puntos1[i][1] = 10;
+        puntos2[i][1] = (i - 100)*0.1;
     }
 
-    Senales D(5, 1, puntos1, puntos2, 40);
-    Matriz t(40,1);
+    for (int i = 200; i < 400; i++){
+        puntos1[i][0] = 0;
+        puntos2[i][0] = 20;
+        puntos1[i][1] = (i - 300)*0.1;
+        puntos2[i][1] = 10;
+    }
+
+    for (int i = 400; i < 600; i++){
+        puntos1[i][0] = 10;
+        puntos2[i][0] = (i - 500)*0.1;
+        puntos1[i][1] = 0;
+        puntos2[i][1] = 20;
+    }
+
+    for (int i = 600; i < 800; i++){
+        puntos1[i][0] = (i - 700)*0.1;
+        puntos2[i][0] = 10;
+        puntos1[i][1] = 0;
+        puntos2[i][1] = 20;
+    }
+
+    Senales D(20, 1, puntos1, puntos2, 800);
+    Matriz t(800,1);
 
     t.multiplicar(D.MatrizSenales(), velocidadesInversas);
     //ya tenemos la matriz t calculada, ahora tenemos que degenerarla y
