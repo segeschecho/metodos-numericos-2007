@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
         if ((i + 1) % ancho == 0)
             for (int j = 0; j < offset; j++)
-                fscanf(pfile, "%*1c");  //salteo la "basura"
+                fscanf(pfile, "%*c");  //salteo la "basura"
     }
 
 	fclose(pfile);
@@ -70,25 +70,43 @@ int main(int argc, char* argv[])
 	fwrite(h1,1,16,pAsalida);
 	fwrite(size,1,4,pAsalida);
 	fwrite(h2,1,32,pAsalida);
-
-//    for(int i = 0; i < 20*20*3; i++)
-//        fprintf(pAsalida, "%c", 0);
+    
 	fclose(pAsalida);
 
     /*
      *  Ahora saco el vector de tiempos
      */
 
-    long double puntos1[800][2];
-    long double puntos2[800][2];
-    for (int i = 0; i < 200; i++){
+    long double puntos1[80][2];
+    long double puntos2[80][2];
+    for (int i = 0; i < 20; i++){
         puntos1[i][0] = 0;
-        puntos2[i][0] = 20;
-        puntos1[i][1] = 10;
-        puntos2[i][1] = (i - 100)*0.1;
+        puntos2[i][0] = 3;
+        puntos1[i][1] = 1.5;
+        puntos2[i][1] = (i - 10)*0.5;
     }
 
-    for (int i = 200; i < 400; i++){
+    for (int i = 20; i < 40; i++){
+        puntos1[i][0] = 0;
+        puntos2[i][0] = 3;
+        puntos1[i][1] = (i - 30)*0.5;
+        puntos2[i][1] = 1.5;
+    }
+
+    for (int i = 40; i < 60; i++){
+        puntos1[i][0] = 1.5;
+        puntos2[i][0] = (i - 50)*0.5;
+        puntos1[i][1] = 0;
+        puntos2[i][1] = 3;
+    }
+
+    for (int i = 60; i < 80; i++){
+        puntos1[i][0] = (i - 70)*0.5;
+        puntos2[i][0] = 1.5;
+        puntos1[i][1] = 0;
+        puntos2[i][1] = 3;
+    }
+/*    for (int i = 200; i < 400; i++){
         puntos1[i][0] = 0;
         puntos2[i][0] = 20;
         puntos1[i][1] = (i - 300)*0.1;
@@ -108,9 +126,9 @@ int main(int argc, char* argv[])
         puntos1[i][1] = 0;
         puntos2[i][1] = 20;
     }
-
-    Senales D(20, 1, puntos1, puntos2, 800);
-    Matriz t(800,1);
+*/
+    Senales D(ancho, 1);//, puntos1, puntos2, 80);
+    Matriz t(6*ancho*ancho,1);
 
     t.multiplicar(D.MatrizSenales(), velocidadesInversas);
     //ya tenemos la matriz t calculada, ahora tenemos que degenerarla y
@@ -118,7 +136,7 @@ int main(int argc, char* argv[])
     //cuadrados minimos, para reconstruir la imagen
 
     for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + (rand() % 100)*atof(factorRuido)/1000);
+        t.asignar(i, 0, t.ver(i,0) + (rand()% 100)*atof(factorRuido)/1000);
     }
 
     velocidadesInversas.cuadradosMinimosLineales(D.MatrizSenales(), t);
