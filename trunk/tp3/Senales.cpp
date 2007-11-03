@@ -159,6 +159,27 @@ void Senales :: metodo2(void){
     }
 }
 
+void Senales :: metodo3(void){
+    //genera 2*(n+1) + n/2 señales
+    long double xMedio = dimension/2;
+    long double yMedio = dimension/2;
+
+    cout << xMedio <<endl;
+    int fila = 0;
+    cout << fila <<endl;
+    //envio las señales desde la pared izquierda
+    for(unsigned int i = 0; i <= 2*dimension; i++){
+        tirarSenal(0, i/2, xMedio, yMedio, fila);
+        fila++;
+    }
+
+    //envio las señales desde el piso hasta la mitad.
+    for(unsigned int i = 1; i <= dimension; i++){
+        tirarSenal(i/2, 0, xMedio, yMedio, fila);
+        fila++;
+    }
+}
+
 void Senales :: tirarSenal(long double x1, long double y1, long double x2, long double y2, int filaALlenar)
 {
     if (x1 == x2){   //si la senial es vertical hacemos las cuentas "a mano"
