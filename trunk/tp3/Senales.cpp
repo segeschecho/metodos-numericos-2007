@@ -6,19 +6,20 @@
 /*          METODOS PUBLICOS         */
 /*************************************/
 
-Senales :: Senales(unsigned int dimImagen, unsigned int metodo)//, long double puntos1[][2], long double puntos2[][2], unsigned int cantSenales)
+Senales :: Senales(unsigned int dimImagen, unsigned int metodo)
 {
     D = NULL;
+    dimension = dimImagen;
     switch(metodo){
         case 1:
-//            metodo1(dimImagen, puntos1, puntos2, cantSenales);
-            metodo1(dimImagen);
+            metodo1();
             break;
         case 2:
-            metodo2(dimImagen);
+            metodo2();
             break;
         default:
-            cout << "No existe el metodo " << metodo << endl;
+            cout << "No existe el metodo. En su lugar se ejecutara el metodo 1" << metodo << endl << endl;
+            metodo1();
             break;
     }
 }
@@ -29,65 +30,85 @@ Senales :: Senales(Senales& s)
     *D = *(s.D);
 }
 
-const Matriz& Senales :: MatrizSenales(void){
+void Senales :: prepararParaGraficarMetodo(ostream & os, int metodo)
+{
+    switch(metodo){
+        case 1:
+            graficarMetodo1(os);
+            break;
+        default:
+            break;
+    }
+}
+
+void Senales :: realizarTomografia(Matriz& resultado, unsigned int factorRuido)
+{
+    Matriz t(numSenales, 1);
+
+    t.multiplicar(*D, resultado);
+    //ya tenemos el vector t calculado, ahora tenemos que degenerarlo y
+    //volver a calcular las velocidades (valores de los pixels) con
+    //cuadrados minimos, para reconstruir la imagen
+
+    for (int i = 0; i < t.filas(); i++){
+        t.asignar(i, 0, t.ver(i,0) + (rand()% 100)*factorRuido/1000000);
+    }
+
+    resultado.cuadradosMinimosLineales(*D, t);
+}
+
+const Matriz& Senales :: matrizSenales(void)
+{
     return *D;
 }
 
 /*************************************/
 /*          METODOS PRIVADOS         */
 /*************************************/
-/*
-void Senales :: metodo1(unsigned int dimImagen, long double puntos1[][2], long double puntos2[][2], unsigned int n)
-{
-    delete D;
-    D = new Matriz(n, dimImagen*dimImagen);
-    for(int i = 0; i < D->filas(); i++)
-         tirarSenal(puntos1[i][0], puntos1[i][1], puntos2[i][0], puntos2[i][1], i);
-}
-*/
 
 /*
  * metodo1: Tira señales desde las 2 paredes verticales de la imagen hacia los
  *          demas pixels que no esten en la misma pared.
- *          Este metodo genera 6*n^2 señales/
+ *          Este metodo genera 6*n^2 señales
  */
-void Senales :: metodo1(unsigned int dimImagen)
+void Senales :: metodo1(void)
 {
-    //este metodo genera 6*n^2 - 8*n + 2 señales, siendo n = dimImagen
+    numSenales = 6*dimension*dimension;
+    //este metodo genera 6*n^2 - 2*n señales, siendo n = dimension
     delete D;
-    D = new Matriz(6*dimImagen*dimImagen, dimImagen*dimImagen);
+    D = new Matriz(numSenales, dimension*dimension);
 
     int fila = 0;                                         //fila a llenar
-    for(unsigned int i = 1; i < dimImagen; i++){
-        for(unsigned int j = 1; j <= dimImagen; j++){
+    for(unsigned int i = 1; i < dimension; i++){
+        for(unsigned int j = 1; j <= dimension; j++){
             //tiro las rectas de la pared izquierda
             tirarSenal(0, i, j, 0, fila);                 //sobre el piso
-            tirarSenal(0, i, dimImagen, j, fila + 1);     //sobre pared derecha
-            if(j != dimImagen)
-                tirarSenal(0, i, j, dimImagen, fila + 2); //sobre el techo
+            tirarSenal(0, i, dimension, j, fila + 1);     //sobre pared derecha
+            if(j != dimension)
+                tirarSenal(0, i, j, dimension, fila + 2); //sobre el techo
 
             //tiro las rectas de la pared derecha
-            tirarSenal(dimImagen, i, j, 0, fila + 3);    //sobre el piso
-            tirarSenal(dimImagen, i, 0, j - 1, fila + 4);//sobre pared izquierda
-            if(j != dimImagen)//sobre el techo
-                tirarSenal(dimImagen, i, j - 1, dimImagen, fila + 5);
+            tirarSenal(dimension, i, j, 0, fila + 3);    //sobre el piso
+            tirarSenal(dimension, i, 0, j - 1, fila + 4);//sobre pared izquierda
+            if(j != dimension)//sobre el techo
+                tirarSenal(dimension, i, j - 1, dimension, fila + 5);
 
-            fila = fila + 6;
+            fila += 6;
         }
     }
 }
 
-void Senales :: metodo2(unsigned int dimImagen){
-    //este metodo genera 6*n^2 - 8*n + 2 señales, siendo n = dimImagen
+void Senales :: metodo2(void){
+    //este metodo genera 6*n^2 - 8*n + 2 señales, siendo n = dimension
     delete D;
-    D = new Matriz(6*dimImagen*dimImagen, dimImagen*dimImagen);
+    D = new Matriz(6*dimension*dimension, dimension*dimension);
 
     int fila = 0;                         //fila a llenar
     //todos los puntos de las demas paredes
-    int cantDestinos = 3*dimImagen - 1;
+    int cantDestinos = 3*dimension - 1;
 
-    for(unsigned int i = 0; i < dimImagen; i++){
-        for(unsigned int j = 1; j <= dimImagen; j++){
+    for(unsigned int i = 0; i < dimension; i++){
+        for(unsigned int j = 1; j <= dimension; j++){
             int filaoff = 0;
             //pared izquierda
             //tiro la señal hacia el piso
@@ -95,28 +116,28 @@ void Senales :: metodo2(unsigned int dimImagen){
             filaoff++;
 
             //tiro la señal hacia la pared derecha
-            tirarSenal(0, (dimImagen + j)/cantDestinos + i, dimImagen, j, fila + filaoff);
+            tirarSenal(0, (dimension + j)/cantDestinos + i, dimension, j, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia el techo
-            if(j != dimImagen){
-                tirarSenal(0, (2*dimImagen + j)/cantDestinos + i, j, dimImagen, fila + filaoff);
+            if(j != dimension){
+                tirarSenal(0, (2*dimension + j)/cantDestinos + i, j, dimension, fila + filaoff);
                 filaoff++;
             }
 
 
             //pared derecha
             //tiro la señal hacia el piso
-            tirarSenal(dimImagen, j/cantDestinos + i, dimImagen - j, 0, fila + filaoff);
+            tirarSenal(dimension, j/cantDestinos + i, dimension - j, 0, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia la pared izquierda
-            tirarSenal(dimImagen, (dimImagen + j)/cantDestinos + i, 0, j, fila + filaoff);
+            tirarSenal(dimension, (dimension + j)/cantDestinos + i, 0, j, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia el techo
-            if(j != dimImagen){
-                tirarSenal(dimImagen, (2*dimImagen + j)/cantDestinos + i, dimImagen - j, dimImagen, fila + filaoff);
+            if(j != dimension){
+                tirarSenal(dimension, (2*dimension + j)/cantDestinos + i, dimension - j, dimension, fila + filaoff);
                 filaoff++;
             }
 
@@ -127,16 +148,14 @@ void Senales :: metodo2(unsigned int dimImagen){
 
 void Senales :: tirarSenal(long double x1, long double y1, long double x2, long double y2, int filaALlenar)
 {
-    int n = (int)sqrt((long double)D->columnas()); //n guarda la dimension de la matriz de pixels
-
     if (x1 == x2){   //si la senial es vertical hacemos las cuentas "a mano"
                      //una senial vertical pasa por toda una columna de pixel con distancia, recorriendo
                      //una distancia de 1 por cada uno
-        for (int fil = 0; fil < n; fil++)
-            if (x1 == n)
-                D->asignar(filaALlenar, fil*n + n - 1, 1);
+        for (unsigned int fil = 0; fil < dimension; fil++)
+            if (x1 == dimension)
+                D->asignar(filaALlenar, fil*dimension + dimension - 1, 1);
             else
-                D->asignar(filaALlenar, fil*n + (int)x1, 1);
+                D->asignar(filaALlenar, fil*dimension + (int)x1, 1);
     }
     else{
         //primero construyo la recta
@@ -149,20 +168,20 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
         //          x2 - x1 != 0 paratodo x2, x1 reales, salvo que sea una senial vertical, lo cual tratamos anteriormente
         long double a = (y2 - y1) / (x2 - x1);
         long double b = y1 - x1*((y2 - y1) / (x2 - x1));
-        long double** pares = new long double* [2*(n+1)];
+        long double** pares = new long double* [2*(dimension+1)];
 
         //2*(n+1) lo peor es que pase por la
         //diagonal entonces va a haber 2*(n+1) pares;
 
         long double yEntero;                  //para ver si hay pares repetidos
         int y = 0;                            //para tener el valor entero
-        bool* yRepetidos = new bool [n + 1];
+        bool* yRepetidos = new bool [dimension + 1];
 
-        for(int i = 0; i < n+1; i++){
+        for(unsigned int i = 0; i < dimension+1; i++){
             yRepetidos[i] = false;
         }
 
-        for(int i = 0; i < 2*(n+1); i++){
+        for(unsigned int i = 0; i < 2*(dimension+1); i++){
             pares[i] = new long double [2];
         }
 
@@ -173,10 +192,10 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
         // x = (y - b)/a
         // y lo guardo en pares x,y
 
-        for (int i = 0; i <= n; i++){
+        for (unsigned int i = 0; i <= dimension; i++){
             long double temp = a*i + b;
 
-            if((temp >= 0) && (temp <= n)){
+            if((temp >= 0) && (temp <= dimension)){
                 pares[cantPares][0] = i;
                 pares[cantPares][1] = temp;
 
@@ -193,10 +212,10 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
             }
         }
 
-        for (int i = 0; (i <= n) && (a != 0); i++){
+        for (unsigned int i = 0; (i <= dimension) && (a != 0); i++){
             long double temp = (i - b)/a;
 
-            if(temp >= 0 && temp <= n){
+            if(temp >= 0 && temp <= dimension){
                 //veo si ese "y" ya estaba antes
                 if(!yRepetidos[i]){
                     pares[cantPares][0] = temp;
@@ -225,17 +244,17 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
 
                     //menor en y, arreglo para coordenadas de la matriz
                     if((int)pares[i][1] < (int)pares[i+2][1]){
-                        fil = n - 1 - (int)pares[i][1];
+                        fil = dimension - 1 - (int)pares[i][1];
                     }
                     else
-                        fil = n - 1 - (int)pares[i+2][1];
+                        fil = dimension - 1 - (int)pares[i+2][1];
 
                     //calculo la distancia recorrida por la señal en cada
                     //pixel por donde paso
                     long double x = pares[i][0] - pares[i+2][0];
                     long double y = pares[i][1] - pares[i+2][1];
 
-                    D->asignar(filaALlenar, fil*n + col, sqrt(pow(x,2) + pow(y,2)));
+                    D->asignar(filaALlenar, fil*dimension + col, sqrt(pow(x,2) + pow(y,2)));
 
                     i++; //si hay un repetido adelante tengo que avanzar 2
                 }
@@ -247,22 +266,22 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
                     col = (int)pares[i][0];
                     //menor en y, arreglo para coordenadas de la matriz
                     if((int)pares[i][1] < (int)pares[i+1][1]){
-                        fil = n - 1 - (int)pares[i][1];
+                        fil = dimension - 1 - (int)pares[i][1];
                     }
                     else
-                        fil = n - 1 - (int)pares[i+1][1];
+                        fil = dimension - 1 - (int)pares[i+1][1];
 
                     //calculo la distancia recorrida por la señal en cada
                     //pixel por donde paso
                     long double x = pares[i][0] - pares[i+1][0];
                     long double y = pares[i][1] - pares[i+1][1];
 
-                    D->asignar(filaALlenar, fil*n + col, sqrt(pow(x,2) + pow(y,2)));
+                    D->asignar(filaALlenar, fil*dimension + col, sqrt(pow(x,2) + pow(y,2)));
                 }
             }
         }
 
-        for(int i = 0; i < 2*(n+1); i++){
+        for(unsigned int i = 0; i < 2*(dimension+1); i++){
             delete [] pares[i];
         }
         delete [] pares;
@@ -345,6 +364,27 @@ void Senales :: anularRepetidos(long double** pares, int cantPares){
         if(pares[i][0] == pares[i+1][0]){
             pares[i+1][0] = -1;
             i++;            //salteo el anulado
+        }
+    }
+}
+
+void Senales :: graficarMetodo1(ostream & os){
+    os << "COPIAR Y PEGAR LO SIGUIENTE EN EL MATLAB" << endl;
+    os << "hold on" << endl;
+    os << "axis([0 " << dimension << " 0 " << dimension << " ])" << endl;
+    for(unsigned int i = 1; i < dimension; i++){
+        for(unsigned int j = 1; j <= dimension; j++){
+            //tiro las rectas de la pared izquierda
+            os << "plot([0 " << j << "], [" << i << " 0], 'k')" << endl;
+            os << "plot([0 " << dimension << "], [" << i << " " << j << "], 'k')" << endl;
+            if(j != dimension)
+                os << "plot([0 " << j << "], [" << i << " " << dimension << "], 'k')" << endl;
+
+            //tiro las rectas de la pared derecha
+            os << "plot([" << dimension << " " << j << "], [" << i << " 0], 'k')" << endl;
+            os << "plot([" << dimension << " 0], [" << i << " " << j-1 << "], 'k')" << endl;
+            if(j != dimension)
+                os << "plot([" << dimension << " " << j-1 << "], [" << i << " " << dimension << "], 'k')" << endl;
         }
     }
 }

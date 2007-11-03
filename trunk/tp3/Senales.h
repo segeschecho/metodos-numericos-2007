@@ -10,13 +10,18 @@ using namespace std;
 class Senales{
   public:
     Senales(){D = NULL;}
-    Senales(unsigned int dimImagen, unsigned int metodo);//, long double puntos1[][2], long double puntos2[][2], unsigned int cantSenales);
+    Senales(unsigned int dimension, unsigned int metodo);//, long double puntos1[][2], long double puntos2[][2], unsigned int cantSenales);
     Senales(Senales& s);
 
-    const Matriz& MatrizSenales(void);
+    //hace un txt para graficar el metodo, enviado por parametro, en matlab
+    void realizarTomografia(Matriz& velocidades, unsigned int factorRuido);
+    void prepararParaGraficarMetodo(ostream & os, int metodo);
+    const Matriz& matrizSenales(void);
     ~Senales(){delete D;}
 
   private:
+    unsigned int dimension;
+    unsigned int numSenales;
     Matriz* D;
 
     //toma los arreglos pendientes y puntos, y los combina elemento a elemento
@@ -24,11 +29,11 @@ class Senales{
 
     //tira señales primero desde la pared izquierda hacia las demas
     //y despues desde la pared derecha hacia las demas
-    void metodo1(unsigned int dimension);
+    void metodo1(void);
 
     //similar que el metodo uno solo que por cada señal enviada se desplaza
     //el punto de pase.
-    void metodo2(unsigned int dimImagen);
+    void metodo2(void);
 
     //Toma una pendiente, un punto de pase para generar una recta
     //una matriz, un n que representa la dimension de la matriz
@@ -45,6 +50,8 @@ class Senales{
     //repetidos poniendo un -1 en la coordenada x, indicando que
     //esta repetida.
     void anularRepetidos(long double** pares, int cantPares);
+
+    void graficarMetodo1(ostream & os);
 };
 
 #endif /*_SENALES_H*/
