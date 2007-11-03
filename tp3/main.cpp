@@ -8,73 +8,103 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-/* 	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
-	char* archivoEntrada = argv[1];
-	char* archivoSalida = argv[2];
-	unsigned int factorRuido = atof(argv[3]);*/
-	char* archivoEntrada = "10.bmp";
-    char* archivoSalida = "test.bmp";
-	unsigned int factorRuido = 0;
+    bool ayuda = false;
+//    int argc = 8;
+//    char* argv[8] = {"exe", "10.bmp", "test2.bmp", "1", "0", "-g", "graficameEsta.txt"};
+    if(argc >= 5){
+        unsigned int metodo = atoi(argv[3]);
+	    unsigned long double factorRuido = atof(argv[4]);
 
-    srand((int)time(NULL));
+        srand((int)time(NULL));
 
-    /*
-     *  Levanto el archivo de entrada
-     */
-    cout << "Levantando archivo " << archivoEntrada << " ... ";
-	BMP imagen;
-    imagen.ReadFromFile(archivoEntrada);
-    Matriz velocidadesInversas(imagen.TellWidth()*imagen.TellHeight(),1);
+        /*
+         *  Levanto el archivo de entrada
+         */
+        cout << "Levantando archivo " << argv[1] << " ... ";
+	    BMP imagen;
+        imagen.ReadFromFile(argv[1]);
+        Matriz velocidadesInversas(imagen.TellWidth()*imagen.TellHeight(),1);
 
-    for (int i = 0; i < imagen.TellHeight(); i++){
-        for (int j = 0; j < imagen.TellWidth(); j++){
-            long double inverso = (1 / ((long double)imagen.GetPixel(j, i).Blue + 1));
-            velocidadesInversas.asignar(i*imagen.TellWidth() + j,0,inverso);
+        for (int i = 0; i < imagen.TellHeight(); i++){
+            for (int j = 0; j < imagen.TellWidth(); j++){
+                long double inverso = (1 / ((long double)imagen.GetPixel(j, i).Blue + 1));
+                velocidadesInversas.asignar(i*imagen.TellWidth() + j,0,inverso);
+            }
+        }
+        cout << "OK!" << endl << endl;
+
+        int inicio = (int)time(NULL);
+        Senales D(imagen.TellHeight(), metodo);
+
+        cout << "Usando el metodo " << metodo;
+        cout << ", generando " << D.getCantidadSenales();
+        cout << " seniales..." << endl << endl;
+        cout << "Operando... ";
+
+        D.realizarTomografia(velocidadesInversas, factorRuido);
+
+        cout << "OK!" << endl << endl;
+        cout << "El algoritmo termino en " << time(NULL) - inicio << " segundos.\n" << endl;
+
+        //ya reconstrui la imagen, ahora la guardo
+        cout << "Guardando archivo " << argv[2] << " ... ";
+
+        for (int i = 0; i < imagen.TellWidth(); i++){
+            for (int j = 0; j < imagen.TellHeight(); j++){
+                RGBApixel nuevoPixel;
+                char valorPixel = (char)((1 / velocidadesInversas.ver(i*imagen.TellWidth() + j,0)) - 1);
+                nuevoPixel.Alpha = 0;
+                nuevoPixel.Red = valorPixel;
+                nuevoPixel.Green = valorPixel;
+                nuevoPixel.Blue = valorPixel;
+                imagen.SetPixel(j, i, nuevoPixel);
+            }
+        }
+        imagen.WriteToFile(argv[2]);
+        cout << "OK!" << endl << endl;
+
+        int parametro = 5;
+        while (parametro < argc){
+            if (strcmp(argv[parametro], "-g") == 0){
+                parametro++;
+                if (parametro == argc){
+                    cout << "Parametro -g mal utilizado." << endl << endl;
+                    ayuda = true;
+                }
+                else{
+                    cout << "Preparando grafico... ";
+                    ofstream paraMatlab;
+                    paraMatlab.open(argv[parametro], ios_base::out);
+                    if (paraMatlab.fail()){
+                        cout << "FAIL!" << endl << endl;
+                        ayuda = true;
+                    }
+                    else{
+                        D.prepararParaGraficarMetodo(paraMatlab, metodo);
+                    }
+                    paraMatlab.close();
+                    cout << "OK!" << endl << endl;
+                }
+            }
+
+            if (strcmp(argv[parametro], "-h") == 0){
+                ayuda = true;
+            }
+
+            parametro++;
         }
     }
-    cout << "OK!" << endl << endl;
-
-    int metodo = 3;
-    //int numSenales = 6*imagen.TellWidth()*imagen.TellHeight();// - 8*imagen.TellHeight() + 2;
-    int numSenales = 2*(imagen.TellWidth() + 1) + imagen.TellWidth()/2;
-
-    cout << "Usando el metodo: " << metodo;
-    cout << ", generando " << 6*imagen.TellWidth()*imagen.TellHeight();
-    cout << " seniales..." << endl << endl;
-    cout << "Operando... " << endl << endl;
-
-    //Ahora saco el vector de tiempos
-    int inicio = (int)time(NULL);
-    Senales D(imagen.TellHeight(), metodo);
-
-    D.realizarTomografia(velocidadesInversas, factorRuido);
-
-    ofstream paraMatlab;
-    paraMatlab.open("test.txt", ios_base::out);
-    if (paraMatlab.fail())
-        cout << "Fallo en grafico!" << endl;
     else
-        D.prepararParaGraficarMetodo(paraMatlab, 1);
-    paraMatlab.close();
+        ayuda = true;
 
-    cout << "OK!" << endl << endl;
-    cout << "El algoritmo termino en " << time(NULL) - inicio << " segundos.\n" << endl;
-
-    //ya reconstrui la imagen, ahora la guardo
-    cout << "Guardando archivo " << archivoSalida << " ... ";
-
-    for (int i = 0; i < imagen.TellWidth(); i++){
-        for (int j = 0; j < imagen.TellHeight(); j++){
-            RGBApixel nuevoPixel;
-            char valorPixel = (char)((1 / velocidadesInversas.ver(i*imagen.TellWidth() + j,0)) - 1);
-            nuevoPixel.Alpha = 0;
-            nuevoPixel.Red = valorPixel;
-            nuevoPixel.Green = valorPixel;
-            nuevoPixel.Blue = valorPixel;
-            imagen.SetPixel(j, i, nuevoPixel);
-        }
+    if (ayuda){
+        cout << "El formato de la ejecucion del programa debe cumplir:\n";
+        cout << argv[0] << " <input_file_bmp> <output_file_bmp> <metodo> <factor_ruido> [opciones...]" << endl << endl;
+        cout << "Las opciones son:\n" << endl;
+        cout << "-h\t\t\t\t\tImprime esta ayuda" << endl;
+        cout << "-g <output_file_txt>\t\t\tPrepara un txt para graficar en matlab\n" << endl;
     }
-    imagen.WriteToFile(archivoSalida);
-    cout << "OK!" << endl << endl;
+
+    system("PAUSE");
 	return 0;
 }

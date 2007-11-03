@@ -17,11 +17,8 @@ Senales :: Senales(unsigned int dimImagen, unsigned int metodo)
         case 2:
             metodo2();
             break;
-        case 3:
-            metodo3();
-            break;
         default:
-            cout << "No existe el metodo. En su lugar se ejecutara el metodo 1" << endl << endl;
+            cout << "No existe el metodo. En su lugar se ejecutara el metodo 1" << metodo << endl << endl;
             metodo1();
             break;
     }
@@ -31,6 +28,8 @@ Senales :: Senales(Senales& s)
 {
     D = new Matriz(s.D->filas(), s.D->columnas());
     *D = *(s.D);
+    dimension = s.dimension;
+    numSenales = s.numSenales;
 }
 
 void Senales :: prepararParaGraficarMetodo(ostream & os, int metodo)
@@ -44,13 +43,14 @@ void Senales :: prepararParaGraficarMetodo(ostream & os, int metodo)
     }
 }
 
-void Senales :: realizarTomografia(Matriz& resultado, unsigned int factorRuido)
+void Senales :: realizarTomografia(Matriz& resultado, unsigned long double factorRuido)
 {
     Matriz t(numSenales, 1);
 
     t.multiplicar(*D, resultado);
-    //ya tenemos el vector t calculado, ahora tenemos que degenerarlo y
-    //volver a calcular las velocidades (valores de los pixels) con
+    //ya tenemos el vector t (tiempos de cada senial) calculado,
+    //ahora tenemos que degenerarlo y volver a calcular las
+    //velocidades (valores de los pixels) con
     //cuadrados minimos, para reconstruir la imagen
 
     for (int i = 0; i < t.filas(); i++){
@@ -60,9 +60,14 @@ void Senales :: realizarTomografia(Matriz& resultado, unsigned int factorRuido)
     resultado.cuadradosMinimosLineales(*D, t);
 }
 
-const Matriz& Senales :: matrizSenales(void)
+unsigned int Senales :: getCantidadSenales(void)
 {
-    return *D;
+    return numSenales;
+}
+
+Senales :: ~Senales()
+{
+    delete D;
 }
 
 /*************************************/
@@ -103,11 +108,9 @@ void Senales :: metodo1(void)
 
 void Senales :: metodo2(void){
     //este metodo genera 6*n^2 - 2*n señales, siendo n = dimImagen
-    unsigned int dimImagen = dimension;
-    numSenales = 6*dimension*dimension - 2*dimension;
-
     delete D;
-    D = new Matriz(numSenales, dimImagen*dimImagen);
+    unsigned int dimImagen = dimension;
+    D = new Matriz(6*dimImagen*dimImagen - 2*dimImagen, dimImagen*dimImagen);
 
     int fila = 0;                         //fila a llenar
     //todos los puntos de las demas paredes
@@ -153,27 +156,6 @@ void Senales :: metodo2(void){
 
             fila += filaoff;
         }
-    }
-}
-
-void Senales :: metodo3(void){
-    //genera 2*(n+1) + n/2 señales
-    long double xMedio = dimension/2;
-    long double yMedio = dimension/2;
-
-    cout << xMedio <<endl;
-    int fila = 0;
-    cout << fila <<endl;
-    //envio las señales desde la pared izquierda
-    for(unsigned int i = 0; i <= 2*dimension; i++){
-        tirarSenal(0, i/2, xMedio, yMedio, fila);
-        fila++;
-    }
-
-    //envio las señales desde el piso hasta la mitad.
-    for(unsigned int i = 1; i <= dimension; i++){
-        tirarSenal(i/2, 0, xMedio, yMedio, fila);
-        fila++;
     }
 }
 
