@@ -34,8 +34,9 @@ int main(int argc, char* argv[])
     }
     cout << "OK!" << endl << endl;
 
-    int metodo = 1;
-    int numSenales = 6*imagen.TellWidth()*imagen.TellHeight();// - 8*imagen.TellHeight() + 2;
+    int metodo = 3;
+    //int numSenales = 6*imagen.TellWidth()*imagen.TellHeight();// - 8*imagen.TellHeight() + 2;
+    int numSenales = 2*(imagen.TellWidth() + 1) + imagen.TellWidth()/2;
 
     cout << "Usando el metodo: " << metodo;
     cout << ", generando " << 6*imagen.TellWidth()*imagen.TellHeight();
