@@ -8,13 +8,13 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
- 	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
+/* 	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
 	char* archivoEntrada = argv[1];
 	char* archivoSalida = argv[2];
-	char* factorRuido = argv[3];
-//	char* archivoEntrada = "10.bmp";
-//    char* archivoSalida = "test.bmp";
-//	char* factorRuido = "0";
+	char* factorRuido = argv[3];*/
+	char* archivoEntrada = "2.bmp";
+    char* archivoSalida = "o.bmp";
+	char* factorRuido = "0";
 
     srand((int)time(NULL));
 
@@ -32,12 +32,20 @@ int main(int argc, char* argv[])
             velocidadesInversas.asignar(i*imagen.TellWidth() + j,0,inverso);
         }
     }
-    cout << "OK!" << endl << endl << "Operando... " << endl << endl;
+    cout << "OK!" << endl << endl;
+
+    int metodo = 2;
+    int numSenales = 6*imagen.TellWidth()*imagen.TellHeight() - 8*imagen.TellHeight() + 2;
+
+    cout << "Usando el metodo: " << metodo;
+    cout << ", generando " << 6*imagen.TellWidth()*imagen.TellHeight();
+    cout << " seniales..." << endl << endl;
+    cout << "Operando... " << endl << endl;
 
     //Ahora saco el vector de tiempos
     int inicio = (int)time(NULL);
-    Senales D(imagen.TellHeight(), 1);
-    Matriz t(6*imagen.TellWidth()*imagen.TellHeight(),1);
+    Senales D(imagen.TellHeight(), metodo);
+    Matriz t(numSenales, 1);
 
     t.multiplicar(D.MatrizSenales(), velocidadesInversas);
     //ya tenemos el vector t calculado, ahora tenemos que degenerarlo y
@@ -49,8 +57,10 @@ int main(int argc, char* argv[])
     }
 
     velocidadesInversas.cuadradosMinimosLineales(D.MatrizSenales(), t);
+
     cout << "OK!" << endl << endl;
     cout << "El algoritmo termino en " << time(NULL) - inicio << " segundos.\n" << endl;
+
     //ya reconstrui la imagen, ahora la guardo
     cout << "Guardando archivo " << archivoSalida << " ... ";
 
