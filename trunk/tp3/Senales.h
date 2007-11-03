@@ -10,22 +10,19 @@ using namespace std;
 class Senales{
   public:
     Senales(){D = NULL;}
-    Senales(unsigned int dimension, unsigned int metodo);//, long double puntos1[][2], long double puntos2[][2], unsigned int cantSenales);
+    Senales(unsigned int dimension, unsigned int metodo);
     Senales(Senales& s);
 
     //hace un txt para graficar el metodo, enviado por parametro, en matlab
-    void realizarTomografia(Matriz& velocidades, unsigned int factorRuido);
+    void realizarTomografia(Matriz& velocidades, unsigned long double factorRuido);
     void prepararParaGraficarMetodo(ostream & os, int metodo);
-    const Matriz& matrizSenales(void);
-    ~Senales(){delete D;}
+    unsigned int getCantidadSenales(void);
+    ~Senales();
 
   private:
     unsigned int dimension;
     unsigned int numSenales;
     Matriz* D;
-
-    //toma los arreglos pendientes y puntos, y los combina elemento a elemento
-//    void metodo1(unsigned int dimension, long double puntos1[][2], long double puntos2[][2], unsigned int n);
 
     //tira señales primero desde la pared izquierda hacia las demas
     //y despues desde la pared derecha hacia las demas
@@ -34,9 +31,6 @@ class Senales{
     //similar que el metodo uno solo que por cada señal enviada se desplaza
     //el punto de pase.
     void metodo2(void);
-
-    //tira señales al centro del cuadrado
-    void metodo3(void);
 
     //Toma una pendiente, un punto de pase para generar una recta
     //una matriz, un n que representa la dimension de la matriz
