@@ -32,6 +32,8 @@ class Senales{
     //el punto de pase.
     void metodo2(void);
 
+    void metodo3(void);
+
     //Toma una pendiente, un punto de pase para generar una recta
     //una matriz, un n que representa la dimension de la matriz
     //imagen y el numero de la matriz a llenar
