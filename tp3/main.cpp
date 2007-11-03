@@ -11,10 +11,10 @@ int main(int argc, char* argv[])
 /* 	assert (argc == 4 ); //nombre del programa, archivos de entrada y salida y ruido
 	char* archivoEntrada = argv[1];
 	char* archivoSalida = argv[2];
-	char* factorRuido = argv[3];*/
-	char* archivoEntrada = "2.bmp";
-    char* archivoSalida = "o.bmp";
-	char* factorRuido = "0";
+	unsigned int factorRuido = atof(argv[3]);*/
+	char* archivoEntrada = "10.bmp";
+    char* archivoSalida = "test.bmp";
+	unsigned int factorRuido = 0;
 
     srand((int)time(NULL));
 
@@ -34,8 +34,8 @@ int main(int argc, char* argv[])
     }
     cout << "OK!" << endl << endl;
 
-    int metodo = 2;
-    int numSenales = 6*imagen.TellWidth()*imagen.TellHeight() - 8*imagen.TellHeight() + 2;
+    int metodo = 1;
+    int numSenales = 6*imagen.TellWidth()*imagen.TellHeight();// - 8*imagen.TellHeight() + 2;
 
     cout << "Usando el metodo: " << metodo;
     cout << ", generando " << 6*imagen.TellWidth()*imagen.TellHeight();
@@ -45,18 +45,16 @@ int main(int argc, char* argv[])
     //Ahora saco el vector de tiempos
     int inicio = (int)time(NULL);
     Senales D(imagen.TellHeight(), metodo);
-    Matriz t(numSenales, 1);
 
-    t.multiplicar(D.MatrizSenales(), velocidadesInversas);
-    //ya tenemos el vector t calculado, ahora tenemos que degenerarlo y
-    //volver a calcular las velocidades (valores de los pixels) con
-    //cuadrados minimos, para reconstruir la imagen
+    D.realizarTomografia(velocidadesInversas, factorRuido);
 
-    for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + (rand()% 100)*atof(factorRuido)/1000000);
-    }
-
-    velocidadesInversas.cuadradosMinimosLineales(D.MatrizSenales(), t);
+    ofstream paraMatlab;
+    paraMatlab.open("test.txt", ios_base::out);
+    if (paraMatlab.fail())
+        cout << "Fallo en grafico!" << endl;
+    else
+        D.prepararParaGraficarMetodo(paraMatlab, 1);
+    paraMatlab.close();
 
     cout << "OK!" << endl << endl;
     cout << "El algoritmo termino en " << time(NULL) - inicio << " segundos.\n" << endl;
