@@ -73,7 +73,7 @@ const Matriz& Senales :: matrizSenales(void)
  */
 void Senales :: metodo1(void)
 {
-    numSenales = 6*dimension*dimension;
+    numSenales = 6*dimension*dimension - 2*dimension;
     //este metodo genera 6*n^2 - 2*n señales, siendo n = dimension
     delete D;
     D = new Matriz(numSenales, dimension*dimension);
@@ -99,16 +99,17 @@ void Senales :: metodo1(void)
 }
 
 void Senales :: metodo2(void){
-    //este metodo genera 6*n^2 - 8*n + 2 señales, siendo n = dimension
+    //este metodo genera 6*n^2 - 2*n señales, siendo n = dimImagen
     delete D;
-    D = new Matriz(6*dimension*dimension, dimension*dimension);
+    unsigned int dimImagen = dimension;
+    D = new Matriz(6*dimImagen*dimImagen - 2*dimImagen, dimImagen*dimImagen);
 
     int fila = 0;                         //fila a llenar
     //todos los puntos de las demas paredes
-    int cantDestinos = 3*dimension - 1;
+    int cantDestinos = 3*dimImagen - 1;
 
-    for(unsigned int i = 0; i < dimension; i++){
-        for(unsigned int j = 1; j <= dimension; j++){
+    for(unsigned int i = 0; i < dimImagen; i++){
+        for(unsigned int j = 1; j <= dimImagen; j++){
             int filaoff = 0;
             //pared izquierda
             //tiro la señal hacia el piso
@@ -116,29 +117,33 @@ void Senales :: metodo2(void){
             filaoff++;
 
             //tiro la señal hacia la pared derecha
-            tirarSenal(0, (dimension + j)/cantDestinos + i, dimension, j, fila + filaoff);
+            tirarSenal(0, (dimImagen + j)/cantDestinos + i, dimImagen, j, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia el techo
-            if(j != dimension){
-                tirarSenal(0, (2*dimension + j)/cantDestinos + i, j, dimension, fila + filaoff);
-                filaoff++;
+            if(j != dimImagen){
+                if(i != (dimImagen - 1)){
+                    tirarSenal(0, (2*dimImagen + j)/cantDestinos + i, j, dimImagen, fila + filaoff);
+                    filaoff++;
+                }
             }
 
 
             //pared derecha
             //tiro la señal hacia el piso
-            tirarSenal(dimension, j/cantDestinos + i, dimension - j, 0, fila + filaoff);
+            tirarSenal(dimImagen, j/cantDestinos + i, dimImagen - j, 0, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia la pared izquierda
-            tirarSenal(dimension, (dimension + j)/cantDestinos + i, 0, j, fila + filaoff);
+            tirarSenal(dimImagen, (dimImagen + j)/cantDestinos + i, 0, j, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia el techo
-            if(j != dimension){
-                tirarSenal(dimension, (2*dimension + j)/cantDestinos + i, dimension - j, dimension, fila + filaoff);
-                filaoff++;
+            if(j != dimImagen){
+                if(i != (dimImagen - 1)){
+                    tirarSenal(dimImagen, (2*dimImagen + j)/cantDestinos + i, dimImagen - j, dimImagen, fila + filaoff);
+                    filaoff++;
+                }
             }
 
             fila += filaoff;
