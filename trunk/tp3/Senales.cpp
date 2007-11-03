@@ -12,7 +12,10 @@ Senales :: Senales(unsigned int dimImagen, unsigned int metodo)//, long double p
     switch(metodo){
         case 1:
 //            metodo1(dimImagen, puntos1, puntos2, cantSenales);
-            metodo1(dimImagen);//, puntos1, puntos2, cantSenales);
+            metodo1(dimImagen);
+            break;
+        case 2:
+            metodo2(dimImagen);
             break;
         default:
             cout << "No existe el metodo " << metodo << endl;
@@ -43,28 +46,81 @@ void Senales :: metodo1(unsigned int dimImagen, long double puntos1[][2], long d
 }
 */
 
+/*
+ * metodo1: Tira señales desde las 2 paredes verticales de la imagen hacia los
+ *          demas pixels que no esten en la misma pared.
+ *          Este metodo genera 6*n^2 señales/
+ */
 void Senales :: metodo1(unsigned int dimImagen)
 {
-    //este metodo genera 6*n^2 señales, siendo n = dimImagen
+    //este metodo genera 6*n^2 - 8*n + 2 señales, siendo n = dimImagen
     delete D;
     D = new Matriz(6*dimImagen*dimImagen, dimImagen*dimImagen);
 
-    int fila = 0;
+    int fila = 0;                                         //fila a llenar
     for(unsigned int i = 1; i < dimImagen; i++){
         for(unsigned int j = 1; j <= dimImagen; j++){
             //tiro las rectas de la pared izquierda
-            tirarSenal(0, i, j, 0, fila); //sobre el piso
-            tirarSenal(0, i, dimImagen, j, fila + 1); //sobre pared derecha
+            tirarSenal(0, i, j, 0, fila);                 //sobre el piso
+            tirarSenal(0, i, dimImagen, j, fila + 1);     //sobre pared derecha
             if(j != dimImagen)
                 tirarSenal(0, i, j, dimImagen, fila + 2); //sobre el techo
 
             //tiro las rectas de la pared derecha
-            tirarSenal(dimImagen, i, j, 0, fila + 3);                 //sobre el piso
-            tirarSenal(dimImagen, i, 0, j - 1, fila + 4);             //sobre pared izquierda
-            if(j != dimImagen)
-                tirarSenal(dimImagen, i, j - 1, dimImagen, fila + 5); //sobre el techo
+            tirarSenal(dimImagen, i, j, 0, fila + 3);    //sobre el piso
+            tirarSenal(dimImagen, i, 0, j - 1, fila + 4);//sobre pared izquierda
+            if(j != dimImagen)//sobre el techo
+                tirarSenal(dimImagen, i, j - 1, dimImagen, fila + 5);
 
             fila = fila + 6;
+        }
+    }
+}
+
+void Senales :: metodo2(unsigned int dimImagen){
+    //este metodo genera 6*n^2 - 8*n + 2 señales, siendo n = dimImagen
+    delete D;
+    D = new Matriz(6*dimImagen*dimImagen, dimImagen*dimImagen);
+
+    int fila = 0;                         //fila a llenar
+    //todos los puntos de las demas paredes
+    int cantDestinos = 3*dimImagen - 1;
+
+    for(unsigned int i = 0; i < dimImagen; i++){
+        for(unsigned int j = 1; j <= dimImagen; j++){
+            int filaoff = 0;
+            //pared izquierda
+            //tiro la señal hacia el piso
+            tirarSenal(0, j/cantDestinos + i, j, 0, fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia la pared derecha
+            tirarSenal(0, (dimImagen + j)/cantDestinos + i, dimImagen, j, fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia el techo
+            if(j != dimImagen){
+                tirarSenal(0, (2*dimImagen + j)/cantDestinos + i, j, dimImagen, fila + filaoff);
+                filaoff++;
+            }
+
+
+            //pared derecha
+            //tiro la señal hacia el piso
+            tirarSenal(dimImagen, j/cantDestinos + i, dimImagen - j, 0, fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia la pared izquierda
+            tirarSenal(dimImagen, (dimImagen + j)/cantDestinos + i, 0, j, fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia el techo
+            if(j != dimImagen){
+                tirarSenal(dimImagen, (2*dimImagen + j)/cantDestinos + i, dimImagen - j, dimImagen, fila + filaoff);
+                filaoff++;
+            }
+
+            fila += filaoff;
         }
     }
 }
@@ -94,11 +150,12 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
         long double a = (y2 - y1) / (x2 - x1);
         long double b = y1 - x1*((y2 - y1) / (x2 - x1));
         long double** pares = new long double* [2*(n+1)];
+
         //2*(n+1) lo peor es que pase por la
         //diagonal entonces va a haber 2*(n+1) pares;
 
         long double yEntero;                  //para ver si hay pares repetidos
-        int y = 0;
+        int y = 0;                            //para tener el valor entero
         bool* yRepetidos = new bool [n + 1];
 
         for(int i = 0; i < n+1; i++){
@@ -126,7 +183,10 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
                 y = (int)temp;          //paso el valor a entero
                 yEntero = y;            //lo guardo para comparar
 
-                if (yEntero == temp){   //veo si es entero y si es guardo la coordenada y para no contarla mas adelante
+                //veo si temp es entero
+                //si lo es lo marco para despues no contarlo
+                //(por que va a estar repetido)
+                if (yEntero == temp){
                     yRepetidos[y] = true;
                 }
                 cantPares++;
@@ -137,6 +197,7 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
             long double temp = (i - b)/a;
 
             if(temp >= 0 && temp <= n){
+                //veo si ese "y" ya estaba antes
                 if(!yRepetidos[i]){
                     pares[cantPares][0] = temp;
                     pares[cantPares][1] = i;
@@ -146,18 +207,10 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
         }
 
         //ordeno por la primer componente
-//        if (a > 0)
-            ordenarParesMenorAMayor(pares, cantPares);
-//        else
-//            ordenarParesMayorAMenor(pares, cantPares);
+        ordenarParesMenorAMayor(pares, cantPares);
 
-
-    //    for(int i = 0; i < cantPares; i++){
-    //        cout << "(" << pares[i][0] << "," << pares[i][1] << ")" << ", ";
-    //    }
-        //anulo los pares repetidos
-        anularRepetidos(pares, cantPares);
-
+        //ahora calculo la distancia que recorre la señal por cada pixel y
+        //genero la fila para la matriz D con estos datos
         for(int i = 0; i < cantPares; i++){
             int fil;
             int col;
@@ -168,11 +221,7 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
                 //siguiente a este es un valor valido(si no me pase de rango)
                 if( (pares[i+1][0] == -1) && (i+2 < cantPares) ){
                     //menor en x
-//                    if((int)pares[i][0] < (int)pares[i+2][0]){
-                        col = (int)pares[i][0];
-//                    }
-//                    else
-//                        col = (int)pares[i+1][0];
+                    col = (int)pares[i][0];
 
                     //menor en y, arreglo para coordenadas de la matriz
                     if((int)pares[i][1] < (int)pares[i+2][1]){
@@ -181,8 +230,8 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
                     else
                         fil = n - 1 - (int)pares[i+2][1];
 
-                    //calculo la distancia recorrida por la señal en cada cuadrado por
-                    //donde paso
+                    //calculo la distancia recorrida por la señal en cada
+                    //pixel por donde paso
                     long double x = pares[i][0] - pares[i+2][0];
                     long double y = pares[i][1] - pares[i+2][1];
 
@@ -203,8 +252,8 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
                     else
                         fil = n - 1 - (int)pares[i+1][1];
 
-                    //calculo la distancia recorrida por la señal en cada cuadrado por
-                    //donde paso
+                    //calculo la distancia recorrida por la señal en cada
+                    //pixel por donde paso
                     long double x = pares[i][0] - pares[i+1][0];
                     long double y = pares[i][1] - pares[i+1][1];
 

@@ -26,6 +26,10 @@ class Senales{
     //y despues desde la pared derecha hacia las demas
     void metodo1(unsigned int dimension);
 
+    //similar que el metodo uno solo que por cada señal enviada se desplaza
+    //el punto de pase.
+    void metodo2(unsigned int dimImagen);
+
     //Toma una pendiente, un punto de pase para generar una recta
     //una matriz, un n que representa la dimension de la matriz
     //imagen y el numero de la matriz a llenar
