@@ -8,6 +8,52 @@
 
 Senales :: Senales(unsigned int dimImagen, unsigned int metodo)
 {
+    long double** a = new long double* [36];
+
+
+    for(unsigned int i = 0; i < 36; i++){
+        a[i] = new long double [2];
+    }
+
+    a[0][0] = 0;
+    a[1][1] = 6.34483;
+    a[2][0] = 1;
+    a[3][1] = 5.71034;
+    a[4][0] = 2;
+    a[5][1] = 5.07586;
+    a[6][0] = 3;
+    a[7][1] = 4.44138;
+    a[8][0] = 4;
+    a[9][1] = 3.8069;
+    a[10][0] = 5;
+    a[11][1] = 3.17241;
+    a[12][0] = 6;
+    a[13][1] = 2.53793;
+    a[14][0] = 7;
+    a[15][1] = 1.90345;
+    a[16][0] = 8;
+    a[17][1] = 1.26897;
+    a[18][0] = 9;
+    a[19][1] = 0.634483;
+    a[20][0] = 10;
+    a[21][1] = 4.33681;
+    a[22][0] = 10;
+    a[23][1] = 0;
+    a[24][0] = 8.42391;
+    a[25][1] = 1;
+    a[26][0] = 6.84783;
+    a[27][1] = 2;
+    a[28][0] = 5.27174;
+    a[29][1] = 3;
+    a[30][0] = 3.69565;
+    a[31][1] = 4;
+    a[32][0] = 2.11957;
+    a[33][1] = 5;
+    a[34][0] = 0.543478;
+    a[35][1] = 6;
+
+    ordenarParesMenorAMayor(a, 36);
+
     D = NULL;
     dimension = dimImagen;
     switch(metodo){
@@ -98,19 +144,28 @@ void Senales :: metodo1(void)
     int fila = 0;                                         //fila a llenar
     for(unsigned int i = 1; i < dimension; i++){
         for(unsigned int j = 1; j <= dimension; j++){
+            int filaoff = 0;
             //tiro las rectas de la pared izquierda
-            tirarSenal(0, i, j, 0, fila);                 //sobre el piso
-            tirarSenal(0, i, dimension, j, fila + 1);     //sobre pared derecha
-            if(j != dimension)
-                tirarSenal(0, i, j, dimension, fila + 2); //sobre el techo
+            tirarSenal(0, i, j, 0, fila);                  //sobre el piso
+            filaoff++;
+            tirarSenal(0, i, dimension, j, fila + filaoff);//sobre pared derecha
+            filaoff++;
+            if(j != dimension){
+                tirarSenal(0, i, j, dimension, fila + filaoff); //sobre el techo
+                filaoff++;
+            }
 
             //tiro las rectas de la pared derecha
-            tirarSenal(dimension, i, j, 0, fila + 3);    //sobre el piso
-            tirarSenal(dimension, i, 0, j - 1, fila + 4);//sobre pared izquierda
-            if(j != dimension)//sobre el techo
-                tirarSenal(dimension, i, j - 1, dimension, fila + 5);
+            tirarSenal(dimension, i, j, 0, fila + filaoff);    //sobre el piso
+            filaoff++;
+            tirarSenal(dimension, i, 0, j - 1, fila + filaoff);//sobre pared izquierda
+            filaoff++;
+            if(j != dimension){//sobre el techo
+                tirarSenal(dimension, i, j - 1, dimension, fila + filaoff);
+                filaoff++;
+            }
 
-            fila += 6;
+            fila += filaoff;
         }
     }
 }
@@ -211,7 +266,7 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
         //          x2 - x1 != 0 paratodo x2, x1 reales, salvo que sea una senial vertical, lo cual tratamos anteriormente
         long double a = (y2 - y1) / (x2 - x1);
         long double b = y1 - x1*((y2 - y1) / (x2 - x1));
-        long double** pares = new long double* [2*(dimension+1)];
+        long double** pares = new long double* [2*(dimension + 1)];
 
         //2*(n+1) lo peor es que pase por la
         //diagonal entonces va a haber 2*(n+1) pares;
@@ -267,9 +322,13 @@ void Senales :: tirarSenal(long double x1, long double y1, long double x2, long 
                 }
             }
         }
-
         //ordeno por la primer componente
         ordenarParesMenorAMayor(pares, cantPares);
+
+ /*       for(int i = 0; i < cantPares; i++){
+            cout << "[" <<  pares[i][0] << ", " << pares[i][1] << "] ";
+        }
+        cout << endl << cantPares << endl;*/
 
         //ahora calculo la distancia que recorre la señal por cada pixel y
         //genero la fila para la matriz D con estos datos
