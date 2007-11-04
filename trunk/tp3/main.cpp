@@ -8,20 +8,20 @@ using namespace std;
 
 int main(int argc, char* argv[]){
     bool ayuda = false;
-    //int argc = 5;
-    //char* argv[8] = {"exe", "10.bmp", "test2.bmp", "3", "0",};// "-g", "graficameEsta.txt"};
-    if(argc >= 5){
-        unsigned int metodo = atoi(argv[3]);
-	    long double factorRuido = atof(argv[4]);
+    int argctrucho = 7;
+    char* argvtrucho[7] = {"exe", "10.bmp", "test2.bmp", "2", "0", "-g", "grafico.txt"};// "-g", "graficameEsta.txt"};
+    if(argctrucho >= 5){
+        unsigned int metodo = atoi(argvtrucho[3]);
+	    long double factorRuido = atof(argvtrucho[4]);
 
         srand((int)time(NULL));
 
         /*
          *  Levanto el archivo de entrada
          */
-        cout << "Levantando archivo " << argv[1] << " ... ";
+        cout << "Levantando archivo " << argvtrucho[1] << " ... ";
 	    BMP imagen;
-        imagen.ReadFromFile(argv[1]);
+        imagen.ReadFromFile(argvtrucho[1]);
         Matriz velocidadesInversas(imagen.TellWidth()*imagen.TellHeight(),1);
 
         for (int i = 0; i < imagen.TellHeight(); i++){
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
         cout << "El algoritmo termino en " << time(NULL) - inicio << " segundos.\n" << endl;
 
         //ya reconstrui la imagen, ahora la guardo
-        cout << "Guardando archivo " << argv[2] << " ... ";
+        cout << "Guardando archivo " << argvtrucho[2] << " ... ";
 
         for (int i = 0; i < imagen.TellWidth(); i++){
             for (int j = 0; j < imagen.TellHeight(); j++){
@@ -59,21 +59,21 @@ int main(int argc, char* argv[]){
                 imagen.SetPixel(j, i, nuevoPixel);
             }
         }
-        imagen.WriteToFile(argv[2]);
+        imagen.WriteToFile(argvtrucho[2]);
         cout << "OK!" << endl << endl;
 
         int parametro = 5;
-        while (parametro < argc){
-            if (strcmp(argv[parametro], "-g") == 0){
+        while (parametro < argctrucho){
+            if (strcmp(argvtrucho[parametro], "-g") == 0){
                 parametro++;
-                if (parametro == argc){
+                if (parametro == argctrucho){
                     cout << "Parametro -g mal utilizado." << endl << endl;
                     ayuda = true;
                 }
                 else{
                     cout << "Preparando grafico... ";
                     ofstream paraMatlab;
-                    paraMatlab.open(argv[parametro], ios_base::out);
+                    paraMatlab.open(argvtrucho[parametro], ios_base::out);
                     if (paraMatlab.fail()){
                         cout << "FAIL!" << endl << endl;
                         ayuda = true;
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
                 }
             }
 
-            if (strcmp(argv[parametro], "-h") == 0){
+            if (strcmp(argvtrucho[parametro], "-h") == 0){
                 ayuda = true;
             }
 
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]){
 
     if (ayuda){
         cout << "El formato de la ejecucion del programa debe cumplir:\n";
-        cout << argv[0] << " <input_file_bmp> <output_file_bmp> <metodo> <factor_ruido> [opciones...]" << endl << endl;
+        cout << argvtrucho[0] << " <input_file_bmp> <output_file_bmp> <metodo> <factor_ruido> [opciones...]" << endl << endl;
         cout << "Las opciones son:\n" << endl;
         cout << "-h\t\t\t\t\tImprime esta ayuda" << endl;
         cout << "-g <output_file_txt>\t\t\tPrepara un txt para graficar en matlab\n" << endl;
