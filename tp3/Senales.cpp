@@ -193,8 +193,8 @@ void Senales :: metodo2(void){
             filaoff++;
 
             //tiro la señal hacia el techo
-            if((j != dimension) && (i != (dimension - 1))){
-                tirarSenal(0, ((long double)2*dimension + j)/(long double)cantDestinos + i, j, dimension, fila + filaoff);
+            if (((j != dimension) && (i != (dimension - 1))) || (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                tirarSenal(0, ((long double)2*dimension + j)/(long double)cantDestinos + i, dimension - j, dimension, fila + filaoff);
                 filaoff++;
             }
 
@@ -209,8 +209,8 @@ void Senales :: metodo2(void){
             filaoff++;
 
             //tiro la señal hacia el techo
-            if((j != dimension) && (i != (dimension - 1))){
-                tirarSenal(dimension, (long double)(2*dimension + j)/(long double)cantDestinos + i, dimension - j, dimension, fila + filaoff);
+            if (((j != dimension) && (i != (dimension - 1))) || (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                tirarSenal(dimension, (long double)(2*dimension + j)/(long double)cantDestinos + i, j, dimension, fila + filaoff);
                 filaoff++;
             }
 
@@ -511,8 +511,9 @@ void Senales :: graficarMetodo2(ostream & os)
             os << "plot([" << 0 << " " << dimension << "], [" << (long double)(dimension + j)/(long double)cantDestinos + i << " " << j << "], 'k')" << endl;
 
             //tiro la señal hacia el techo
-            if((j != dimension) && (i != (dimension - 1))){
-                os << "plot([" << 0 << " " << j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i << " " << dimension << "], 'k')" << endl;
+            //if((j != dimension) && (i != (dimension - 1))){
+            if (((j != dimension) && (i != (dimension - 1))) || (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                os << "plot([" << 0 << " " << dimension - j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i << " " << dimension << "], 'k')" << endl;
             }
 
             //pared derecha
@@ -523,8 +524,9 @@ void Senales :: graficarMetodo2(ostream & os)
             os << "plot([" << dimension << " " << 0 << "], [" << (long double)(dimension + j)/(long double)cantDestinos + i << " " << j << "], 'k')" << endl;
 
             //tiro la señal hacia el techo
-            if((j != dimension) && (i != (dimension - 1))){
-                os << "plot([" << dimension << " " << dimension - j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i << " " << dimension << "], 'k')" << endl;
+            //if((j != dimension) && (i != (dimension - 1))){
+            if (((j != dimension) && (i != (dimension - 1))) || (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                os << "plot([" << dimension << " " << j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i << " " << dimension << "], 'k')" << endl;
             }
         }
     }
