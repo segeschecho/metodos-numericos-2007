@@ -6,14 +6,13 @@
 #include "EasyBMP.h"
 using namespace std;
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]){
     bool ayuda = false;
-//    int argc = 8;
-//    char* argv[8] = {"exe", "10.bmp", "test2.bmp", "1", "0", "-g", "graficameEsta.txt"};
+    //int argc = 5;
+    //char* argv[8] = {"exe", "10.bmp", "test2.bmp", "3", "0",};// "-g", "graficameEsta.txt"};
     if(argc >= 5){
         unsigned int metodo = atoi(argv[3]);
-	    unsigned long double factorRuido = atof(argv[4]);
+	    long double factorRuido = atof(argv[4]);
 
         srand((int)time(NULL));
 

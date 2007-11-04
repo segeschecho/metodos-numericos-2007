@@ -17,8 +17,11 @@ Senales :: Senales(unsigned int dimImagen, unsigned int metodo)
         case 2:
             metodo2();
             break;
+        case 3:
+            metodo3();
+            break;
         default:
-            cout << "No existe el metodo. En su lugar se ejecutara el metodo 1" << metodo << endl << endl;
+            cout << "No existe el metodo. En su lugar se ejecutara el metodo 1" << endl << endl;
             metodo1();
             break;
     }
@@ -43,7 +46,7 @@ void Senales :: prepararParaGraficarMetodo(ostream & os, int metodo)
     }
 }
 
-void Senales :: realizarTomografia(Matriz& resultado, unsigned long double factorRuido)
+void Senales :: realizarTomografia(Matriz& resultado, long double factorRuido)
 {
     Matriz t(numSenales, 1);
 
@@ -108,6 +111,7 @@ void Senales :: metodo1(void)
 
 void Senales :: metodo2(void){
     //este metodo genera 6*n^2 - 2*n señales, siendo n = dimImagen
+    numSenales = 6*(dimension^2) - 2*dimension;
     delete D;
     unsigned int dimImagen = dimension;
     D = new Matriz(6*dimImagen*dimImagen - 2*dimImagen, dimImagen*dimImagen);
@@ -160,13 +164,15 @@ void Senales :: metodo2(void){
 }
 
 void Senales :: metodo3(void){
-    //genera 2*(n+1) + n/2 señales
-    long double xMedio = dimension/2;
-    long double yMedio = dimension/2;
+    //genera 3*(n + 1)
+    numSenales = 4*dimension;
+    delete D;
+    D = new Matriz(numSenales, dimension*dimension);
 
-    cout << xMedio <<endl;
+    long double xMedio = (long double)dimension/2;
+    long double yMedio = (long double)dimension/2;
+
     int fila = 0;
-    cout << fila <<endl;
     //envio las señales desde la pared izquierda
     for(unsigned int i = 0; i <= 2*dimension; i++){
         tirarSenal(0, i/2, xMedio, yMedio, fila);
@@ -174,7 +180,7 @@ void Senales :: metodo3(void){
     }
 
     //envio las señales desde el piso hasta la mitad.
-    for(unsigned int i = 1; i <= dimension; i++){
+    for(unsigned int i = 1; i < 2*dimension; i++){
         tirarSenal(i/2, 0, xMedio, yMedio, fila);
         fila++;
     }

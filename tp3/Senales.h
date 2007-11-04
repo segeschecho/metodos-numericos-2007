@@ -14,7 +14,7 @@ class Senales{
     Senales(Senales& s);
 
     //hace un txt para graficar el metodo, enviado por parametro, en matlab
-    void realizarTomografia(Matriz& velocidades, unsigned long double factorRuido);
+    void realizarTomografia(Matriz& velocidades, long double factorRuido);
     void prepararParaGraficarMetodo(ostream & os, int metodo);
     unsigned int getCantidadSenales(void);
     ~Senales();
