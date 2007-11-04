@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc, char* argv[]){
     bool ayuda = false;
     int argctrucho = 7;
-    char* argvtrucho[7] = {"exe", "10.bmp", "test2.bmp", "2", "0", "-g", "grafico.txt"};// "-g", "graficameEsta.txt"};
+    char* argvtrucho[7] = {"exe", "10.bmp", "test2.bmp", "3", "0", "-g", "grafico.txt"};// "-g", "graficameEsta.txt"};
     if(argctrucho >= 5){
         unsigned int metodo = atoi(argvtrucho[3]);
 	    long double factorRuido = atof(argvtrucho[4]);
