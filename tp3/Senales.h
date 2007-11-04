@@ -28,7 +28,7 @@ class Senales{
     //y despues desde la pared derecha hacia las demas
     void metodo1(void);
 
-    //similar que el metodo uno solo que por cada señal enviada se desplaza
+    //similar que el metodo uno, salvo que por cada señal enviada se desplaza
     //el punto de pase.
     void metodo2(void);
 
@@ -51,6 +51,8 @@ class Senales{
     void anularRepetidos(long double** pares, int cantPares);
 
     void graficarMetodo1(ostream & os);
+    void graficarMetodo2(ostream & os);
+    void graficarMetodo3(ostream & os);
 };
 
 #endif /*_SENALES_H*/
