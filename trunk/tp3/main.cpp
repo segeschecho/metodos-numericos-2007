@@ -4,12 +4,13 @@
 #include "Matriz.h"
 #include "Senales.h"
 #include "EasyBMP.h"
+
 using namespace std;
 
 int main(int argc, char* argv[]){
     bool ayuda = false;
     int argctrucho = 7;
-    char* argvtrucho[7] = {"exe", "12.bmp", "test2.bmp", "1", "0", "-g", "grafico.txt"};// "-g", "graficameEsta.txt"};
+    char* argvtrucho[7] = {"exe", "10.bmp", "test2.bmp", "2", "0", "-g", "grafico.txt"};// "-g", "graficameEsta.txt"};
 
 
     if(argctrucho >= 5){
