@@ -63,7 +63,7 @@ void Senales :: realizarTomografia(Matriz& resultado, long double factorRuido)
     //cuadrados minimos, para reconstruir la imagen
 
     for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + (long double)(rand() % 100)*(factorRuido/1000000));
+        t.asignar(i, 0, t.ver(i,0) + (long double)(rand() % 10)*(factorRuido/100000));
     }
 
     resultado.cuadradosMinimosLineales(*D, t);

@@ -9,34 +9,21 @@ using namespace std;
 
 int main(int argc, char* argv[]){
     bool ayuda = false;
-    int argctrucho = 7;
-    char argvtrucho[7][256] = {"exe", "07.bmp", "test24.bmp", "2", "0", "-g", "grafico10.txt"};
-/*    for (int test = 1; test <= 30; test++){
-        if(test % 10 == 0){
-            argvtrucho[1][0] += 1;
-            argvtrucho[2][4] += 1;
-            argvtrucho[6][7] += 1;
-            argvtrucho[1][1] = '0';
-            argvtrucho[2][5] = '0';
-            argvtrucho[6][8] = '0';
+    if(argc >= 5){
+        unsigned int metodo = atoi(argv[3]);
+	    long double factorRuido = atof(argv[4]);
+        if (factorRuido < 0){
+            factorRuido = 0;
         }
-        else{
-            argvtrucho[1][1] += 1;
-            argvtrucho[2][5] += 1;
-            argvtrucho[6][8] += 1;
-        }*/
-    if(argctrucho >= 5){
-        unsigned int metodo = atoi(argvtrucho[3]);
-	    long double factorRuido = atof(argvtrucho[4]);
 
         srand((int)time(NULL));
 
         /*
          *  Levanto el archivo de entrada
          */
-        cout << "Levantando archivo " << argvtrucho[1] << " ... ";
+        cout << "Levantando archivo " << argv[1] << " ... ";
 	    BMP imagen;
-        imagen.ReadFromFile(argvtrucho[1]);
+        imagen.ReadFromFile(argv[1]);
 
         //Creo la matriz para las velocidades inversas
         Matriz velocidadesInversas(imagen.TellWidth()*imagen.TellHeight(),1);
@@ -64,9 +51,10 @@ int main(int argc, char* argv[]){
         cout << "Operando ... ";
 
         D.realizarTomografia(velocidadesInversas, factorRuido);
+        int fin = (int)time(NULL);
 
         cout << "OK!" << endl << endl;
-        cout << "El algoritmo termino en " << time(NULL) - inicio << " segundos.\n" << endl;
+        cout << "El algoritmo termino en " << fin - inicio << " segundos.\n" << endl;
 
         //muestro el Error cuadratico medio para ver la calidad
         //de la imagen reconstruida
@@ -82,40 +70,40 @@ int main(int argc, char* argv[]){
         cout << "Error cuadratico Medio: " << ecm << endl << endl;
 
         //ya reconstrui la imagen, ahora la guardo
-        cout << "Guardando archivo " << argvtrucho[2] << " ... ";
+        cout << "Guardando archivo " << argv[2] << " ... ";
 
         for (int i = 0; i < imagen.TellWidth(); i++){
             for (int j = 0; j < imagen.TellHeight(); j++){
                 RGBApixel nuevoPixel;
-                char valorPixel = (char)((1 / velocidadesInversas.ver(i*imagen.TellWidth() + j,0)) - 1);
+                long double valorPixel = (1/(velocidadesInversas.ver(i*imagen.TellWidth() + j,0))) - 1;
                 if (valorPixel < 0)
                     valorPixel = 0;
 
                 if (valorPixel > 255)
                     valorPixel = 255;
                 nuevoPixel.Alpha = 0;
-                nuevoPixel.Red = valorPixel;
-                nuevoPixel.Green = valorPixel;
-                nuevoPixel.Blue = valorPixel;
+                nuevoPixel.Red = (unsigned char)valorPixel;
+                nuevoPixel.Green = (unsigned char)valorPixel;
+                nuevoPixel.Blue = (unsigned char)valorPixel;
                 imagen.SetPixel(j, i, nuevoPixel);
             }
         }
-        imagen.WriteToFile(argvtrucho[2]);
+        imagen.WriteToFile(argv[2]);
         cout << "OK!" << endl << endl;
 
         //veo si se selecciono la opcion para graficar
         int parametro = 5;
-        while (parametro < argctrucho){
-            if (strcmp(argvtrucho[parametro], "-g") == 0){
+        while (parametro < argc){
+            if (strcmp(argv[parametro], "-g") == 0){
                 parametro++;
-                if (parametro == argctrucho){
+                if (parametro == argc){
                     cout << "Parametro -g mal utilizado." << endl << endl;
                     ayuda = true;
                 }
                 else{
                     cout << "Preparando grafico ... ";
                     ofstream paraMatlab;
-                    paraMatlab.open(argvtrucho[parametro], ios_base::out);
+                    paraMatlab.open(argv[parametro], ios_base::out);
                     if (paraMatlab.fail()){
                         cout << "FAIL!" << endl << endl;
                         ayuda = true;
@@ -128,7 +116,7 @@ int main(int argc, char* argv[]){
                 }
             }
 
-            if (strcmp(argvtrucho[parametro], "-h") == 0){
+            if (strcmp(argv[parametro], "-h") == 0){
                 ayuda = true;
             }
 
@@ -140,8 +128,8 @@ int main(int argc, char* argv[]){
 
     //muestro la ayuda
     if (ayuda){
-        cout << "\nSimula el proceso de tomografia y reconstruccion\n\n";
-        cout << argvtrucho[0] << " Input_file_bmp Output_file_bmp Metodo Factor_ruido [Opciones...]" << endl << endl;
+        cout << "\nSimular el proceso de tomografia y reconstruccion\n\n";
+        cout << argv[0] << " <Input_file_bmp> <Output_file_bmp> <Metodo> <Factor_ruido> [Opciones...]" << endl << endl;
         cout << "Input_file_bmp:       Imagen de entrada en formato BMP.\n";
         cout << "Output_file_bmp:      Imagen de salida en formato BMP.\n";
         cout << "Metodo:               Metodo de distribucion de señales de 1 a 3\n";
@@ -149,7 +137,6 @@ int main(int argc, char* argv[]){
         cout << "\nOpciones:\n" << endl;
         cout << "-h                    Imprime esta ayuda" << endl;
         cout << "-g <output_file_txt>  Prepara un txt para graficar en matlab\n" << endl;
-//    }
     }
     system("PAUSE");
 	return 0;
