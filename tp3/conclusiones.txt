@@ -1,0 +1,3 @@
+Conclusiones:
+
+con respecto a lo observado podemos sacar las siguientes conclusiones: en las pruebas de error cuadratico medio se vio un menor valor para imagenes que contienen valores mas bajos, mas cercanos a 0 (colores mas oscuros, en escala de grises), y esto se debe al calculo de los tiempos, ya que al hacer las cuentas y tener una velocidad (valor del pixel) muy grande la division se vuelve chica por lo cual se esta mas propenso a errores grandes de redondeo, mas que el numero calculado en caso de tener un valor mas chico de la velocidad. Esto implica tener los datos con un cierto nivel de error, que a la hora de hacer la reconstruccion, se suman al error propio de la aproximacion.
