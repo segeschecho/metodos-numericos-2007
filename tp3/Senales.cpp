@@ -175,7 +175,7 @@ void Senales :: metodo2(void){
 }
 
 void Senales :: metodo3(void){
-    //genera 3*(n + 1)
+    //genera 2*n^2 señales
     numSenales = 2*dimension*dimension;
     delete D;
     D = new Matriz(numSenales, dimension*dimension);
