@@ -10,9 +10,21 @@ using namespace std;
 int main(int argc, char* argv[]){
     bool ayuda = false;
     int argctrucho = 7;
-    char* argvtrucho[7] = {"exe", "6.bmp", "test2.bmp", "3", "0", "-g", "grafico.txt"};// "-g", "graficameEsta.txt"};
-
-
+    char argvtrucho[7][256] = {"exe", "07.bmp", "test24.bmp", "2", "0", "-g", "grafico10.txt"};
+/*    for (int test = 1; test <= 30; test++){
+        if(test % 10 == 0){
+            argvtrucho[1][0] += 1;
+            argvtrucho[2][4] += 1;
+            argvtrucho[6][7] += 1;
+            argvtrucho[1][1] = '0';
+            argvtrucho[2][5] = '0';
+            argvtrucho[6][8] = '0';
+        }
+        else{
+            argvtrucho[1][1] += 1;
+            argvtrucho[2][5] += 1;
+            argvtrucho[6][8] += 1;
+        }*/
     if(argctrucho >= 5){
         unsigned int metodo = atoi(argvtrucho[3]);
 	    long double factorRuido = atof(argvtrucho[4]);
@@ -48,8 +60,8 @@ int main(int argc, char* argv[]){
 
         cout << "Usando el metodo " << metodo;
         cout << ", generando " << D.getCantidadSenales();
-        cout << " seniales..." << endl << endl;
-        cout << "Operando... ";
+        cout << " senales..." << endl << endl;
+        cout << "Operando ... ";
 
         D.realizarTomografia(velocidadesInversas, factorRuido);
 
@@ -62,7 +74,7 @@ int main(int argc, char* argv[]){
         for (int i = 0; i < imagen.TellHeight(); i++){
             for (int j = 0; j < imagen.TellWidth(); j++){
                 long double orig = velocidadesOrig.ver(i*imagen.TellWidth() +j, 0);
-                long double aprox = 1/velocidadesInversas.ver(i*imagen.TellWidth() +j, 0);
+                long double aprox = 1/velocidadesInversas.ver(i*imagen.TellWidth() + j, 0);
                 ecm += (orig - aprox)*(orig - aprox);
             }
         }
@@ -76,6 +88,11 @@ int main(int argc, char* argv[]){
             for (int j = 0; j < imagen.TellHeight(); j++){
                 RGBApixel nuevoPixel;
                 char valorPixel = (char)((1 / velocidadesInversas.ver(i*imagen.TellWidth() + j,0)) - 1);
+                if (valorPixel < 0)
+                    valorPixel = 0;
+
+                if (valorPixel > 255)
+                    valorPixel = 255;
                 nuevoPixel.Alpha = 0;
                 nuevoPixel.Red = valorPixel;
                 nuevoPixel.Green = valorPixel;
@@ -96,7 +113,7 @@ int main(int argc, char* argv[]){
                     ayuda = true;
                 }
                 else{
-                    cout << "Preparando grafico... ";
+                    cout << "Preparando grafico ... ";
                     ofstream paraMatlab;
                     paraMatlab.open(argvtrucho[parametro], ios_base::out);
                     if (paraMatlab.fail()){
@@ -132,8 +149,8 @@ int main(int argc, char* argv[]){
         cout << "\nOpciones:\n" << endl;
         cout << "-h                    Imprime esta ayuda" << endl;
         cout << "-g <output_file_txt>  Prepara un txt para graficar en matlab\n" << endl;
+//    }
     }
-
     system("PAUSE");
 	return 0;
 }
