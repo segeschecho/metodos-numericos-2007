@@ -145,7 +145,7 @@ void Matriz :: resolver(Matriz &X, Matriz &b)
 
 void Matriz :: cuadradosMinimosLineales(const Matriz& A, const Matriz& b)
 {
-    //En este algoritmo se aprobecha que A(traspuesta)*A es simetrica
+    //En este algoritmo se aprovecha que A(traspuesta)*A es simetrica
 
     Matriz AtA(A.col, A.col);
     Matriz Atb(A.col, 1);

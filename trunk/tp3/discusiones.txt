@@ -1,0 +1,12 @@
+DISCUCIONES:
+
+Una de las cosas que nos consumío bastante tiempo de pruebas y deliberación fue el poder encontrar una expresion que simule bien el factor ruido. En total sugieron tres versiones direfentes de ella. La primera tenia la siguiente ecuacion (long double)((rand() % 100)+1)*(factorRuido/1000)), y la idea era calcular el ruido dependiendo de un random acotado entre uno y cien de manera tal de poder hacer una especie de porcentaje al valor original. La division por mil hace que los valores de la cuenta no se exedan en valores irreales o muy elevados. Este metodo se descarto al surgir otra manera de calcular el ruido, ya que esta forma no tenia la posibilidad de que el random fuese cero, y ademas los valores que calculaba esta expresion se hacian demasiado grandes porque consideramos que el factor ruido tenia que ser mas bien valores chicos, ademas nos resulto incomodo a la hora de hacer los testeos.
+
+El segundo metodo tenia la siguiente ecuacion (long double)(rand() % 100)*(factorRuido/1000000) para resover los problemas del metodo anterior, para que el factor sea mas pequeño optamos por aumentar el divisor a 1000000. Despues de hacer varias pruebas nos dimos cuenta que este metodo al tener el %100 en el random hacia que el ruido introducido fuese demasiado inestable, y necesitabamos algo que a pesar de ser aleatorio contenga una distribucion mas uniforme del ruido. Por lo cual tuvimos que buscar una nueva espresion.
+
+El tercer y ultimo metodo que tiene la ecuacion (long double)(rand() % 10)*(factorRuido/100000)) soluciono los problemas de inestabilidad que se presentaba con el algoritmo anterior. Realizando pruebas llegamos a que esta expresion funciona bastante bien en terminos de los valores de ruido que genera.
+
+
+
+
+
