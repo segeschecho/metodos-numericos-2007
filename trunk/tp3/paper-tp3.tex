@@ -72,12 +72,6 @@ Como la imagen reconstruida es una aproximación, se utiliza el error cuadrático 
 \leftline{\LARGE{\bf Desarrollo:}}
 \medskip
 
-
-\medskip
-\medskip
-\leftline{\LARGE{\bf Detalles de la implementación:}}
-\medskip
-
 El problema  que se plantea, es el de simular el proceso de tomografía y reconstrucción de cuerpos en dos dimensiones. Para hacer esto se trabaja a partir de una imagen en escala de grises, con lo que las tres componentes (RGB) de cada píxel tienen el mismo valor. Sabemos por las condiciones del trabajo que ésta debe ser cuadrada. Para trabajar con ella., la imagen es discretizada en la cantidad de pixels donde cada uno de estos es considerado un cuadrado de dimensión uno. El valor de un píxel corresponde a la velocidad que tendría una señal acústica al pasar por ese sector.
 
 La imagen se encuentra en formato BMP, éste contiene una cabecera de 54 Bytes con los datos del archivo y las características de la imagen, el tipo, ancho y alto en pixels, tamaño del archivo y tamaño de la cabecera, seguido de la imagen propiamente dicha. Esta información tiene importancia al momento de obtener la matriz con los pixels que conforman la imagen, por lo tanto se implementó un procedimiento que obtiene dicha matriz de manera que se pueda abordar el problema sin preocuparnos por datos ajenos a la estructura que queremos utilizar como modelo. Además, para el manejo de las imagenes se esta empleando una librería para C++, EasyBMP, que realiza todas las manipulaciones pertinentes sobre el encabezado, y crea los flujos de entrada y salida de a cuerdo a nuestras necesidades.
@@ -101,7 +95,7 @@ Explicada la manera para generar una señal, se pasan a describir los tres método
 \includegraphics[scale=0.50]{metodo1.jpg}
 }
 \centerline{
-\tiny{Metodo 1}
+{\small Metodo 1}
 }
 
 \medskip
@@ -109,7 +103,7 @@ Explicada la manera para generar una señal, se pasan a describir los tres método
 \includegraphics[scale=0.5]{metodo2.jpg}
 }
 \centerline{
-\tiny{Metodo 2}
+{\small Metodo 2}
 }
 
 \item El tercer método, lanza rectas desde la pared izquierda y la base de la discretización, comenzando en lo que sería el origen de nuestro sistema cartesiano y avanzando de a pasos de 1/n hacia los extremos. Toma como epicentro para todas las señales el punto central de la imagen, mientras que el segundo punto para calcular cada recta es el antes mencionado. Considerando que este método se detiene cuando ambos focos alcanzan el extremo correspondiente de la imagen, cada uno emite n*n señales acústicas, lo que da un total de $2n^2$, siendo éste el procedimiento que menos rectas traza.
@@ -118,7 +112,7 @@ Explicada la manera para generar una señal, se pasan a describir los tres método
 \includegraphics[scale=0.5]{metodo3.jpg}
 }
 \centerline{
-\tiny{Metodo 3}
+{\small Metodo 3}
 }
 \end{itemize}
 
@@ -140,6 +134,11 @@ En este punto conocemos todos los datos del problema: las velocidades, las dista
 Completada esta etapa, acometeremos el verdadero objetivo del trabajo. Éste consiste en reconstruir la imagen original (que es equivalente a obtener las velocidades) a partir de las distancias (la matriz D) y los tiempos (que en esta etapa son distorsionados en un grado elegido por el usuario). Para reconstruir los datos, aplicamos la técnica de cuadrados mínimos lineales, y utilizando las ecuaciones normales resolvemos el sistema, aplicando eliminación gaussiana con pivoteo parcial. En el caso de que el pivoteo parcial no pueda efectuarse (si solo hay ceros debajo del elemento de la diagonal) se utiliza la técnica de pivoteo total.
 
 Resuelto el sistema, se obtiene un vector columna que contiene las velocidades invertidas. Cabe aclarar que, en este punto, las velocidades son una aproximación de las originales, ya que el método de cuadrados mínimos puede no obtener los valores reales de la imagen debido al ruido introducido en los tiempos  .Con éstas, se procede a  reconstruir la matriz de pixels, y convertirla a formato BMP. Este proceso implica copiar tres veces el valor de cada velocidad (para formar un píxel con las componentes RGB igualadas, por ser la imagen una escala de grises) y de agregar al final de cada fila de pixels los Bytes de "basura" que sean necesarios según el formato. Recordemos que para estas tareas se emplea una librería especializada para manipulación de BMP.
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Detalles de la implementación:}}
+\medskip
 
 Todo este proceso esta sustentado en los módulos 'Matriz' y 'Senales', el primero incluye el utilizado en el trabajo anterior, con los siguientes agregados y modificaciones:
 
@@ -193,12 +192,185 @@ Una vez hecho todo lo anterior se libera la memoria de los arreglos creados y co
 \medskip
 \medskip
 \leftline{\LARGE{\bf Resultados:}}
+\medskip
+
+En esta sección se procedera a la muestra de diferentes resultados realizados al sistema, con distintas imágenes. En una primera parte se mostrará como se comportan los diferentes métodos de distribución de señales al momento de reconstruir una imagen. La segunda parte se encargará de explayar graficamente los errores cuadraticos medios de cada método aplicado a una misma imagen de 10x10 pixels.
+
+En la parte final se verán los tiempos requeridos para reconstruir una imagen en función del tamaño de la imagen, para obsvervar su eficiencia.
+
+\medskip
+En los siguientes graficos se probaran los 3 metodos de distribución de señales en una imagen de 20x20 pixels, y usando factor ruido igual a 50.
+
+La imagen original es la siguiente:
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{20.JPG}
+}
+
+\medskip
+Se prueban en orden los metodos 1, 2 y 3 respectivamente.
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test20M1cr50.JPG}
+}
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test20M2cr50.JPG}
+}
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test20M3cr50.JPG}
+}
+
+\medskip
+Las siguientes pruebas se realizaran sobre una imagen de 25x25 con nivel de ruido 50.
+
+La imagen original es la siguiente:
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{25.JPG}
+}
+\medskip
+
+Ahora se muestran en orden los metodos 1, 2 y 3.
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test25M1cr50.JPG}
+}
+\medskip
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test25M2cr50.JPG}
+}
+\medskip
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test25M3cr50.JPG}
+}
+\medskip
+
+Finalizando esta primera parte pruebas, se muestran los metodos sobre una imagen de 30x30 pixels y con grado de ruido 50.
+
+La imagen original:
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{30.JPG}
+}
+\medskip
+
+Ahora los metodos en orden:
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test30M1cr50.JPG}
+}
+\medskip
 
 
+\medskip
+\centerline{
+\includegraphics[scale=5]{test30M2cr50.JPG}
+}
+\medskip
+
+
+\medskip
+\centerline{
+\includegraphics[scale=5]{test30M3cr50.JPG}
+}
+\medskip
+
+La segunda parte de nuestras pruebas muestra el error cuadratico medio en función del factor ruido para los métodos 1 y 2, sobre una imagen de 10x10 pixels.
+
+\centerline{
+\includegraphics[scale=0.45]{ECMyFR.jpg}
+}
+
+Para el método 3, mostraremos un gráfico aparte ya que el error cuadrático medio en función del factor ruido se comporta de forma muy inestable para la misma imagen de 10x10 pixels. En este caso se observan valores más elevados de lo que espararíamos para el error cuadrático medio para niveles de ruido muy pequeños, esto indica que el método no es eficiente (y tal vez ni siquiera eficaz) a la hora de reconstruir la imagen original.
+
+
+
+\centerline{
+\includegraphics[scale=0.45]{ECMyFRmetodo3.jpg}
+}
+
+En esta ultima parte, el siguiente gráfico mostrara el tiempo requerido para reconstruir una imagen en función del tamaño en pixels, en este caso las dimensiones de la imagen estan acotadas a 30x30 pixels como máximo.
+
+\centerline{
+\includegraphics[scale=0.45]{SegundosDimension.jpg}
+}
 
 \medskip
 \medskip
 \leftline{\LARGE{\bf Discusiones:}}
+\medskip
+
+Como se pudo apreciar en la sección Resultados, no fueron incluidas reconstrucciones sin ruido, ya que estas son totalmente fieles a las imágenes originales para los métodos 1 y 2, esto sucede gracias a que, con ambas distribuciones la técnica de cuadrados mínimos lineales cuenta con suficiente información como para dar una aproximación 'exacta', y porque concuerdan perfectamente los datos con los que se la utiliza.
+
+Nótese que en las ecuaciones normales que empleamos para resolver el método de CML se puede quitar la At y nos queda el sistema original.
+
+A la luz de las imágenes aproximadas por el método 3, se puede decir que éste tiene una performance bastante menor a los otros dos. Esto se debe a que es el diagrama que menos rectas traza, o también (sin ser excluyente) a una mala distribución de las señales al momento de surcar la imagen.
+
+Como era de esperarse, las imágenes  respetan la relación inversa entre calidad y ruido. Esto sucede a causa de la disparidad entre los datos originales y los tiempos que utiliza la técnica de CML. De todas formas consideramos que ésta tiene un muy buen desempeño al aproximar las velocidades, teniendo en cuenta que la magnitud del ruido llega a ser bastante alta.
+
+Por último, casi no se aprecia diferencia entre las aproximaciones realizadas con los métodos 1 y 2, esto era bastante esperable, ya que como puede observarse en el gráfico correspondiente sus ECM, se mantienen en ordenes similiares para todas las dimensiones, con distintos factores de ruido.
+
+Las magnitudes con que se distorsionan los tiempos de recorridas forman un elemento crucial al momento de la reconstrucción. Si bien éstas no son un resultado del trabajo, su cálculo afecta a todas las imágenes que sean producto de nuestro programa. Es por esto que se incluyen en esta sección nuestras apreciaciones sobre el tema. 
+
+Una de las cosas que nos consumió bastante tiempo de pruebas y deliberación fue el poder encontrar una expresión que simule bien el factor ruido. En total surgieron tres versiones diferentes de ella. La primera tenía la siguiente ecuación: 
+
+$$(long double)((rand() \% 100)+1)*(factorRuido/1000))$$
+
+La idea era calcular el ruido dependiendo de un número pseudo-aleatorio (random) acotado entre uno y cien de manera tal de poder hacer una suerte de porcentaje del valor original. La división por mil hace que los valores de la cuenta no se excedan en magnitud, tornándose muy elevados o irreales. Este método se descarto al surgir otra manera de calcular el ruido, ya que la fórmula anterior no tenía la posibilidad de que el ruido fuese cero, y además los valores que calculaba esta expresión se hacían demasiado grandes, ya que consideramos que el parámetro tenía que ser más bien pequeño, sin contar que nos resultó incomodo a la hora de testear el programa.
+
+Una vez reformulado, el segundo método quedo expresado de la siguiente manera
+
+$$(long double)(rand() \% 100)*(factorRuido/1000000)$$
+
+Para resolver los problemas de la función anterior (para que el factor sea más pequeño), optamos por aumentar el divisor a 1000000. Después de hacer varias pruebas nos dimos cuenta que este método al calcular el "mod 100" en el random hacia que el ruido introducido fuese demasiado inestable, y deseábamos algo que a pesar de ser aleatorio, tuviera una distribución más uniforme del ruido. Por ello, abandonamos esta segunda forma de cálculo para buscar una nueva expresión.
+
+El tercer y último método se obtiene mediante el siguiente cálculo 
+
+$$(long double)(rand() \% 10)*(factorRuido/100000)) $$
+
+Este solucionó los problemas de inestabilidad que se presentaba con el algoritmo anterior, y centra los valores del ruido en diez posibilidades, que si bien no son muchas, consideramos una cantidad suficiente para distorsionar los tiempos de recorrida. Realizando distintas pruebas nos dimos por satisfechos y creemos que esta expresión funciona bastante bien en en cuanto a los valores de ruido que genera.  
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Conclusiones:}}
+\medskip
+
+Con respecto a lo observado podemos sacar las siguientes conclusiones: en las pruebas de error cuadrático medio se vio un resultado menor para imágenes que contienen valores más bajos, más cercanos a 0 (colores más oscuros, en escala de grises), esto se debe al cálculo que se realiza para obtener los tiempos, ya que al hacer las cuentas y tener una velocidad (valor del pixel) muy grande, la división se vuelve chica por lo cual se esta más propenso a errores grandes de redondeo, en contraste con un número calculado con un menor valor de la velocidad. Esto implica tener los datos con un cierto nivel de error, que al momento de hacer la reconstrucción, se suma al que ya es propio de la aproximación.
+
+Con esto se puede inferir lo siguiente: imágenes (en escala de grises) con mayoría de pixels oscuros, tienen más oportunidad de generar error adicional al cometido durante la reconstrucción. Sin embargo, teniendo un método de distribución de señales eficiente, esto no se vuelve un problema grave, lo que es seguro, es que su incidencia en el resultado final debe ser tenido en cuenta.
+
+Siguendo con los patrones de distribución, se observó durante el trabajo que no siempre el mejor método para reconstruir una imagen es el que llega a atravezar todos los puntos de la discretizacion, si no el que puede surcar cada punto con más de una recta y además en diferentes direcciones, la mayor cantidad que sea posible, en función de recopilar la mayor cantidad de datos posibles para cada sector a reconstruir. En la sección de resultados se puede observar que el método 3 no es nada eficiente a pesar que genera un número importante de señales. Esto se debe a que la distribución de la emisión de señales no es óptima por lo explicado anteriormente. En síntesis, se puede concluir que el resultado a obtener esta directamente relacionado (entre otras cosas) con el tipo de distribucion de estas señales, y que una mala elección de esta puede llevar a resultados incongurentes con lo esperado y por lo tanto incorrectos.
+
+En cuanto al aspecto de eficiencia computacional en memoria y tiempo podemos decir que nos manejamos en rangos aceptables, aunque sin duda mejorables, en particular, con una revision del código y una redistribución y reagrupación del mismo se podrían llegar a bajar las constantes de la complejidad. Sin embargo, se prefirió asignar más tiempo a las pruebas experimentales en lugar de pulir el código, en detrimento de la eficiencia. Cabe aclarar que con ese trabajo tan solo se podrían disminuir las constantes, que no son el factor preponderante en el calculo de complejidades asintóticas. 
+Para calcular los diagramas de distribución de las señales, incurrimos en una complejidad (en los tres métodos) de orden cúbico, es decir O($n^3$), en la dimensión de la matriz que se desea analizar. Esto se debe a que se ejecuta, generalizando, el método tirarSenal, que es O($n$), dentro de ciclos anidados que lo repiten $n^2$ veces (todo sin tener en cuenta las constantes que multiplican estas magnitudes), lo que, por propiedades del "álgebra de ordenes", nos da una complejidad cúbica.  
+El otro método que incurre en una complejidad similar es cuadradosMinimosLineales, del módulo Matriz. Las multiplicaciones que tiene que realizar éste hacen que su orden sea O($fil2*col$) y la función resolver que emplea es de una complejidad O($col^3$), con fil y col filas y columnas de la matriz D. Siendo ésta mas 'alta' que 'ancha' (todos las distribuciones de señales generan muchas más rectas que $n^2$) es preponderante la complejidad cúbica en las columnas (col es del orden de $n^2$), así el algoritmo tiene un abrumador orden final de O($n^6$), lo que vuelve un tanto fútil bajar las constantes con la intención de mejorar los tiempos de ejecución. 
+Por esto, el limite de ancho o alto para imágenes a tratar con nuestro software es de 30 pixels, superarlo no lo hace fallar, pero insume una gran cantidad de tiempo.
+El tema de la memoria es un tanto diferente, el manejo de matrices grandes trae, inherentemente, un consumo de espacio importante, y el hecho de no conocer con exactitud la distribución de los elementos distintos de cero (ya se hizo notar que D es rala) hace difícil cualquier intento de evitar almacenar solamente estos últimos. Se tomaron algunas medidas para paliar esto, como calcular algunos resultados intermedios in situ, pero no se gana gran cosa.
+
+Basándonos en nuestras experiencias durante este trabajo, hemos llegado a las siguientes conclusiones:
+
+\begin{itemize}
+\item Siempre es deseable una distribución de las señales que minimice la cantidad de filas linealmente dependientes de la matriz D. Con esto se garantiza una buena aproximación mediante los CML.
+
+\item Extender estos métodos a imágenes de dimensión mayor a 30, no tiene problemas en el plano teorico, pero encuentra trabas en el práctico debido a las grandes complejidades temporales. Se descuenta que en futuras versiones se optimizara el código.
+
+\item La magnitud del ruido introducido es un factor esencial, que influye grandemente en el resultado final del trabajo. Este es un componente muy sensible en la implementación, que debe ser manipulado con mucho cuidado y a conciencia.  
+
+\end{itemize}
 
 \pagebreak
 \leftline{{\LARGE{\bf Apendice A:}}}
@@ -1125,7 +1297,169 @@ void Matriz :: pivoteoTotal(int fila, Matriz *b)
 \end{verbatim}
 }
 
+\item
+\bf Main.cpp
+{\small
+\begin{verbatim}
+#include <iostream>
+#include <fstream>
+#include <time.h>
+#include "Matriz.h"
+#include "Senales.h"
+#include "EasyBMP.h"
 
+using namespace std;
+
+int main(int argc, char* argv[]){
+    bool ayuda = false;
+    if(argc >= 5){
+        unsigned int metodo = atoi(argv[3]);
+	    long double factorRuido = atof(argv[4]);
+        if (factorRuido < 0){
+            factorRuido = 0;
+        }
+
+        srand((int)time(NULL));
+
+        /*
+         *  Levanto el archivo de entrada
+         */
+        cout << "Levantando archivo " << argv[1] << " ... ";
+	    BMP imagen;
+        imagen.ReadFromFile(argv[1]);
+
+        //Creo la matriz para las velocidades inversas
+        Matriz velocidadesInversas(imagen.TellWidth()*imagen.TellHeight(),1);
+        //velocidades originales para calcular el Error cuadratico medio
+        Matriz velocidadesOrig(imagen.TellWidth()*imagen.TellHeight(),1);
+
+        for (int i = 0; i < imagen.TellHeight(); i++){
+            for (int j = 0; j < imagen.TellWidth(); j++){
+                long double inverso = (1 /
+                                      ((long double)imagen.GetPixel(j, i).Blue
+                                      + 1));
+
+                velocidadesInversas.asignar(i*imagen.TellWidth() + j, 0,
+                                            inverso);
+                //guardo las velocidades orginales para hacer el ECM
+                velocidadesOrig.asignar(i*imagen.TellWidth() + j, 0,
+                                       (long double)imagen.GetPixel(j, i).Blue +
+                                        1);
+            }
+        }
+        cout << "OK!" << endl << endl;
+
+        //inicio: para calcular cuanto tarda el algoritmo
+        int inicio = (int)time(NULL);
+        Senales D(imagen.TellHeight(), metodo);
+
+        cout << "Usando el metodo " << metodo;
+        cout << ", generando " << D.getCantidadSenales();
+        cout << " senales..." << endl << endl;
+        cout << "Operando ... ";
+
+        D.realizarTomografia(velocidadesInversas, factorRuido);
+        int fin = (int)time(NULL);
+
+        cout << "OK!" << endl << endl;
+        cout << "El algoritmo termino en " << fin - inicio << " segundos.\n"
+             << endl;
+
+        //muestro el Error cuadratico medio para ver la calidad
+        //de la imagen reconstruida
+        long double ecm = 0;
+        for (int i = 0; i < imagen.TellHeight(); i++){
+            for (int j = 0; j < imagen.TellWidth(); j++){
+                long double orig = velocidadesOrig.ver(i*imagen.TellWidth() +j,
+                                                       0);
+                long double aprox =
+                1/velocidadesInversas.ver(i*imagen.TellWidth() + j, 0);
+
+                ecm += (orig - aprox)*(orig - aprox);
+            }
+        }
+        ecm = ecm/(imagen.TellWidth()*imagen.TellWidth());
+        cout << "Error cuadratico Medio: " << ecm << endl << endl;
+
+        //ya reconstrui la imagen, ahora la guardo
+        cout << "Guardando archivo " << argv[2] << " ... ";
+
+        for (int i = 0; i < imagen.TellWidth(); i++){
+            for (int j = 0; j < imagen.TellHeight(); j++){
+                RGBApixel nuevoPixel;
+                long double valorPixel =
+                (1/(velocidadesInversas.ver(i*imagen.TellWidth() + j,0))) - 1;
+
+                if (valorPixel < 0)
+                    valorPixel = 0;
+
+                if (valorPixel > 255)
+                    valorPixel = 255;
+                nuevoPixel.Alpha = 0;
+                nuevoPixel.Red = (unsigned char)valorPixel;
+                nuevoPixel.Green = (unsigned char)valorPixel;
+                nuevoPixel.Blue = (unsigned char)valorPixel;
+                imagen.SetPixel(j, i, nuevoPixel);
+            }
+        }
+        imagen.WriteToFile(argv[2]);
+        cout << "OK!" << endl << endl;
+
+        //veo si se selecciono la opcion para graficar
+        int parametro = 5;
+        while (parametro < argc){
+            if (strcmp(argv[parametro], "-g") == 0){
+                parametro++;
+                if (parametro == argc){
+                    cout << "Parametro -g mal utilizado." << endl << endl;
+                    ayuda = true;
+                }
+                else{
+                    cout << "Preparando grafico ... ";
+                    ofstream paraMatlab;
+                    paraMatlab.open(argv[parametro], ios_base::out);
+                    if (paraMatlab.fail()){
+                        cout << "FAIL!" << endl << endl;
+                        ayuda = true;
+                    }
+                    else{
+                        D.prepararParaGraficarMetodo(paraMatlab, metodo);
+                    }
+                    paraMatlab.close();
+                    cout << "OK!" << endl << endl;
+                }
+            }
+
+            if (strcmp(argv[parametro], "-h") == 0){
+                ayuda = true;
+            }
+
+            parametro++;
+        }
+    }
+    else
+        ayuda = true;
+
+    //muestro la ayuda
+    if (ayuda){
+        cout << "\nSimular el proceso de tomografia y reconstruccion\n\n";
+        cout << argv[0] << " <Input_file_bmp> <Output_file_bmp> <Metodo>"
+             << "Factor_ruido> [Opciones...]" << endl << endl;
+
+        cout << "Input_file_bmp:  Imagen de entrada en formato BMP.\n";
+        cout << "Output_file_bmp: Imagen de salida en formato BMP.\n";
+        cout << "Metodo:          Metodo de distribucion de señales de 1 a 3\n";
+        cout << "Factor_ruido:  Factor de distorcion a aplicar en la imagen.\n";
+        cout << "\nOpciones:\n" << endl;
+        cout << "-h                    Imprime esta ayuda" << endl;
+        cout << "-g <output_file_txt>  Prepara un txt para graficar en matlab\n"
+             << endl;
+    }
+    system("PAUSE");
+	return 0;
+}
+\end{verbatim}
+}
 
 
 
