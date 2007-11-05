@@ -1,0 +1,245 @@
+\documentclass[10pt]{article}
+\usepackage[spanish]{babel} %pone palabras en español
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\begin{document}
+\title{\fbox{\fbox{\bf Trabajo Práctico 3: Homenaje a Los Pumas}}}
+\author{\bf{Universidad de Buenos Aires}\\
+		 \bf{Facultad de Ciencias Exáctas y Naturales}\\
+		 \bf{(FCEyN)}\\
+		 \bf{Departamento de Computación}\\ \\
+		 González Sergio (gonzalezsergio2003@yahoo.com.ar)\\
+		 González Emiliano (XJesse\_JamesX@hotmail.com)\\
+		 Ferro Mariano (eltrencitomasverde@gmail.com)}
+\date{5 de noviembre, 2007}
+\maketitle
+\begin{abstract} % comienzo del resumen. Opcional
+\textit{En esta investigaci\'on abordaremos un proceso de simulaci\'on y reconstrucción, para un análisis tomográfico, mediante el uso de imágenes. Este procedimiento utiliza diversos recursos matemáticos para tornarse resoluble, una de ellos es emplear un gran sistema de ecuaciones donde se alojaran todas las señales emitidas para el proceso de atravezar la imagen, y utilizar métodos conocidos de resolución y aproximación de soluciones sobre ella. Para llevar a buen término este procedimiento, primero se obtienen los valores originales de los pixels de la imagen, luego se la discretiza, y con esto se calculan los tiempos que tardan en recorrer cada celda de la discretización las señales emitidas. Una vez obtenidos estos datos se pasa, ahora sí, al momento  de la reconstrucción, intentando aproximar los valores de los pixels a los originales tanto como se pueda.
+Continuando con el objetivo de simular un análisis real, se genera ruido aleatorio para cada  valor de los tiempos obtenidos en el primer paso  y se procede  a aplicar el método de de resolución de cuadrados mínimos lineales.
+}
+\end{abstract}
+\medskip
+\medskip
+{\LARGE \bf{Palábras clave:}}
+{\small
+\begin{itemize}
+\item Cuadrados mínimos lineales.
+\item Señales.
+\item Analisis Tomográfico.
+\item Ruido.
+\item Simulación.
+\end{itemize}
+}
+
+\pagebreak %nueva pagina.
+
+\leftline{\LARGE {\bf Introducción:}}
+\medskip
+Es frecuente el problema de tener un conjunto de mediciones y desear ajustar los datos observados a funciones que describan la relación entre la variable dependiente y la independiente. El problema original parece estar asociado al nombre de Gauss,  quien trató de ajustar curvas a datos experimentales obtenidos en observaciones astronómicas. En nuestros días el planteamiento permite establecer un modelo matemático basado en optimización, para dar solución al problema de calcular los coeficientes que satisfacen el criterio de mínimos cuadrados. 
+
+Mínimos cuadrados es una técnica de optimización matemática que, dada una serie de mediciones, intenta encontrar una función que se aproxime a los datos (un "mejor ajuste"). Intenta minimizar la suma de cuadrados de las diferencias ordenadas (llamadas residuos) entre los puntos generados por la función y los correspondientes en los datos. Existen variantes para esta técnica, entre las que se encuentran el método de mínimos cuadrados promedio, mínimos cuadrados ponderados, mínimos cuadrados lineales, siendo esta última la utilizada durante este trabajo.
+
+Un requisito implícito para que funcione el método de mínimos cuadrados es que los errores de cada medida estén distribuidos de forma aleatoria. El teorema de Gauss-Markov prueba que los estimadores mínimos cuadráticos carecen de sesgo y que el muestreo de datos no tiene que ajustarse, por ejemplo, a una distribución normal. También es importante que los datos recogidos estén bien escogidos, para que permitan visibilidad en las variables que han de ser resueltas (para dar más peso a un dato en particular, se emplea mínimos cuadrados ponderados).
+
+Para explicar como funciona el método de aproximación por cuadrados mínimos lineales veamos un pequeño ejemplo:
+Supóngase que el conjunto de datos consiste en los puntos (xi,yi) siendo  i=1,2,...,n  . Queremos encontrar una función f tal que $f(x_i) \approx y_i$.
+Para llegar a este objetivo, suponemos que la función f es de una forma particular que contenga algunos parámetros que necesitamos determinar. Por ejemplo, supongamos que es cuadrática, lo que quiere decir que $f(x) = ax^2 + bx + c$ , donde no conocemos aún  ,   y  . Ahora buscamos los valores de  ,  y  que minimicen la suma de los cuadrados de los residuos (S):
+
+$$S = \sum_{i=1}^n (y_i - f(x_i))^2$$
+ 
+Esto explica el nombre de mínimos cuadrados.
+
+El caso que nos atañe es aquel en el que las variables se presentan en forma lineal, lo que reduce la dificultad del problema a un sistema de ecuaciones lineales. Este sistema se puede definir en forma matricial a través de su ecuación normal:
+
+$$A^tAx = A^tb$$
+
+
+Esta fórmula siempre tiene solución, aunque puede no ser única.
+
+En nuestro caso particular, debemos emular el comportamiento de un tomógrafo, que reconstruye una imagen (por lo general una parte del cuerpo vista desde dentro) mediante la interpretación de los tiempos que necesita un grupo de señales para atravesar el objeto analizado. Considerando las mediciones, el aparato dictamina que tipo de tejido (por la densidad) se halla en el camino de cada señal acústica. 
+
+Para ello, contamos con un cuerpo que suponemos bidimensional y cuadrado, representado con una imagen, que será discretizada, y sometida a un bombardeo de señales. Con las distancias que hayan recorrido éstas, y las velocidades con que pasen por cada punto de la discretización se calculará cuanto tiempo le llevo a cada señal atravesar el cuerpo. Este proceso es el emulador del procedimiento tomográfico.
+
+Una vez echo esto, se perturban los tiempos de recorrida y, con los datos de las distancias, se trata de volver a la imagen original, reconstruyendo las velocidades. Para ello se emplea el método de cuadrados mínimos lineales.   
+
+Como la imagen reconstruida es una aproximación, se utiliza el error cuadrático medio para apreciar la diferencia con la original. Esta función contrastará los valores de la reconstrucción y la imagen original, para medir la calidad de la aproximación.  
+
+
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Desarrollo:}}
+\medskip
+
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Detalles de la implementación:}}
+\medskip
+
+El problema  que se plantea, es el de simular el proceso de tomografía y reconstrucción de cuerpos en dos dimensiones. Para hacer esto se trabaja a partir de una imagen en escala de grises, con lo que las tres componentes (RGB) de cada píxel tienen el mismo valor. Sabemos por las condiciones del trabajo que ésta debe ser cuadrada. Para trabajar con ella., la imagen es discretizada en la cantidad de pixels donde cada uno de estos es considerado un cuadrado de dimensión uno. El valor de un píxel corresponde a la velocidad que tendría una señal acústica al pasar por ese sector.
+
+La imagen se encuentra en formato BMP, éste contiene una cabecera de 54 Bytes con los datos del archivo y las características de la imagen, el tipo, ancho y alto en pixels, tamaño del archivo y tamaño de la cabecera, seguido de la imagen propiamente dicha. Esta información tiene importancia al momento de obtener la matriz con los pixels que conforman la imagen, por lo tanto se implementó un procedimiento que obtiene dicha matriz de manera que se pueda abordar el problema sin preocuparnos por datos ajenos a la estructura que queremos utilizar como modelo. Además, para el manejo de las imagenes se esta empleando una librería para C++, EasyBMP, que realiza todas las manipulaciones pertinentes sobre el encabezado, y crea los flujos de entrada y salida de a cuerdo a nuestras necesidades.
+
+Las velocidades obtenidas se guardan en un tipo Matriz, diseñada especialmente con los métodos nativos a esta como trasponer, triangular (que utiliza el método de Gauss con pivoteo parcial), resolver (que implementa sustitución hacia atrás y resuelve el sistema de ecuaciones), multiplicar y operaciones para copiar y obtener sus características (cantidad del filas, cantidad de columnas y visualizar un elemento en alguna posición).
+
+Una vez hecho esto se generarán las señales que atravesarán el cuerpo. Hay tres métodos diferentes para distribuir las señales, sin embargo en el programa final solo habrá uno disponible, los otros se incluyen ya que con ellos se realizaron pruebas y se compararon sus resultados para elegir el método que consideramos más eficiente. 
+
+Antes de explicar las diferentes distribuciones es necesario conocer como se genera una señal. El mecanismo es simple, ya que no se utiliza más que dos puntos de la misma para obtener un punto de pase y una pendiente, con ellos se genera la recta (de la forma $Y = aX + b$), una vez conocidos éstos, se hace variar el valor de X sobre los enteros que estén dentro del rango de la dimensión de la matriz que contiene la imagen (que por disposición del trabajo es cuadrada) obteniendo los correspondientes Y. La operación se repite para valores de Y, despejando en este caso el valor correspondiente al eje X. De esta forma se obtienen los pares (X, Y) que están incluidos en los bordes de los cuadrados que representan los pixels y por donde pasa la señal lanzada. Una vez hecho esto los pares son ordenados de menor a mayor con respecto a la variable X y luego se anulan los repetidos (esto puede ocurrir cuando, por ejemplo, la señal pasa por las esquinas de los cuadrados) y se calcula la distancia recorrida por la señal en cada píxel por el cual pasó.
+
+El procedimiento anterior se hace una vez por cada señal a emitir, y su finalidad es ir llenando la matriz que contiene las distancias (en el enunciado del trabajo, la matriz llamada D).
+
+Explicada la manera para generar una señal, se pasan a describir los tres métodos que las distribuyen: 
+
+\begin{itemize}
+\item El primer método se estaciona en cada coordenada entera sobre las "paredes" derecha e izquierda de la matriz discretizada. Desde estos puntos lanza rectas contra cada una de las otras tres "paredes", uniendo el origen de cada andanada de señales, con todas las coordenadas enteras que delimitan la discretización de la imagen en ejes cartesianos. Este método genera $6n^2 - 2n$ señales, siendo n la dimension de la matriz de pixels, ya que por cada uno de los 2n-2 puntos de las paredes lanza 3n-3 señales. Esto último se debe a que no se contemplan las rectas verticales en este modelo.
+
+\item El segundo método posiciona una fuente de señales en la base de la  discretización y lanza una recta a cada punto entero del eje X, otra fuente, situada a aproximadamente un tercio de la altura del mismo cuadrado en la pared izquierda irradia cada coordenada entera de la pared opuesta, una tercera, colocada aproximadamente a dos tercios de la altura (siempre dentro de la misma area de la imagen discretizada), traza rectas contra el "techo". Luego de disparar una señal, a cada uno de estos puntos-fuente se les incrementa en un decimal (que crece con cada iteración) la coordenada correspondiente a las Y. De esta forma, cada segmento de longitud uno sobre el eje Y, bombardea las tres paredes generando un total de 3n-1 señales por cada uno, con lo que al terminar de recorrer la dimensión de la imagen tenemos $3(n-1)$ rectas que surcan nuestra discretización. Este procedimiento se realiza también utilizando la pared derecha como fuente, lo que nos da un total de $6(n-1)$ aces.
+
+\centerline{
+\includegraphics[scale=0.50]{metodo1.jpg}
+}
+\centerline{
+Metodo 1
+}
+
+\medskip
+\centerline{
+\includegraphics[scale=0.50]{metodo2.jpg}
+}
+\centerline{
+Metodo 2
+}
+
+\item El tercer método, lanza rectas desde la pared izquierda y la base de la discretización, comenzando en lo que sería el origen de nuestro sistema cartesiano y avanzando de a pasos de 1/n hacia los extremos. Toma como epicentro para todas las señales el punto central de la imagen, mientras que el segundo punto para calcular cada recta es el antes mencionado. Considerando que este método se detiene cuando ambos focos alcanzan el extremo correspondiente de la imagen, cada uno emite n*n señales acústicas, lo que da un total de $2n^2$, siendo éste el procedimiento que menos rectas traza.
+
+\centerline{
+\includegraphics[scale=0.50]{metodo3.jpg}
+}
+\centerline{
+Metodo 3
+}
+\end{itemize}
+
+{\leftline{Algunas aclaraciones comunes a todos los métodos:}}
+\begin{itemize}
+\item Cada método borra (si la hubiera) la anterior matriz D, ya que puede ser que las dimensiones de dicha estructura no concuerden con la distribución a efectuarse.
+
+\item Los procedimientos son estáticos, es decir, no importa en que circunstancias se ejecuten, siempre siguen el mismo patron.
+
+\item En ninguna distribución se contempla la posibilidad de lanzar rectas verticales.
+
+\item El 'n' al que se hace referencia es la dimensión de la imagen cuadrada.
+\end{itemize}
+
+Una vez trasladados todos los datos a la matriz D pasamos a resolver el sistema, que consiste en la matriz antes mencionada, multiplicada por una matriz columna con las velocidades invertidas e igualada a otro vector columna cuyos componentes resultarán ser los tiempos de recorrida de las señales en el total de la imagen.
+
+En este punto conocemos todos los datos del problema: las velocidades, las distancias y los tiempos de recorrida de cada señal en forma exacta. Hasta aquí consideramos que resolvimos una primera parte del trabajo que denominamos "la ida".
+
+Completada esta etapa, acometeremos el verdadero objetivo del trabajo. Éste consiste en reconstruir la imagen original (que es equivalente a obtener las velocidades) a partir de las distancias (la matriz D) y los tiempos (que en esta etapa son distorsionados en un grado elegido por el usuario). Para reconstruir los datos, aplicamos la técnica de cuadrados mínimos lineales, y utilizando las ecuaciones normales resolvemos el sistema, aplicando eliminación gaussiana con pivoteo parcial. En el caso de que el pivoteo parcial no pueda efectuarse (si solo hay ceros debajo del elemento de la diagonal) se utiliza la técnica de pivoteo total.
+
+Resuelto el sistema, se obtiene un vector columna que contiene las velocidades invertidas. Cabe aclarar que, en este punto, las velocidades son una aproximación de las originales, ya que el método de cuadrados mínimos puede no obtener los valores reales de la imagen debido al ruido introducido en los tiempos  .Con éstas, se procede a  reconstruir la matriz de pixels, y convertirla a formato BMP. Este proceso implica copiar tres veces el valor de cada velocidad (para formar un píxel con las componentes RGB igualadas, por ser la imagen una escala de grises) y de agregar al final de cada fila de pixels los Bytes de "basura" que sean necesarios según el formato. Recordemos que para estas tareas se emplea una librería especializada para manipulación de BMP.
+
+Todo este proceso esta sustentado en los módulos 'Matriz' y 'Senales', el primero incluye el utilizado en el trabajo anterior, con los siguientes agregados y modificaciones:
+
+\begin{itemize}
+\item Traspuesta: esta función recibe un objeto matriz por referencia, y altera los punteros del miembro privado 'm', que era la estructura elegida para almacenar los datos de nuestro objeto (arreglo de arreglos de C++). Ya que modifica la matriz, no devuelve valor alguno.
+
+\item Multiplicar: este método debe ser aplicado sobre la matriz resultado, y recibe dos matrices que serán los factores. El procedimiento para multiplicar es el estándar (fila por columna) y con el se van llenando los elementos de la matriz resultado uno a uno.
+
+\item Triangular: trabaja en forma muy similar al método original, salvo que fue adaptado para que pueda recibir matrices no cuadradas. Además, siempre que se puede se utiliza el pivoteo parcial, y cuando no, se agrego el pivoteo total.
+
+\item CuadradosMinimosLineales: este procedimiento recibe dos matrices (A y b) y devuelve el resultado (X) de la ecuación normal $A^tAX = A^tb$, en la matriz que se utilizó para llamarlo. El método esta dividido en dos series de ciclos anidados:
+
+El primero calcula $A^tA$, no mediante el método explicado arriba, sino aprovechando el hecho de que $A^tA$ es simétrica. Toma los elementos de A, y los multiplica por su "traspuesto" (trocando filas por columnas), tras lo cual suma cada resultado y lo coloca en una nueva matriz.
+
+El otro grupo de ciclos se encarga de calcular $A^tb$, toma cada elemento de A como si fuera su "traspuesto", y lo multiplica por los elementos de b, para luego guardarlos en una tercera matriz.
+
+De esta forma se trata de evitar el overhead de memoria, trabajando in situ en lugar de emplear varias matrices temporales para los resultados intermedios, como $A^t$. Sin embargo, $A^tA$ y $A^tb$ consumen bastante memoria, pero esta será liberada al terminar la función.
+
+Finalmente se triangula y resuelve el sistema que forman las matrices creadas arriba y la matriz X, utilizando los métodos correspondientes. 
+\end{itemize}
+
+Hasta aquí los cambios que sufrió el módulo 'Matriz', ahora comentaremos las características de los métodos del módulo 'Senales':
+
+Esta clase guarda sus datos en un objeto Matriz, siendo ésta la única estructura de datos compleja empleada por el módulo. La dimensión de la imagen (el ancho o el alto, de ahora en mas 'n') y la cantidad de señales que la recorren estan almacenados en sendos enteros sin signo como miembros privados de la clase. La matriz (que a partir de ahora será llamada D) tiene dimensión $m*n^2$, donde m es la cantidad de señales emitidas para surcar el cuerpo, y $n^2$ es la cantidad de celdas en las que fue discretizada la imagen (siendo esta cuadrada y de lado de longitud n). En ésta, cada fila  almacena la distancia recorrida por la señal correspondiente en cada una de las celdas de la discretización, éstas se distribuyen en la fila con un criterio lineal, una fila de celdas es seguida por su inmediata siguiente, hasta completar las n filas. Resulta claro tras un breve análisis que las señales recorren como máximo una cantidad  igual a $2n-1$ celdas, los valores que corresponden a los cuadrados no tocados por una recta son cero.
+
+Esta forma de guardar los datos apareja una distribución no previsible de los valores distintos de cero, a menos que se conozca el método empleado (en detalle) y el tamaño de la imagen. Por ello no es sencillo aprovechar el hecho de que D es una matriz rala.
+
+Nótese que este módulo fue pensado únicamente para la resolución de este trabajo, de hecho, hasta último momento las funciones que serán descriptas a continuación estaban diseminadas, sin formar parte de una clase. Es por ello que el modulo no ofrece posibilidades de reutilización (a diferencia del modulo 'Matriz') y está tan embebido del problema que nos acaece. 
+
+En cuanto a los métodos que completan la clase, 'Senales' cuenta con constructor por defecto y por copia, pero la función que hace trabajar verdaderamente este módulo es su constructor con parámetros. En él se llama a los métodos de distribución de las señales, en este momento, para testear cada uno y comprobar cual es el más idóneo para las distintas imágenes, todos los métodos están disponibles para ser llamados. El constructor recibe el ancho de la imagen y un numero que decide que método de distribución se utilizará (ambos unsigned int). En el caso de que pretenda llamarse un método que no es ninguno de los tres disponibles (por ejemplo un hipotetico método cinco), se lanza un mensaje de error y se ejecuta por defecto el número uno.
+
+Otras funciones relevantes de 'Senales' son:
+
+\begin{itemize}
+\item realizarTomografia: este método condensa gran parte del trabajo realizado, ya que es el responsable de obtener los tiempos de recorrida de las señales (mediante una multiplicación de distancias y velocidades inversas, las distancias son miembro de la clase, y las velocidades son una matriz pasada como parámetro). Luego estos tiempos son modificados, por un valor que es función del último valor (factorRuido) que se le da a este procedimiento. Con éstos, se trata de aproximar las velocidades originales a través del método de cuadrados mínimos. Esta aproximación se devuelve en el mismo parámetro en el cual se ingresaron las velocidades inversas.
+\end{itemize}
+
+Los métodos de emisión de señales son públicos, y ya han sido comentados más arriba.
+
+\begin{itemize}
+\item tirarSenal: También sobre éste ya se han dado algunos datos sobre su comportamiento, pero ahora se lo abordara en detalle. Este procedimiento recibe cuatro valores long double y un entero. Los primeros son dos parejas de puntos (X,Y), que se toman como puntos de paso de una hipotética recta, que será construida utilizando estas coordenadas en las dos ecuaciones necesarias para despejar pendiente y punto de pase (real). El parámetro restante, indica qué fila de la matriz D se debe completar con la corriente llamada al método. Los datos con los que se llenará son calculados de la siguiente manera: en un arreglo de tuplas se guardan los pares (X,Y) para cada X entero, según la ecuacion de la recta y el 'a' y el 'b' conocidos, mientras se van almacenando se marcan los Y que tienen el mismo valor que las X (cuando la recta traza una diagonal por el cuadrado de la discretización). Tras completar todas las coordenadas enteras sobre abscisas, se procede a llenar la segunda parte del arreglo, mediante un procedimiento equivalente sobre las coordenadas Y. Es en este momento cuando se contrastan los elementos que se van obteniendo con el registro antes mencionado, de forma que no se cuenten dos veces los pares de elementos enteros. Al terminar, tenemos un arreglo de longitud $2*n$, en el cual la primera mitad esta ocupada por las coordenadas con los X enteros, y en la segunda se hallan las tuplas con Y entero. Nótese que ésta puede no estar completa debido a que se ignoran los repetidos. Con estos datos se procede a completar la fila indicada por el parámetro correspondiente, obteniendo la distancia entre los puntos mediante el cálculo de la norma dos. Recordemos que el criterio de llenado de las filas era lineal, es decir que los primeros n elementos de la fila se corresponden con la distancia recorrida en cada uno de los cuadrados de la base de la discretización, los segundos con las coordenadas que tienen X en uno etc.
+Una vez hecho todo lo anterior se libera la memoria de los arreglos creados y con ello se termina el método. 
+
+\item ordenarParesMenorAMayor: Este método recibe un arreglo de pares para ordenar y la longitud de este arreglo. Ordena los pares de menor a mayor con un Selection Sort.
+
+\item ordenarParesMayorAMenor: Mismo que el anterior pero ordena de mayor a menor.
+
+\item anularRepetidos: A esta función se le pasa un arreglo de pares y su longitud. El método recorre el arreglo y cuando encuentra dos elementos iguales elimina el segundo, poniendo un -1 en su lugar.
+\end{itemize}
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Resultados:}}
+
+
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Discusiones:}}
+
+\pagebreak
+\leftline{{\LARGE{\bf Apendice A:}}}
+\medskip
+\medskip
+\leftline{{\bf enunciado:}}
+
+\medskip
+\medskip
+\medskip
+
+\leftline{{\LARGE{\bf Apendice B:}}}
+\medskip
+\medskip
+
+\leftline{{\LARGE{\bf Apendice C:}}}
+\medskip
+\medskip
+
+\pagebreak
+\begin{thebibliography}{11}
+\bibitem{grifhig} http://www.cplusplus.com/ .
+Referencia y consulta para C++
+
+\bibitem{grifhig} http://148.204.224.249/esimetic/seminario2007/mod\_01/graficasconmatlab933.pdf 
+
+Graficos con Matlab.
+
+\bibitem{grifhig} http://www.mathworks.com/matlabcentral/files/8998/content/gridfitdir/demo/html/gridfit\_demo.html
+Graficos avanzados en Matlab.
+
+\bibitem{grifhig} http://www.mathworks.com/matlabcentral/newsreader/view\_thread/155703
+Hacer graficos en 3d con diferentes colores en Matlab (foro).
+
+\bibitem{grifhig} pcmap.unizar.es/~pilar/latex.pdf .
+Introduccion a latex.
+
+\bibitem{grifhig} http://oc.wikipedia.org/wiki/Ajuda:Formulas\_TeX\_e\_LaTeX
+Formulas Latex.
+
+\bibitem{grifhig} webs.uvigo.es/mat.avanzadas/PracME\_1.pdf .
+Introducción a MatLab.
+\end{thebibliography}
+
+\end{document}
