@@ -2,6 +2,7 @@
 \usepackage[spanish]{babel} %pone palabras en español
 \usepackage[latin1]{inputenc}
 \usepackage{graphicx}
+\newcommand{\real}{\hbox{\bf R}}
 \begin{document}
 \title{\fbox{\fbox{\bf Trabajo Práctico 3: Homenaje a Los Pumas}}}
 \author{\bf{Universidad de Buenos Aires}\\
@@ -100,24 +101,24 @@ Explicada la manera para generar una señal, se pasan a describir los tres método
 \includegraphics[scale=0.50]{metodo1.jpg}
 }
 \centerline{
-Metodo 1
+\tiny{Metodo 1}
 }
 
 \medskip
 \centerline{
-\includegraphics[scale=0.50]{metodo2.jpg}
+\includegraphics[scale=0.5]{metodo2.jpg}
 }
 \centerline{
-Metodo 2
+\tiny{Metodo 2}
 }
 
 \item El tercer método, lanza rectas desde la pared izquierda y la base de la discretización, comenzando en lo que sería el origen de nuestro sistema cartesiano y avanzando de a pasos de 1/n hacia los extremos. Toma como epicentro para todas las señales el punto central de la imagen, mientras que el segundo punto para calcular cada recta es el antes mencionado. Considerando que este método se detiene cuando ambos focos alcanzan el extremo correspondiente de la imagen, cada uno emite n*n señales acústicas, lo que da un total de $2n^2$, siendo éste el procedimiento que menos rectas traza.
 
 \centerline{
-\includegraphics[scale=0.50]{metodo3.jpg}
+\includegraphics[scale=0.5]{metodo3.jpg}
 }
 \centerline{
-Metodo 3
+\tiny{Metodo 3}
 }
 \end{itemize}
 
@@ -203,7 +204,128 @@ Una vez hecho todo lo anterior se libera la memoria de los arreglos creados y co
 \leftline{{\LARGE{\bf Apendice A:}}}
 \medskip
 \medskip
-\leftline{{\bf enunciado:}}
+\leftline{{\bf Enunciado:}}
+
+\medskip
+\begin{centering}
+\bf Laboratorio de M\'etodos Num\'ericos - Segundo cuatrimestre 2007 \\
+\bf Trabajo Pr\'actico N\'umero 3: Homenaje a Los Pumas \\
+\end{centering}
+
+\vskip 25pt
+\hrule
+\vskip 11pt
+
+El objetivo del trabajo pr\'actico es evaluar un m\'etodo para reconstruir
+im\'agenes tomogr\'aficas sujetas a ruido, utilizando el m\'etodo de 
+aproximaci\'on por cuadrados m\'\i nimos.
+
+\textbf{El m\'etodo de reconstrucci\'on}
+
+El an\'alisis tomogr\'afico de un cuerpo (que suponemos bidimensional y cuadrado) consiste
+en emitir se\~nales ac\'usticas que lo atraviesan en diferentes direcciones,
+midiendo el tiempo que tarda cada una en atravesarlo. Por ejemplo, la
+Figura~1 muestra una posible distribuci\'on de estas se\~nales.
+
+\begin{centering}
+\includegraphics[scale=0.5]{tp3.jpg} \\
+Figura 1: Ejemplo de configuraci\'on de las señales. \\
+\end{centering}
+
+\vskip 11pt
+
+Suponemos que el cuerpo est\'a dividido en $n\times n$ celdas cuadradas, de
+modo tal que en cada celda las se\~nales ac\'usticas tienen velocidad
+constante. Si $d^k_{ij}$ es la distancia que recorre la $k$-\'esima se\~nal
+en la celda $ij$ (notar que $d^k_{ij}=0$ si la se\~nal no pasa por esta
+celda) y $v_{ij}$ es la velocidad de la se\~nal en esa celda, entonces
+el tiempo de recorrido de la se\~nal completa es de
+\begin{displaymath}
+t_k \ =\ \sum_{i=1}^n \sum_{j=1}^n d^k_{ij} \: v^{-1}_{ij}.
+\end{displaymath}
+Como resultado del an\'alisis tomogr\'afico, se tienen mediciones del tiempo
+que tard\'o cada se\~nal en recorrer el cuerpo. Si se emitieron $m$ se\~nales,
+entonces el resultado es un vector $t\in\real^m$, tal que $t_k$ indica el
+tiempo de recorrida de la $k$-\'esima se\~nal. Sea $D\in\real^{m\times n^2}$
+una matriz cuyas filas se corresponden con las $m$ se\~nales y cuyas columnas
+se corresponden con las $n^2$ celdas de la discretizaci\'on del cuerpo, y
+tal que la fila $k$ contiene los valores $d^k_{ij}$ en las columnas
+correspondientes a cada celda. Entonces, las velocidades de recorrida
+originales $v_{ij}$ se pueden reconstruir resolviendo el sistema de
+ecuaciones $Ds = t$. El vector soluci\'on $s\in\real^{n^2}$ contiene los
+valores inversos de las velocidades originales en cada celda.
+
+Un problema fundamental que debe considerarse es la presencia de errores
+de medici\'on en el vector $t$ de tiempos de recorrido. Dado que el sistema
+estar\'a en general sobredeterminado, la existencia de estos errores har\'a
+que no sea posible encontrar una soluci\'on que satisfaga al mismo tiempo
+todas las ecuaciones del sistema. Para manejar este problema, el sistema
+$Ds=t$ se resuelve utilizando el m\'etodo de aproximaci\'on por \emph{cuadrados
+m\'\i nimos}, obteniendo as\'\i\ una soluci\'on que resuelve de forma aproximada
+el sistema original.
+
+\textbf{Enunciado}
+
+El trabajo pr\'actico consiste en implementar un programa que
+simule el proceso de tomograf\'\i a y reconstrucci\'on, realizando
+los siguientes pasos:
+\begin{enumerate}
+\item Leer desde un archivo una imagen con los datos reales
+(discretizados) de un cuerpo. Para los fines de este procedimiento, se
+considera que el valor de cada \emph{pixel} de la imagen corresponde a la
+velocidad de recorrida de las se\~nales ac\'usticas al atravesar ese pixel.
+\item Ejecutar el proceso tomogr\'afico, generando un conjunto
+relevante de se\~nales y sus tiempos de recorrida exactos.
+\item Perturbar los tiempos de recorrida con ruido aleatorio.
+\item Ejecutar el m\'etodo propuesto en la secci\'on anterior sobre
+los datos perturbados, con el objetivo de reconstruir el cuerpo
+original. La imagen resultante se debe guardar en un archivo de salida.
+\end{enumerate}
+El programa debe tomar como par\'ametros los nombres de los archivos
+de entrada y de salida, junto con un par\'ametro que permita especificar
+el nivel de ruido a introducir en la imagen. El formato de los archivos
+de entrada y salida queda a elecci\'on del grupo. Para simplificar la
+implementaci\'on, es posible utilizar un formato propio que no sea ninguno
+de los formatos est\'andar para guardar im\'agenes\footnote{Un formato para
+almacenar im\'agenes que es de f\'acil lectura y tiene cierta difusi\'on es
+el formato \textsc{Raw}, ver por ejemplo \texttt{http://local.wasp.uwa.edu.au/}$\sim$\texttt{pbourke/dataformats/bitmaps}.}.
+
+Sobre la base de la implementaci\'on, se pide medir la calidad de la imagen
+reconstruida en funci\'on del nivel de ruido. Para medir el error de la
+imagen resultante se deber\'a utilizar el \emph{error cuadr\'atico medio},
+definido como
+\begin{displaymath}
+\hbox{ecm}(v,\tilde{v})\ =\ \frac{\sum_{i=1}^n \sum_{j=1}^n (v_{ij} - \tilde{v}_{ij})^2}{n^2},
+\end{displaymath}
+siendo $v_{ij}$ la velocidad de recorrido de la celda $ij$ del cuerpo
+original, y $\tilde{v}_{ij}$ la velocidad en la misma celda del cuerpo
+reconstruido.
+
+\medskip
+\textbf{Objetivos adicionales}
+
+En forma optativa, se sugiere probar con distintas estrategias geom\'etricas
+para generar las se\~nales ac\'usticas (paquetes de se\~nales radiando de
+puntos fijos o puntos de inicio m\'oviles, se\~nales partiendo de los cuatro
+lados de la imagen o s\'olo de algunos lados, rango de \'angulos de salida
+de las se\~nales, etc.) para buscar la estrategia que minimice el error
+de la reconstrucci\'on.
+
+Por otra parte, puede ser interesante medir el n\'umero de condici\'on de la
+matriz asociada al sistema de ecuaciones normales que resuelve el problema
+de cuadrados m\'\i nimos, para analizar la estabilidad de la resoluci\'on.
+En caso de que el sistema tenga un n\'umero de condici\'on alto, se pueden
+intentar esquemas de regularizaci\'on para mejorar la estabilidad de la
+soluci\'on obtenida.
+
+\vskip 15pt
+
+\hrule
+
+\vskip 11pt
+
+Fecha de entrega: Lunes 5 de Noviembre
+\pagebreak
 
 \medskip
 \medskip
@@ -213,24 +335,810 @@ Una vez hecho todo lo anterior se libera la memoria de los arreglos creados y co
 \medskip
 \medskip
 
-\leftline{{\LARGE{\bf Apendice C:}}}
-\medskip
-\medskip
+\begin{enumerate}
+
+\item
+\bf{Senales.h}
+{\small
+\begin{verbatim}
+#ifndef _SENALES_H
+#define _SENALES_H
+
+#include <iostream>
+#include <string.h>
+#include <assert.h>
+#include "Matriz.h"
+using namespace std;
+
+class Senales{
+  public:
+    Senales(){D = NULL;}
+    Senales(unsigned int dimension, unsigned int metodo);
+    Senales(Senales& s);
+
+    //hace un txt para graficar el metodo, enviado por parametro, en matlab
+    void realizarTomografia(Matriz& velocidades, long double factorRuido);
+    void prepararParaGraficarMetodo(ostream & os, int metodo);
+    unsigned int getCantidadSenales(void);
+    ~Senales();
+
+  private:
+    unsigned int dimension;
+    unsigned int numSenales;
+    Matriz* D;
+
+    //tira señales primero desde la pared izquierda hacia las demas
+    //y despues desde la pared derecha hacia las demas
+    void metodo1(void);
+
+    //similar que el metodo uno, salvo que por cada señal enviada se desplaza
+    //el punto de pase.
+    void metodo2(void);
+
+    void metodo3(void);
+
+    //Toma una pendiente, un punto de pase para generar una recta
+    //una matriz, un n que representa la dimension de la matriz
+    //imagen y el numero de la matriz a llenar
+    void tirarSenal(long double x1, long double y1, long double x2,
+                    long double y2, int filaALlenar);
+
+    //ordena un vector de tuplas por su primer componente de menor a mayor
+    void ordenarParesMenorAMayor(long double** pares, int filas);
+
+    //ordena un vector de tuplas por su primer componente de mayor a menor
+    void ordenarParesMayorAMenor(long double** pares, int filas);
+
+    //recorre el vector de pares de coordenadas y anula los
+    //repetidos poniendo un -1 en la coordenada x, indicando que
+    //esta repetida.
+    void anularRepetidos(long double** pares, int cantPares);
+
+    void graficarMetodo1(ostream & os);
+    void graficarMetodo2(ostream & os);
+    void graficarMetodo3(ostream & os);
+};
+
+#endif /*_SENALES_H*/
+\end{verbatim}
+}
+
+\item
+\bf {Senales.cpp}
+{\small
+\begin{verbatim}
+#include <math.h>
+#include "Matriz.h"
+#include "Senales.h"
+
+/*************************************/
+/*          METODOS PUBLICOS         */
+/*************************************/
+
+Senales :: Senales(unsigned int dimImagen, unsigned int metodo)
+{
+    D = NULL;
+    dimension = dimImagen;
+    switch(metodo){
+        case 1:
+            metodo1();
+            break;
+        case 2:
+            metodo2();
+            break;
+        case 3:
+            metodo3();
+            break;
+        default:
+            cout << "No existe el metodo. En su lugar se ejecutara el metodo 1";
+            cout << endl << endl;
+            metodo1();
+            break;
+    }
+}
+
+Senales :: Senales(Senales& s)
+{
+    D = new Matriz(s.D->filas(), s.D->columnas());
+    *D = *(s.D);
+    dimension = s.dimension;
+    numSenales = s.numSenales;
+}
+
+void Senales :: prepararParaGraficarMetodo(ostream & os, int metodo)
+{
+    switch(metodo){
+        case 1:
+            graficarMetodo1(os);
+            break;
+        case 2:
+            graficarMetodo2(os);
+            break;
+        case 3:
+            graficarMetodo3(os);
+            break;
+        default:
+            break;
+    }
+}
+
+void Senales :: realizarTomografia(Matriz& resultado, long double factorRuido)
+{
+    Matriz t(numSenales, 1);
+
+    t.multiplicar(*D, resultado);
+    //ya tenemos el vector t (tiempos de cada senial) calculado,
+    //ahora tenemos que degenerarlo y volver a calcular las
+    //velocidades (valores de los pixels) con
+    //cuadrados minimos, para reconstruir la imagen
+
+    for (int i = 0; i < t.filas(); i++){
+        t.asignar(i, 0, t.ver(i,0) + 
+                 (long double)(rand() % 100)*(factorRuido/1000000));
+    }
+
+    resultado.cuadradosMinimosLineales(*D, t);
+}
+
+unsigned int Senales :: getCantidadSenales(void)
+{
+    return numSenales;
+}
+
+Senales :: ~Senales()
+{
+    delete D;
+}
+
+/*************************************/
+/*          METODOS PRIVADOS         */
+/*************************************/
+
+/*
+ * metodo1: Tira señales desde las 2 paredes verticales de la imagen hacia los
+ *          demas pixels que no esten en la misma pared.
+ *          Este metodo genera 6*n^2 señales
+ */
+void Senales :: metodo1(void)
+{
+    numSenales = 6*dimension*dimension - 2*dimension;
+    //este metodo genera 6*n^2 - 2*n señales, siendo n = dimension
+    delete D;
+    D = new Matriz(numSenales, dimension*dimension);
+
+    int fila = 0;                                          //fila a llenar
+    for(unsigned int i = 1; i < dimension; i++){
+        for(unsigned int j = 1; j <= dimension; j++){
+            int filaoff = 0;
+            //tiro las rectas de la pared izquierda
+            //sobre el piso
+            tirarSenal(0, i, j, 0, fila);
+            filaoff++;
+            //sobre pared derecha
+            tirarSenal(0, i, dimension, j, fila + filaoff);
+            filaoff++;
+            if(j != dimension){
+                //sobre el techo
+                tirarSenal(0, i, j, dimension, fila + filaoff);
+                filaoff++;
+            }
+
+            //tiro las rectas de la pared derecha
+            //sobre el piso
+            tirarSenal(dimension, i, j, 0, fila + filaoff);
+            filaoff++;
+            //sobre pared izquierda
+            tirarSenal(dimension, i, 0, j - 1, fila + filaoff); 
+            filaoff++;
+            if(j != dimension){//sobre el techo
+                tirarSenal(dimension, i, j - 1, dimension, fila + filaoff);
+                filaoff++;
+            }
+
+            fila += filaoff;
+        }
+    }
+}
+
+void Senales :: metodo2(void){
+    //este metodo genera 6*n^2 - 2*n señales, siendo n = dimImagen
+
+    numSenales = 6*dimension*dimension - 2*dimension;
+    delete D;
+    D = new Matriz(6*dimension*dimension - 2*dimension, dimension*dimension);
+
+    int fila = 0;                                 //fila a llenar
+    //todos los puntos de las demas paredes
+    int cantDestinos = 3*dimension - 1;
+    long double desplazamiento = 0.5*(1/(long double)cantDestinos);
+
+    for(unsigned int i = 0; i < dimension; i++){
+        for(unsigned int j = 1; j <= dimension; j++){
+            int filaoff = 0;
+            //pared izquierda
+            //tiro la señal hacia el piso
+            tirarSenal(0, (long double)j/(long double)cantDestinos +
+                       i - desplazamiento, j, 0, fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia la pared derecha
+            tirarSenal(0, (long double)(dimension + j)/(long double)cantDestinos
+                       + i - desplazamiento, dimension, j, fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia el techo
+            if (((j != dimension) && (i != (dimension - 1))) ||
+               (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                tirarSenal(0,((long double)2*dimension+j)/
+                          (long double)cantDestinos + 
+                          i, dimension - j - desplazamiento,
+                          dimension, fila + filaoff);
+                filaoff++;
+            }
+
+
+            //pared derecha
+            //tiro la señal hacia el piso
+            tirarSenal(dimension, (long double)j/(long double)cantDestinos +
+                       i - desplazamiento, dimension - j, 0, fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia la pared izquierda
+            tirarSenal(dimension, (long double)(dimension + j)/
+                      (long double)cantDestinos + i - desplazamiento, 0, j,
+                      fila + filaoff);
+            filaoff++;
+
+            //tiro la señal hacia el techo
+            if (((j != dimension) && (i != (dimension - 1))) ||
+               (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                tirarSenal(dimension, (long double)(2*dimension + j)/
+                          (long double)cantDestinos + i, j, dimension,
+                          fila + filaoff);
+                filaoff++;
+            }
+
+            fila += filaoff;
+        }
+    }
+}
+
+void Senales :: metodo3(void){
+    //genera 3*(n + 1)
+    numSenales = 2*dimension*dimension;
+    delete D;
+    D = new Matriz(numSenales, dimension*dimension);
+
+    long double xMedio = (long double)dimension/2;
+    long double yMedio = (long double)dimension/2;
+
+    int fila = 0;
+    //envio las señales desde la pared izquierda
+    for(unsigned int i = 0; i <= dimension*dimension; i++){
+        tirarSenal(0, (long double)i/(long double)dimension, xMedio, yMedio,
+                  fila);
+        fila++;
+    }
+
+    //envio las señales desde el piso
+    for(unsigned int i = 1; i < dimension*dimension; i++){
+        tirarSenal((long double)i/(long double)dimension, 0, xMedio, yMedio,
+                  fila);
+        fila++;
+    }
+}
+
+void Senales :: tirarSenal(long double x1, long double y1, long double x2,
+                           long double y2, int filaALlenar){
+    if (x1 == x2){   //si la senial es vertical hacemos las cuentas "a mano"
+                     //una senial vertical pasa por toda una columna de pixel
+                     //con distancia 1, recorriendo
+                     //una distancia de 1 por cada pixel
+        for (unsigned int fil = 0; fil < dimension; fil++)
+            if (x1 == dimension)
+                D->asignar(filaALlenar, fil*dimension + dimension - 1, 1);
+            else
+                D->asignar(filaALlenar, fil*dimension + (int)x1, 1);
+    }
+    else{
+        //primero construyo la recta
+        //tengo un sistema de 2x2 que es: y1 = x1*a + b
+        //                                y2 = x2*a + b
+        //entonces: b = y1 - x1*a
+        //          y2 = x2*a + y1 - x1*a
+        //          a = (y2 - y1) / (x2 - x1)
+        //          b = y1 - x1*((y2 - y1) / (x2 - x1))
+        //          x2 - x1 != 0 paratodo x2, x1 reales, salvo que sea una
+        //          senial vertical, lo cual tratamos anteriormente
+        long double a = (y2 - y1) / (x2 - x1);
+        long double b = y1 - x1*((y2 - y1) / (x2 - x1));
+        long double** pares = new long double* [2*(dimension + 1)];
+
+        //2*(n+1) lo peor es que pase por la
+        //diagonal entonces va a haber 2*(n+1) pares;
+
+        long double yEntero;                  //para ver si hay pares repetidos
+        int y = 0;                            //para tener el valor entero
+        bool* yRepetidos = new bool [dimension + 1];
+
+        for(unsigned int i = 0; i < dimension+1; i++){
+            yRepetidos[i] = false;
+        }
+
+        for(unsigned int i = 0; i < 2*(dimension+1); i++){
+            pares[i] = new long double [2];
+        }
+
+        int cantPares = 0;
+
+        //genero el vector pares donde estan los resultados de aplicar
+        // y = a*x + b
+        // x = (y - b)/a
+        // y lo guardo en pares x,y
+
+        for (unsigned int i = 0; i <= dimension; i++){
+            long double temp = a*i + b;
+
+            if((temp >= 0) && (temp <= dimension)){
+                pares[cantPares][0] = i;
+                pares[cantPares][1] = temp;
+
+                y = (int)temp;          //paso el valor a entero
+                yEntero = y;            //lo guardo para comparar
+
+                //veo si temp es entero
+                //si lo es lo marco para despues no contarlo
+                //(por que va a estar repetido)
+                if (yEntero == temp){
+                    yRepetidos[y] = true;
+                }
+                cantPares++;
+            }
+        }
+
+        for (unsigned int i = 0; (i <= dimension) && (a != 0); i++){
+            long double temp = (i - b)/a;
+
+            if(temp >= 0 && temp <= dimension){
+                //veo si ese "y" ya estaba antes
+                if(!yRepetidos[i]){
+                    pares[cantPares][0] = temp;
+                    pares[cantPares][1] = i;
+                    cantPares++;
+                }
+            }
+        }
+        //ordeno por la primer componente
+        ordenarParesMenorAMayor(pares, cantPares);
+
+        anularRepetidos(pares, cantPares);
+
+        //ahora calculo la distancia que recorre la señal por cada pixel y
+        //genero la fila para la matriz D con estos datos
+        for(int i = 0; i < cantPares; i++){
+            int fil;
+            int col;
+
+            //veo si no es un valor duplicado
+            if( (pares[i][0] != -1)){
+                //si no es duplicado, veo si el que sigue es un duplicado y el
+                //siguiente a este es un valor valido(si no me pase de rango)
+                if( (pares[i+1][0] == -1) && (i+2 < cantPares) ){
+                    //menor en x
+                    col = (int)pares[i][0];
+
+                    //menor en y, arreglo para coordenadas de la matriz
+                    if((int)pares[i][1] < (int)pares[i+2][1]){
+                        fil = dimension - 1 - (int)pares[i][1];
+                    }
+                    else
+                        fil = dimension - 1 - (int)pares[i+2][1];
+
+                    //calculo la distancia recorrida por la señal en cada
+                    //pixel por donde paso
+                    long double x = pares[i][0] - pares[i+2][0];
+                    long double y = pares[i][1] - pares[i+2][1];
+
+                    D->asignar(filaALlenar, fil*dimension + col, sqrt(pow(x,2) +
+                               pow(y,2)));
+
+                    i++; //si hay un repetido adelante tengo que avanzar 2
+                }
+                //si no, veo si fallo la primer guarda
+                //si el siguiente no es un duplicado y es una posicion valida
+                else if((pares[i+1][0] != -1) && (i+1 < cantPares))
+                {
+                    //menor en x
+                    col = (int)pares[i][0];
+                    //menor en y, arreglo para coordenadas de la matriz
+                    if((int)pares[i][1] < (int)pares[i+1][1]){
+                        fil = dimension - 1 - (int)pares[i][1];
+                    }
+                    else
+                        fil = dimension - 1 - (int)pares[i+1][1];
+
+                    //calculo la distancia recorrida por la señal en cada
+                    //pixel por donde paso
+                    long double x = pares[i][0] - pares[i+1][0];
+                    long double y = pares[i][1] - pares[i+1][1];
+
+                    D->asignar(filaALlenar, fil*dimension + col, sqrt(pow(x,2) +
+                               pow(y,2)));
+                }
+            }
+        }
+
+        for(unsigned int i = 0; i < 2*(dimension+1); i++){
+            delete [] pares[i];
+        }
+        delete [] pares;
+        delete [] yRepetidos;
+    }
+}
+
+void Senales :: ordenarParesMenorAMayor(long double** pares, int filas){
+    int topeInf = 0;
+    long double temp1;  //variable temporal para el primer componente de la
+                        //tupla
+    long double temp2;  //variable temporal para el segundo componente de la
+                        //tupla
+
+
+    while (topeInf < (filas - 1)){
+        int i = topeInf;
+        int posMenor = i;
+        long double menor = pares[i][0];
+
+        while (i < filas){
+            if(pares[i][0] < menor){
+                menor = pares[i][0];
+                posMenor = i;
+            }
+            i++;
+        }
+
+        /* hago el swap de los elementos */
+        temp1 = pares[topeInf][0];
+        temp2 = pares[topeInf][1];
+
+        pares[topeInf][0] = pares[posMenor][0];
+        pares[topeInf][1] = pares[posMenor][1];
+
+        pares[posMenor][0] = temp1;
+        pares[posMenor][1] = temp2;
+
+        topeInf++;
+
+    }
+}
+
+void Senales :: ordenarParesMayorAMenor(long double** pares, int filas){
+    int topeInf = 0;
+    long double temp1;  //variable temporal para el primer componente de la
+                        //tupla
+    long double temp2;  //variable temporal para el segundo componente de la
+                        //tupla
+
+
+    while (topeInf < (filas - 1)){
+        int i = topeInf;
+        int posMayor = i;
+        long double mayor = pares[i][0];
+
+        while (i < filas){
+            if(pares[i][0] > mayor){
+                mayor = pares[i][0];
+                posMayor = i;
+            }
+            i++;
+        }
+
+        /* hago el swap de los elementos */
+        temp1 = pares[topeInf][0];
+        temp2 = pares[topeInf][1];
+
+        pares[topeInf][0] = pares[posMayor][0];
+        pares[topeInf][1] = pares[posMayor][1];
+
+        pares[posMayor][0] = temp1;
+        pares[posMayor][1] = temp2;
+
+        topeInf++;
+
+    }
+}
+
+void Senales :: anularRepetidos(long double** pares, int cantPares){
+    int cant = cantPares;
+
+    for (int i = 0; i < (cant - 1); i++) {
+        if(pares[i][0] == pares[i+1][0]){
+            pares[i+1][0] = -1;
+            i++;            //salteo el anulado
+        }
+    }
+}
+
+void Senales :: graficarMetodo1(ostream & os){
+    os << "COPIAR Y PEGAR LO SIGUIENTE EN EL MATLAB" << endl;
+    os << "hold on" << endl;
+    os << "axis([0 " << dimension << " 0 " << dimension << " ])" << endl;
+    for(unsigned int i = 1; i < dimension; i++){
+        for(unsigned int j = 1; j <= dimension; j++){
+            //tiro las rectas de la pared izquierda
+            os << "plot([0 " << j << "], [" << i << " 0], 'k')" << endl;
+            os << "plot([0 " << dimension << "], [" << i << " " << j
+               << "], 'k')" << endl;
+            if(j != dimension)
+                os << "plot([0 " << j << "], [" << i << " " << dimension
+                   << "], 'k')" << endl;
+
+            //tiro las rectas de la pared derecha
+            os << "plot([" << dimension << " " << j << "], [" << i
+               << " 0], 'k')" << endl;
+            os << "plot([" << dimension << " 0], [" << i << " " << j-1
+               << "], 'k')" << endl;
+            if(j != dimension)
+                os << "plot([" << dimension << " " << j-1 << "], [" << i
+                   << " " << dimension << "], 'k')" << endl;
+        }
+    }
+}
+
+void Senales :: graficarMetodo2(ostream & os)
+{
+    os << "COPIAR Y PEGAR LO SIGUIENTE EN EL MATLAB" << endl;
+    os << "hold on" << endl;
+    os << "axis([0 " << dimension << " 0 " << dimension << " ])" << endl;
+
+    int cantDestinos = 3*dimension - 1;
+    long double desplazamiento = 0.5*(1/(long double)cantDestinos);
+
+    for(unsigned int i = 0; i < dimension; i++){
+        for(unsigned int j = 1; j <= dimension; j++){
+            //pared izquierda
+            //tiro la señal hacia el piso
+            os << "plot([" << 0 << " " << j << "], ["
+               << (long double)j/(long double)cantDestinos + i - desplazamiento
+               << " " << 0 << "], 'k')" << endl;
+
+            //tiro la señal hacia la pared derecha
+            os << "plot([" << 0 << " " << dimension << "], ["
+               << (long double)(dimension + j)/(long double)cantDestinos + i -
+                   desplazamiento << " " << j << "], 'k')" << endl;
+
+            //tiro la señal hacia el techo
+            if (((j != dimension) && (i != (dimension - 1))) ||
+               (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                os << "plot([" << 0 << " " << dimension - j << "], ["
+                   << (long double)(2*dimension + j)/(long double)cantDestinos +
+                      i - desplazamiento << " " << dimension << "], 'k')"
+                   << endl;
+            }
+
+            //pared derecha
+            //tiro la señal hacia el piso
+            os << "plot([" << dimension << " " << dimension - j << "], ["
+               << (long double)j/(long double)cantDestinos + i - desplazamiento
+               << " " << 0 << "], 'k')" << endl;
+
+            //tiro la señal hacia la pared izquierda
+            os << "plot([" << dimension << " " << 0 << "], ["
+               << (long double)(dimension + j)/(long double)cantDestinos + i -
+                  desplazamiento << " " << j << "], 'k')" << endl;
+
+            //tiro la señal hacia el techo
+            if (((j != dimension) && (i != (dimension - 1))) ||
+               (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
+                os << "plot([" << dimension << " " << j << "], ["
+                   << (long double)(2*dimension + j)/(long double)cantDestinos +
+                      i - desplazamiento << " " << dimension << "], 'k')"
+                   << endl;
+            }            
+        }
+    }
+}
+
+void Senales :: graficarMetodo3(ostream & os)
+{
+    os << "COPIAR Y PEGAR LO SIGUIENTE EN EL MATLAB" << endl;
+    os << "hold on" << endl;
+    os << "axis([0 " << dimension << " 0 " << dimension << " ])" << endl;
+
+    long double xMedio = (long double)dimension/2;
+    long double yMedio = (long double)dimension/2;
+
+    //envio las señales desde la pared izquierda
+    for(unsigned int i = 0; i <= dimension*dimension; i++){
+        os << "plot([" << 0 << " " << xMedio << "], ["
+           << (long double)i/(long double)dimension << " " << yMedio
+           << "], 'k')" << endl;
+    }
+
+    //envio las señales desde el piso
+    for(unsigned int i = 1; i <= dimension*dimension; i++){
+        os << "plot([" << (long double)i/(long double)dimension << " " << xMedio
+           << "], [" << 0 << " " << yMedio << "], 'k')" << endl;
+    }
+
+    for(unsigned int i = 1; i <= dimension*dimension; i++){
+        os << "plot([" << xMedio << " " << dimension << "], [" << yMedio << " "
+           << (long double)i/(long double)dimension << "], 'k')" << endl;
+    }
+
+    for(unsigned int i = 1; i < dimension*dimension; i++){
+        os << "plot([" << xMedio << " " << (long double)i/(long double)dimension
+           << "], [" << yMedio << " " << dimension << "], 'k')" << endl;
+    }
+}
+
+\end{verbatim}
+}
+
+\item
+\bf Matriz.h
+{\small
+\begin{verbatim}
+#ifndef _MATRIZ_H
+#define _MATRIZ_H
+
+#include <iostream>
+#include <string.h>
+#include <assert.h>
+using namespace std;
+
+class Matriz{
+	friend ostream& operator<<(ostream&, const Matriz&);
+	friend ostream& mostrarParaGraficar(ostream&, const Matriz&);
+  public:
+    Matriz(int = 4, int = 4);
+    Matriz(const Matriz& mat);
+    int filas() const;
+    int columnas() const;
+
+    long double ver(int fila, int columna) const;
+    void asignar(int fila, int columna, long double valor);
+
+    void traspuesta (Matriz& res) const;
+    void multiplicar (const Matriz& A, const Matriz& B);
+    void triangular (Matriz *b = NULL);
+    void resolver (Matriz &X, Matriz &b);
+    void cuadradosMinimosLineales (const Matriz& A, const Matriz& b);
+
+    void operator= (const Matriz &m1);
+    ~Matriz();
+  private:
+    long double** m;
+    int fil;
+    int col;
+    /* metodos privados */
+    void permutarFilas(int fila1, int fila2, Matriz *b);
+    void permutarColumnas(int columna1, int columna2);
+    void pivoteoParcial(int, Matriz *b);
+    void pivoteoTotal(int, Matriz *b);
+    void restarFilas(long double coef, int filaAanular, int filaActual, Matriz *b);
+};
+
+#endif /*_MATRIZ_H*/
+\end{verbatim}
+}
+
+\item
+\bf Matriz.cpp (nuevos metodos incluidos)
+{\small
+\begin{verbatim}
+void Matriz :: traspuesta (Matriz& res) const
+{
+    //primero borro la matriz que ya estaba
+    if (res.m != NULL){
+        for(int i = 0; i < fil; i++)
+            delete res.m[i];
+        delete res.m;
+    }
+
+    res.fil = col;
+    res.col = fil;
+    res.m = new long double* [fil];
+
+    for(int i = 0; i < res.fil; i++){
+        res.m[i] = new long double [col];
+        for(int j = 0; j < res.col; j++){
+            res.m[i][j] = m[j][i];
+        }
+    }
+}
+
+void Matriz :: multiplicar (const Matriz& A, const Matriz& B)
+{
+    assert(A.col == B.fil);
+
+	//primero borro la matriz que ya estaba
+    if (m != NULL){
+        for (int i = 0; i < fil; i++)
+            delete m[i];
+        delete m;
+    }
+
+    fil = A.fil;
+    col = B.col;
+    m = new long double* [fil];
+
+    for (int i = 0; i < fil; i++){
+        m[i] = new long double [col];
+        for (int j = 0; j < col; j++){
+            long double suma = 0;
+		    for (int k = 0; k < A.col; k++){
+                suma += (A.m[i][k])*(B.m[k][j]);
+            }
+            m[i][j] = suma;
+        }
+    }
+}
+
+void Matriz :: cuadradosMinimosLineales(const Matriz& A, const Matriz& b)
+{
+    //En este algoritmo se aprobecha que A(traspuesta)*A es simetrica
+
+    Matriz AtA(A.col, A.col);
+    Matriz Atb(A.col, 1);
+
+    for (int i = 0; i < A.fil; i++){
+        for (int j = i; j < A.col; j++){
+            long double temp = 0;
+            for (int c = 0; c < A.fil; c++){
+                temp += A.m[c][i]*A.m[c][j];
+            }
+            AtA.m[i][j] = temp;
+            AtA.m[j][i] = temp;
+        }
+    }
+
+    for (int i = 0; i < Atb.fil; i++){
+        long double temp = 0;
+        for (int j = 0; j < A.fil; j++){
+            temp += A.m[j][i]*b.m[j][0];
+        }
+        Atb.m[i][0] = temp;
+    }
+
+    AtA.triangular(&Atb);
+    AtA.resolver(*this, Atb);
+}
+
+void Matriz :: pivoteoTotal(int fila, Matriz *b)
+{
+    int maxI = fila;
+    int maxJ = fila;
+
+    for (int i = fila; i < fil; i++) {
+        for (int j = fila; j < col; j++) {
+            if(MOD(m[i][j]) > MOD(m[maxI][maxJ])){
+                maxI = i;
+                maxJ = j;
+            }
+        }
+    }
+
+    permutarFilas(fila, maxI, b);
+    permutarColumnas(fila, maxJ);
+}
+\end{verbatim}
+}
+
+
+
+
+
+\end{enumerate}
+
 
 \pagebreak
-\begin{thebibliography}{11}
+\begin{thebibliography}{6}
 \bibitem{grifhig} http://www.cplusplus.com/ .
 Referencia y consulta para C++
 
 \bibitem{grifhig} http://148.204.224.249/esimetic/seminario2007/mod\_01/graficasconmatlab933.pdf 
-
 Graficos con Matlab.
-
-\bibitem{grifhig} http://www.mathworks.com/matlabcentral/files/8998/content/gridfitdir/demo/html/gridfit\_demo.html
-Graficos avanzados en Matlab.
-
-\bibitem{grifhig} http://www.mathworks.com/matlabcentral/newsreader/view\_thread/155703
-Hacer graficos en 3d con diferentes colores en Matlab (foro).
 
 \bibitem{grifhig} pcmap.unizar.es/~pilar/latex.pdf .
 Introduccion a latex.
@@ -240,6 +1148,9 @@ Formulas Latex.
 
 \bibitem{grifhig} webs.uvigo.es/mat.avanzadas/PracME\_1.pdf .
 Introducción a MatLab.
+
+\bibitem{grifhig} ingenierias.uanl.mx/10/pdf/10\_Salvador\_Acha\_et\_al\_Ajuste\_datos\_exp.pdf
+Ajuste de muestras por cuadrados minimos.
 \end{thebibliography}
 
 \end{document}
