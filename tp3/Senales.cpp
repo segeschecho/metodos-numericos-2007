@@ -63,7 +63,7 @@ void Senales :: realizarTomografia(Matriz& resultado, long double factorRuido)
     //cuadrados minimos, para reconstruir la imagen
 
     for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + (long double)(rand() % 100)*factorRuido/1000000);
+        t.asignar(i, 0, t.ver(i,0) + (long double)(rand() % 100)*(factorRuido/1000000));
     }
 
     resultado.cuadradosMinimosLineales(*D, t);
@@ -175,7 +175,7 @@ void Senales :: metodo2(void){
 }
 
 void Senales :: metodo3(void){
-    //genera 2*n^2 señales
+    //genera 3*(n + 1)
     numSenales = 2*dimension*dimension;
     delete D;
     D = new Matriz(numSenales, dimension*dimension);
