@@ -8,52 +8,6 @@
 
 Senales :: Senales(unsigned int dimImagen, unsigned int metodo)
 {
-    long double** a = new long double* [36];
-
-
-    for(unsigned int i = 0; i < 36; i++){
-        a[i] = new long double [2];
-    }
-
-    a[0][0] = 0;
-    a[1][1] = 6.34483;
-    a[2][0] = 1;
-    a[3][1] = 5.71034;
-    a[4][0] = 2;
-    a[5][1] = 5.07586;
-    a[6][0] = 3;
-    a[7][1] = 4.44138;
-    a[8][0] = 4;
-    a[9][1] = 3.8069;
-    a[10][0] = 5;
-    a[11][1] = 3.17241;
-    a[12][0] = 6;
-    a[13][1] = 2.53793;
-    a[14][0] = 7;
-    a[15][1] = 1.90345;
-    a[16][0] = 8;
-    a[17][1] = 1.26897;
-    a[18][0] = 9;
-    a[19][1] = 0.634483;
-    a[20][0] = 10;
-    a[21][1] = 4.33681;
-    a[22][0] = 10;
-    a[23][1] = 0;
-    a[24][0] = 8.42391;
-    a[25][1] = 1;
-    a[26][0] = 6.84783;
-    a[27][1] = 2;
-    a[28][0] = 5.27174;
-    a[29][1] = 3;
-    a[30][0] = 3.69565;
-    a[31][1] = 4;
-    a[32][0] = 2.11957;
-    a[33][1] = 5;
-    a[34][0] = 0.543478;
-    a[35][1] = 6;
-
-    ordenarParesMenorAMayor(a, 36);
-
     D = NULL;
     dimension = dimImagen;
     switch(metodo){
@@ -109,7 +63,7 @@ void Senales :: realizarTomografia(Matriz& resultado, long double factorRuido)
     //cuadrados minimos, para reconstruir la imagen
 
     for (int i = 0; i < t.filas(); i++){
-        t.asignar(i, 0, t.ver(i,0) + (rand()% 100)*factorRuido/1000000);
+        t.asignar(i, 0, t.ver(i,0) + (long double)(rand() % 100)*factorRuido/1000000);
     }
 
     resultado.cuadradosMinimosLineales(*D, t);
@@ -179,33 +133,34 @@ void Senales :: metodo2(void){
     int fila = 0;                         //fila a llenar
     //todos los puntos de las demas paredes
     int cantDestinos = 3*dimension - 1;
+    long double desplazamiento = 0.5*(1/(long double)cantDestinos);
 
     for(unsigned int i = 0; i < dimension; i++){
         for(unsigned int j = 1; j <= dimension; j++){
             int filaoff = 0;
             //pared izquierda
             //tiro la señal hacia el piso
-            tirarSenal(0, (long double)j/(long double)cantDestinos + i, j, 0, fila + filaoff);
+            tirarSenal(0, (long double)j/(long double)cantDestinos + i - desplazamiento, j, 0, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia la pared derecha
-            tirarSenal(0, (long double)(dimension + j)/(long double)cantDestinos + i, dimension, j, fila + filaoff);
+            tirarSenal(0, (long double)(dimension + j)/(long double)cantDestinos + i - desplazamiento, dimension, j, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia el techo
             if (((j != dimension) && (i != (dimension - 1))) || (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
-                tirarSenal(0, ((long double)2*dimension + j)/(long double)cantDestinos + i, dimension - j, dimension, fila + filaoff);
+                tirarSenal(0, ((long double)2*dimension + j)/(long double)cantDestinos + i, dimension - j - desplazamiento, dimension, fila + filaoff);
                 filaoff++;
             }
 
 
             //pared derecha
             //tiro la señal hacia el piso
-            tirarSenal(dimension, (long double)j/(long double)cantDestinos + i, dimension - j, 0, fila + filaoff);
+            tirarSenal(dimension, (long double)j/(long double)cantDestinos + i - desplazamiento, dimension - j, 0, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia la pared izquierda
-            tirarSenal(dimension, (long double)(dimension + j)/(long double)cantDestinos + i, 0, j, fila + filaoff);
+            tirarSenal(dimension, (long double)(dimension + j)/(long double)cantDestinos + i - desplazamiento, 0, j, fila + filaoff);
             filaoff++;
 
             //tiro la señal hacia el techo
@@ -240,8 +195,6 @@ void Senales :: metodo3(void){
         tirarSenal((long double)i/(long double)dimension, 0, xMedio, yMedio, fila);
         fila++;
     }
-
-    cout << *D;
 }
 
 void Senales :: tirarSenal(long double x1, long double y1, long double x2, long double y2, int filaALlenar)
@@ -500,34 +453,36 @@ void Senales :: graficarMetodo2(ostream & os)
     os << "axis([0 " << dimension << " 0 " << dimension << " ])" << endl;
 
     int cantDestinos = 3*dimension - 1;
+    long double desplazamiento = 0.5*(1/(long double)cantDestinos);
 
     for(unsigned int i = 0; i < dimension; i++){
         for(unsigned int j = 1; j <= dimension; j++){
             //pared izquierda
             //tiro la señal hacia el piso
-            os << "plot([" << 0 << " " << j << "], [" << (long double)j/(long double)cantDestinos + i << " " << 0 << "], 'k')" << endl;
+            os << "plot([" << 0 << " " << j << "], [" << (long double)j/(long double)cantDestinos + i - desplazamiento << " " << 0 << "], 'k')" << endl;
 
             //tiro la señal hacia la pared derecha
-            os << "plot([" << 0 << " " << dimension << "], [" << (long double)(dimension + j)/(long double)cantDestinos + i << " " << j << "], 'k')" << endl;
+            os << "plot([" << 0 << " " << dimension << "], [" << (long double)(dimension + j)/(long double)cantDestinos + i - desplazamiento << " " << j << "], 'k')" << endl;
 
             //tiro la señal hacia el techo
-            //if((j != dimension) && (i != (dimension - 1))){
+//            if((j != dimension) && (i != (dimension - 1))){
             if (((j != dimension) && (i != (dimension - 1))) || (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
-                os << "plot([" << 0 << " " << dimension - j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i << " " << dimension << "], 'k')" << endl;
+                os << "plot([" << 0 << " " << dimension - j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i - desplazamiento << " " << dimension << "], 'k')" << endl;
             }
 
             //pared derecha
             //tiro la señal hacia el piso
-            os << "plot([" << dimension << " " << dimension - j << "], [" << (long double)j/(long double)cantDestinos + i << " " << 0 << "], 'k')" << endl;
+            os << "plot([" << dimension << " " << dimension - j << "], [" << (long double)j/(long double)cantDestinos + i - desplazamiento << " " << 0 << "], 'k')" << endl;
 
             //tiro la señal hacia la pared izquierda
-            os << "plot([" << dimension << " " << 0 << "], [" << (long double)(dimension + j)/(long double)cantDestinos + i << " " << j << "], 'k')" << endl;
+            os << "plot([" << dimension << " " << 0 << "], [" << (long double)(dimension + j)/(long double)cantDestinos + i - desplazamiento << " " << j << "], 'k')" << endl;
 
             //tiro la señal hacia el techo
-            //if((j != dimension) && (i != (dimension - 1))){
+//            if((j != dimension) && (i != (dimension - 1))){
             if (((j != dimension) && (i != (dimension - 1))) || (i == (dimension - 1) && j != dimension  && j != (dimension-1))){
-                os << "plot([" << dimension << " " << j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i << " " << dimension << "], 'k')" << endl;
+                os << "plot([" << dimension << " " << j << "], [" << (long double)(2*dimension + j)/(long double)cantDestinos + i - desplazamiento << " " << dimension << "], 'k')" << endl;
             }
+            
         }
     }
 }
