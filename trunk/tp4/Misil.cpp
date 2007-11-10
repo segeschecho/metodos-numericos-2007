@@ -44,10 +44,14 @@ bool Misil :: estaDestruido (void) const
     return destruido;
 }
 
-void Misil :: posicion (long double tiempo, long double& posResX, long double& posResY) const
+long double Misil :: posicionX (long double tiempo) const
 {
-    posX = x[0]*pow(posX, 3) + x[1]*pow(posX, 2) + x[2]*pow(posX, 1) + x[3];
-    posY = y[0]*pow(posY, 3) + y[1]*pow(posY, 2) + y[2]*pow(posY, 1) + y[3];
+    return (x[0]*pow(tiempo, 3) + x[1]*pow(tiempo, 2) + x[2]*pow(tiempo, 1) + x[3]);
+}
+
+long double Misil :: posicionY (long double tiempo) const
+{
+    return (y[0]*pow(tiempo, 3) + y[1]*pow(tiempo, 2) + y[2]*pow(tiempo, 1) + y[3]);
 }
 
 Misil :: ~Misil(){}
@@ -70,7 +74,7 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
     //a0 b0 c0 d0 a1 b1 c1 d1 a2 b2 ....
 
     //hago que el polinomio cumpla con los puntos pasados
-    for(int i = 1; i < numMuestras - 1; i++){
+    for(unsigned int i = 1; i < numMuestras - 1; i++){
         //igualo el polinomio de intervalo [i - 1, i] al valor de f(i)
         //y guardo los coeficientes que acompañan a cada letra
 
@@ -131,7 +135,7 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
     fila++;
 
     //tengo que derivar y igualarlas
-    for(int i = 1; i < numMuestras - 1; i++){
+    for(unsigned int i = 1; i < numMuestras - 1; i++){
         //igualo las derivadas en el punto i
         //3*a([i-1,i])*X^2 + 2*b([i-1,i])*X + c([i-1,i]) - (
         //3*a([i,i+1])*X^2 + 2*b([i,i+1])*X + c([i-1,i])  )= 0
@@ -162,7 +166,7 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
     //tengo que derivar dos veces e igualarlas.
     //las derivadas segundas de las puntas del grafico
     //son igualadas a cero
-    for(int i = 1; i < numMuestras - 1; i++){
+    for(unsigned int i = 1; i < numMuestras - 1; i++){
         //igualo las derivadas en el punto i
         //6*a([i-1,i])*X + 2*b([i-1,i]) - (
         //6*a([i,i+1])*X + 2*b([i,i+1]) ) = 0
@@ -230,11 +234,9 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
 
 ostream& operator<<(ostream& os, const Misil& misil)
 {
-    long double x;
-    long double y;
-    for(int i = 0; i < 10; i+= 0.05){
-        misil.posicion(i, x, y);
-        os << "plot([" << x << "],[" << y << "], '+');\n";
+    os << "hold on" << endl;
+    for(double i = 0; i < 10; i+= 0.05){
+        os << "plot([" << misil.posicionX(i) << "],[" << misil.posicionY(i) << "], '*');\n";
     }
     return os;
 }
