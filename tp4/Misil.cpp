@@ -20,7 +20,7 @@ Misil :: Misil(char id, const long double* medicionesX, const long double* medic
     spline(medicionesY, cantMediciones, y);
     identificador = id;
     destruido = false;
-    
+
 }
 
 Misil :: Misil(const Misil& m)
@@ -46,6 +46,8 @@ bool Misil :: estaDestruido (void) const
 
 long double Misil :: posicionX (long double tiempo) const
 {
+    cout << "tiempo  " << tiempo << endl;
+    cout << "tiempo^3  " << x[0]*pow(tiempo, 3) + x[1]*pow(tiempo, 2) + x[2]*pow(tiempo, 1) + x[3] << endl;
     return (x[0]*pow(tiempo, 3) + x[1]*pow(tiempo, 2) + x[2]*pow(tiempo, 1) + x[3]);
 }
 
@@ -74,10 +76,26 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
     //a0 b0 c0 d0 a1 b1 c1 d1 a2 b2 ....
 
     //hago que el polinomio cumpla con los puntos pasados
-    for(unsigned int i = 1; i < numMuestras - 1; i++){
+    for(unsigned int i = 2; i < numMuestras ; i++){
         //igualo el polinomio de intervalo [i - 1, i] al valor de f(i)
         //y guardo los coeficientes que acompañan a cada letra
 
+        //guardo a
+        sistema.asignar(fila, 4*(i-2), pow((long double)i, 3));
+        //guardo b
+        sistema.asignar(fila, 4*(i-2) + 1, pow((long double)i, 2));
+        //guardo c
+        sistema.asignar(fila, 4*(i-2) + 2, i);
+        //guardo a
+        sistema.asignar(fila, 4*(i-2) + 3, 1);
+
+        //asigno el valor de la imagen al vector b
+        b.asignar(fila, 0, muestra[i-1]);
+
+        fila++;
+
+        //igualo el polinomio de intervalo [i, i + 1] al valor de f(i)
+        //y guardo los coeficientes que acompañan a cada letra
         //guardo a
         sistema.asignar(fila, 4*(i-1), pow((long double)i, 3));
         //guardo b
@@ -88,30 +106,17 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
         sistema.asignar(fila, 4*(i-1) + 3, 1);
 
         //asigno el valor de la imagen al vector b
-        b.asignar(fila, 0, muestra[i]);
-
-        fila++;
-
-        //igualo el polinomio de intervalo [i, i + 1] al valor de f(i)
-        //y guardo los coeficientes que acompañan a cada letra
-        //guardo a
-        sistema.asignar(fila, 4*i, pow((long double)i, 3));
-        //guardo b
-        sistema.asignar(fila, 4*i + 1, pow((long double)i, 2));
-        //guardo c
-        sistema.asignar(fila, 4*i + 2, i);
-        //guardo a
-        sistema.asignar(fila, 4*i + 3, 1);
-
-        //asigno el valor de la imagen al vector b
-        b.asignar(fila, 0, muestra[i]);
+        b.asignar(fila, 0, muestra[i-1]);
 
         fila++;
 
     }
-    
+
     //ahora hago que cumpla en los extremos
     //en el principio
+    sistema.asignar(fila, 0, 1);
+    sistema.asignar(fila, 1, 1);
+    sistema.asignar(fila, 2, 1);
     sistema.asignar(fila, 3, 1);
 
     //asigno el valor de la imagen al vector b
@@ -121,13 +126,13 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
 
     //en el final
     //guardo a
-    sistema.asignar(fila, 4*(numMuestras - 1) - 4, pow((long double)(numMuestras-1), 3));
+    sistema.asignar(fila, 4*(numMuestras - 1) - 4, pow((long double)(numMuestras), 3));
     //guardo b
-    sistema.asignar(fila, 4*(numMuestras - 1) - 3, pow((long double)(numMuestras-1), 2));
+    sistema.asignar(fila, 4*(numMuestras - 1) - 3, pow((long double)(numMuestras), 2));
     //guardo c
-    sistema.asignar(fila, 4*(numMuestras - 1) - 2, numMuestras - 1);
+    sistema.asignar(fila, 4*(numMuestras - 1) - 2, numMuestras);
     //guardo a
-    sistema.asignar(fila, 4*(numMuestras - 1) - 1,1);
+    sistema.asignar(fila, 4*(numMuestras - 1) - 1, 1);
 
     //asigno el valor de la imagen al vector b
     b.asignar(fila, 0,  muestra[numMuestras - 1]);
@@ -135,27 +140,27 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
     fila++;
 
     //tengo que derivar y igualarlas
-    for(unsigned int i = 1; i < numMuestras - 1; i++){
+    for(unsigned int i = 2; i < numMuestras; i++){
         //igualo las derivadas en el punto i
         //3*a([i-1,i])*X^2 + 2*b([i-1,i])*X + c([i-1,i]) - (
         //3*a([i,i+1])*X^2 + 2*b([i,i+1])*X + c([i-1,i])  )= 0
         //guardo a
-        sistema.asignar(fila, 4*(i-1), 3*pow((long double)i, 2));
+        sistema.asignar(fila, 4*(i-2), 3*pow((long double)i, 2));
         //guardo b
-        sistema.asignar(fila, 4*(i-1) + 1, 2*i);
+        sistema.asignar(fila, 4*(i-2) + 1, 2*i);
         //guardo c
-        sistema.asignar(fila, 4*(i-1) + 2, 1);
+        sistema.asignar(fila, 4*(i-2) + 2, 1);
         //guardo d
-        sistema.asignar(fila, 4*(i-1)+ 3, 0);
+        sistema.asignar(fila, 4*(i-2)+ 3, 0);
 
         //guardo a
-        sistema.asignar(fila, 4*(i-1) + 4, -3*pow((long double)i, 2));
+        sistema.asignar(fila, 4*(i-2) + 4, -3*pow((long double)i, 2));
         //guardo b
-        sistema.asignar(fila, 4*(i-1) + 5, -2*i);
+        sistema.asignar(fila, 4*(i-2) + 5, -2*i);
         //guardo c
-        sistema.asignar(fila, 4*(i-1) + 6, -1);
+        sistema.asignar(fila, 4*(i-2) + 6, -1);
         //guardo a
-        sistema.asignar(fila, 4*(i-1) + 7, 0);
+        sistema.asignar(fila, 4*(i-2) + 7, 0);
 
         //asigno al vertor b cero
         b.asignar(fila, 0, 0);
@@ -166,27 +171,27 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
     //tengo que derivar dos veces e igualarlas.
     //las derivadas segundas de las puntas del grafico
     //son igualadas a cero
-    for(unsigned int i = 1; i < numMuestras - 1; i++){
+    for(unsigned int i = 2; i < numMuestras; i++){
         //igualo las derivadas en el punto i
         //6*a([i-1,i])*X + 2*b([i-1,i]) - (
         //6*a([i,i+1])*X + 2*b([i,i+1]) ) = 0
         //guardo a
-        sistema.asignar(fila, 4*(i-1), 6*i);
+        sistema.asignar(fila, 4*(i-2), 6*i);
         //guardo b
-        sistema.asignar(fila, 4*(i-1) + 1, 2);
+        sistema.asignar(fila, 4*(i-2) + 1, 2);
         //guardo c
-        sistema.asignar(fila, 4*(i-1) + 2, 0);
+        sistema.asignar(fila, 4*(i-2) + 2, 0);
         //guardo d
-        sistema.asignar(fila, 4*(i-1) + 3, 0);
+        sistema.asignar(fila, 4*(i-2) + 3, 0);
 
         //guardo a
-        sistema.asignar(fila, 4*(i-1) + 4, -6*i);
+        sistema.asignar(fila, 4*(i-2) + 4, -6*i);
         //guardo b
-        sistema.asignar(fila, 4*(i-1) + 5, -2);
+        sistema.asignar(fila, 4*(i-2) + 5, -2);
         //guardo c
-        sistema.asignar(fila, 4*(i-1) + 6, 0);
+        sistema.asignar(fila, 4*(i-2) + 6, 0);
         //guardo a
-        sistema.asignar(fila, 4*(i-1) + 7, 0);
+        sistema.asignar(fila, 4*(i-2) + 7, 0);
 
         //asigno al vertor b cero
         b.asignar(fila, 0, 0);
@@ -230,6 +235,11 @@ void Misil :: spline (const long double* muestra, unsigned int numMuestras, long
     res[1] = X.ver(4*(numMuestras - 1) - 3, 0);
     res[2] = X.ver(4*(numMuestras - 1) - 2, 0);
     res[3] = X.ver(4*(numMuestras - 1) - 1, 0);
+
+    cout << sistema << endl;
+    cout << X;
+
+    cout << endl << "ultimo polinomio " << res[0] << " " << res[1] << " " << res[2] << " " << res[3] << endl;
 }
 
 ostream& operator<<(ostream& os, const Misil& misil)
