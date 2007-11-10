@@ -7,9 +7,9 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     ifstream entrada;
-    entrada.open("D:\\Facultad\\Metodos Numericos\\Simulador TP 4\\misilito.txt", ios_base::in);
+    entrada.open("Impacto_v1.09\\misilito.txt", ios_base::in);
     unsigned int cantMisiles, cantMediciones, cantBombas;
-    unsigned long double radioBomba, radioPlaneta;
+    long double radioBomba, radioPlaneta;
 
     entrada >> cantMisiles;
     entrada >> cantMediciones;
@@ -34,9 +34,13 @@ int main(int argc, char* argv[])
     ofstream salida;
     Misil test(0, muestraX, muestraY, 4);
 
-    salida.open("d:\\Facultad\\Metodos Numericos\\Simulador TP 4\\bombita.txt", ios_base::out);
+    salida.open("Impacto_v1.09\\bombita.txt", ios_base::out);
 
-    salida << cantMediciones << " " << test.posicionX(cantMediciones) << " " << test.posicionY(cantMediciones);
+    if(!salida.is_open()){
+        cout << "no abrio el archivo" << endl;
+        return 0;
+    }
+    salida << cantMediciones + 5 << " " << test.posicionX(cantMediciones + 5) << " " << test.posicionY(cantMediciones + 5);
     salida.close();
 
     delete muestraX;
