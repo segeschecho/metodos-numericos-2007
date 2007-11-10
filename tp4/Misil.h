@@ -4,8 +4,8 @@
 #define _MISIL_H
 
 class Misil{
+   	friend ostream& operator<<(ostream& os, const Misil& misil);
 public:
-   	friend ostream& operator<<(ostream&, const Matriz&);
     Misil();
     // Asegurar que los identificadores van a ser distintos
     Misil(char id, const long double* medicionesX, const long double* medicionesY, unsigned int cantMediciones);
@@ -14,7 +14,8 @@ public:
 
     char id (void) const;
     bool estaDestruido (void) const;
-    void posicion (long double tiempo, long double&, long double&) const;
+    long double posicionX (long double tiempo) const;
+    long double posicionY (long double tiempo) const;
 
     ~Misil();
 //private:
