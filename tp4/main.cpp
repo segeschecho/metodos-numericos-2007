@@ -39,6 +39,40 @@ Armageddon(ifstream& entrada, ofstream& salida)
     }
 }
 
+void parser(ifstream &in, Misil *misiles, unsigned int &cantMisiles, unsigned int &cantBombas, long double &radioPlaneta, long double &radioBomba){
+    int cantMediciones = 0;
+
+    in >> cantMisiles;
+    in >> cantMediciones;
+
+    cout << "cant mediciones " << cantMediciones << endl;
+    cout << "cant misiles " << cantMisiles << endl;
+    
+    misiles = new Misil[cantMisiles];
+    long double *muestraX = new long double[cantMediciones];
+    long double *muestraY = new long double[cantMediciones];
+
+    for(int i = 0; i < cantMisiles; i++){
+        for(int j = 0; j < cantMediciones; j++){
+	    in >> muestraX[j];
+	    cout << "muestra en x " << muestraX[j];
+	    in >> muestraY[j];
+	    cout << " muestra en y " << muestraY[j] << endl;
+	}
+        misiles[i] = Misil((char)i, muestraX, muestraY, cantMediciones);
+    }
+    in >> cantBombas;
+    in >> radioBomba;
+    in >> radioPlaneta;
+
+    cout << "num bombas " << cantBombas << endl;
+    cout << "radio planeta " << radioPlaneta << endl;
+    cout << "radio bomba " << radioBomba << endl;
+
+    delete muestraX;
+    delete muestraY;
+}
+
 int main(int argc, char* argv[])
 {
     ifstream entrada;
