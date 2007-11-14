@@ -1,0 +1,305 @@
+\documentclass[10pt]{article}
+\usepackage[spanish]{babel} %pone palabras en español
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\newcommand{\real}{\hbox{\bf R}}
+\begin{document}
+\title{\fbox{\fbox{\bf Trabajo Práctico 4: Impacto profundo}}}
+\author{\bf{Universidad de Buenos Aires}\\
+		 \bf{Facultad de Ciencias Exáctas y Naturales}\\
+		 \bf{(FCEyN)}\\
+		 \bf{Departamento de Computación}\\ \\
+		 González Sergio (gonzalezsergio2003@yahoo.com.ar)\\
+		 González Emiliano (XJesse\_JamesX@hotmail.com)\\
+		 Ferro Mariano (eltrencitomasverde@gmail.com)}
+\date{19 de noviembre, 2007}
+\maketitle
+\begin{abstract} % comienzo del resumen. Opcional
+\textit{En este trabajo abordaremos un problema particular que requiere la utilización del método de interpolación con splines cúbicos normales. Dicho problema trata sobre un supuesto bombardeo de misiles intergalácticos hacia la tierra, estos misiles tienen que ser destruidos de antes de llegar al planeta. Los splines se utilizan para calcular las trayectorias de los misiles haciendo extrapolación en el último polinomio, correspondiente al último intervalo de tiempo donde se hicieron las mediciones. Uno de los problemas además del anterior mencionado, radica en neutralizar la mayor cantidad de misiles teniendo un número acotado (y probablemente menor) de bombas. Para resolver esto se requiere implementar una estrategia adecuada tratando de maximizar la cantidad de misiles neutralizados.
+}
+\end{abstract}
+\medskip
+\medskip
+{\LARGE \bf{Palábras clave:}}
+{\small
+\begin{itemize}
+\item Splines cubicos naturales.
+\item Extrapolación.
+\item Simulación.
+\end{itemize}
+}
+
+\pagebreak %nueva pagina.
+
+\leftline{\LARGE {\bf Introducción:}}
+\medskip
+\medskip
+
+En muchas ocasiones tenemos información que relaciona valores de variables, donde cada una depende de otra. En estos casos no se tiene una función que describa este conjunto de valores, por lo cual se busca un método que la obtenga. Para esto se utiliza la técnica de interpolación de datos. En el subcampo matemático, se denomina interpolación a la construcción de nuevos puntos a partir de un conjunto de valores que se encuentran discretizados. El conjunto de valores es una muestra que se obtiene a través de mediciones experimentales, a partir de las cuales se pretende construir una función que los ajuste y caracterice.  
+
+Además de la utilidad mencionada anteriormente, la interpolación de datos se utiliza para aproximar funciones complejas o difíciles de calcular, por otras más simples. El procedimiento es similar al ya explicado, es decir, se genera una muestra de la función a aproximar y luego, interpolando esos puntos, se obtiene una nueva función que aproxime a la anterior. Por ser una estimación, esta nueva función conlleva un error de aproximación con respecto a la original, que estará sujeto a las características del problema y del método de interpolación utilizado.
+
+En todos lo casos, teniendo un conjunto de valores que ordenaremos en pares $(x_i, y_i)$, correspondientes al resultado del experimento, se busca obtener una función que llamaremos $f$ que verifique:
+
+$$f(x_i) = y_i \forall i = 1..n$$
+
+Esta función, se denomina función interpolante en los puntos $x_1..x_n$. Existen varios métodos para calcularla, entre ellos la llamada interpolación lineal, la polinómica o la interpolación mediante splines.
+
+Para este trabajo, se utilizara el método de interpolación mediante splines. Un spline es una curva que unirá dos mediciones del muestreo de la función incógnita. Esta técnica define un conjunto de valores de a trozos mediante polinomios de grado menor o igual a al atribuido al spline. Esta característica, implica que al tener expresiones de bajo grado en cada intervalo, no se generen oscilaciones, que en la mayoría de las aplicaciones resultan indeseables. Es por esta razón que los splines utilizados casi con exclusividad son aquellos que minimizan su grado, impidiendo la aparición de dichas oscilaciones evitando interpolar mediante polinomios de grado elevado. Además esta característica apareja una cantidad de cálculos menor que los demás métodos. Esto se vuelve apreciable al momento de obtener resultados con un número grande de datos.
+
+A continuación se detallan las condiciones que debe cumplir un spline cúbico para ser tratado como tal. Los valores $x_j$ son los correspondientes a la muestra de la función que se desea interpolar, mientras que $S_j$ es la candidata para unir los puntos $(x_j, x_{j+1})$  :
+ 
+\begin{enumerate}
+\item $S(x_j) = f(x_j)$
+\item $S_{j+1}(x_{j+1}) = S_j(x_{j+1})$
+\item $S'_{j+1}(x_{j+1}) = S'_j(x_{j+1})$
+\item $S''_{j+1}(x_{j+1}) = S''_j(x_{j+1})$
+\end{enumerate}
+
+
+
+Para que la función $S_j$ (curva cúbica en cada intervalo) cumpla con los requisitos antes expuestos, se la fuerza a tener la siguiente forma:  
+
+$$S_j(x) = a_j + b_j(x - x_j) + c_j(x - x_j)^2 + d_j(x - x_j)^3$$
+
+De las condiciones anteriores, cumplidas por el polinomio se desprende que:
+\begin{enumerate}
+\item $a_j = f(x_j)$ $\forall j = 0..n-1$
+\item $a_n = S_{n-1}(x_n)$
+\item $b_j = \frac{a_{j+1} - a_j }{h_j } - h_j (\frac{2}{3}c_j + \frac{c_{j+1}}{3})$
+
+\item $b_{j+1} = b_j + 2c_j(x_{j+1} - x_j) + 3d_j(x_{j+1} - x_j)^2$ $\forall j = 0..n-2$
+
+\item $b_{n} = S'_{n-1}(x_n)$
+\item $S''_{j}(x_{j+1}) = S''_{j+1}(x_{j+1})$ $\forall j = 0...n-2$
+\item $2c_n = S''_{n-1}(x_n)$
+\item $d_j = \frac{c_{j+1} - c_j}{3h_j}$ $\forall j=0...n-1$ con $h_j = x_{j+1} - x_j$
+
+\end{enumerate}
+
+Donde $h_j = x_{j+1} - x_j$
+
+Luego se iguala la ecuación 3 con la 4, esta última con subíndice $j$ en lugar de $j+1$, y se remplaza  $b_{j-1}$ por la expresión 3 con el índice correspondiente.
+Como resultado se obtiene:
+
+$$\frac{1}{3}c_{j-1}h_{j-1} + c_j(\frac{2(h_j + h_{j-1})}{3}) + c_{j+1}\frac{h_j}{3} = \frac{a_{j+1}- a_j}{h_j} - \frac{a_j- a_{j-1}}{h_{j-1}}$$
+
+$$\forall j=0...n-1$$
+
+Con esta ultima ecuación se obtienen los valores $c_j$ de los polinomios de cada uno de los intervalos. Para ello se genera un sistema de ecuaciones, que se resuelve aplicando el método de gauss para realizar la triangulación, este sistema no esta completo, ya que faltan ecuaciones, para esto se igualan las derivadas segundas de los polinomios de cada extremo a cero (definiendo un spline cubico natural),  teniendo la misma cantidad de ecuaciones que de incognitas, dados estos datos se pueden hallar los valores correspondientes. Cabe destacar que el anterior sistema de ecuaciones es tridiagonal, por lo cual al momento de resolverlo se pueden aprovechar las características propias de este para hacer mas optima la solución en cuanto a tiempo o espacio requerido.
+
+Una vez obtenidos los valores de $c_j$, se procede a calcular los $d_j$ y $b_j$ correspondientes (los valores de $a_j$ son conocidos ya que se obtienen de la ecuación 1 y 2). Para esto se utilizan las ecuaciones 8 para $d_j$ y una combinación de las ecuaciones 4 y 5 para los valores de $c_j$.
+
+Con los polinomios obtenidos, se puede calcular cualquier valor dentro intervalo que definen los datos haciendo interpolación o bien calcular valores fuera de dicho rango haciendo extrapolación sobre el último polinomio del intervalo según el caso.
+
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Detalles de la implementación:}}
+\medskip
+\medskip
+
+Para este trabajo se implemento una nueva clase que se encarga que de describir a los objetos que vamos a interceptar, los misiles. A estos se les dio un comportamiento adecuado al problema. La clase se llama Misil y tiene las siguientes características:
+
+Cada misil tiene el número de mediciones, correspondientes a la muestra que define su trayectoria. Este dato se utiliza para calcular el spline que permite extrapolar el camino que recorre el misil en los siguientes intervalos de tiempo.
+
+Cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de explotar la mayor cantidad de misiles posibles, dicho método se explicara con mas detalle en párrafos mas adelante.
+
+Una variable de tipo bool indica si el misil fue destruido. Este dato se utiliza para evitar que dos misiles iguales estén al mismo tiempo en dos grupos diferentes. Puede pasar lo  anterior mencionado por ejemplo si en un intervalo de tiempo, un misil esta contenido dentro de un grupo que es el mejor para detonar una bomba, entonces por esta razón, dicho misil ya no existe para intervalos de tiempo posteriores, por lo tanto a la hora de detectar nuevos grupos para detonar bombas no se tenga en cuenta.
+
+Luego se tienen los coeficientes correspondientes a los polinomios calculados con el método de splines, para cada coordenada con respecto al tiempo y calcular la trayectoria del misil para cualquier intervalo de tiempo.
+
+Por último se tiene el método llamado spline  que dada una muestra de pares $(x,y)$ calcula los coeficientes del polinomio del ultimo intervalo de la muestra, y por lo tanto, los que sirven para hacer la extrapolación de la trayectoria del misil.
+
+Para calcular los coeficientes utilizamos las características de la matriz que se genera usando el método explicado en la sección Introducción.
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Resultados:}}
+\medskip
+\medskip
+
+
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Discusiones:}}
+\medskip
+\medskip
+
+\medskip
+\leftline{\LARGE{\bf Conclusiones:}}
+\medskip
+
+
+\pagebreak
+\leftline{{\LARGE{\bf Apendice A:}}}
+\medskip
+\medskip
+\leftline{{\bf Enunciado:}}
+
+\medskip
+\begin{centering}
+\bf Laboratorio de M\'etodos Num\'ericos - Segundo cuatrimestre 2007 \\
+\bf Trabajo Pr\'actico N\'umero 4: Impacto profundo \\
+\end{centering}
+
+\vskip 25pt
+\hrule
+\vskip 11pt
+
+\textbf{Introducci\'on}
+
+Nos encontramos nuevamente en el Centro de Operaciones Log\'\i sticas
+Laterales (\textsc{C.o.l.l.}), en uno de los momentos m\'as dram\'aticos
+de la XLII Guerra Intergal\'actica. El planeta Z-80 est\'a siendo atacado
+por un conjunto de misiles que amenazan su integridad, y nuestra misi\'on
+consiste en detener este cruel ataque.
+
+Para defender al planeta Z-80 contamos con un n\'umero reducido de bombas
+de destrucci\'on masiva. Estas bombas son enviadas a un punto del espacio
+circundante a nuestro planeta, donde se las hace explotar. La explosi\'on
+genera una onda expansiva que destruye todos los objetos (y misiles) ubicados
+a menos de un cierto radio cr\'\i tico del centro de la explosi\'on.
+
+Nuestros radares nos proporcionan la posici\'on exacta de los misiles
+enemigos a intervalos de tiempo aproximadamente constantes\footnote{Dominamos
+los viajes interplanetarios pero nuestros radares usan la anticuada
+tecnolog\'ia del siglo XXI.}. En funci\'on de estas mediciones deberemos
+determinar las trayectorias futuras de los misiles y, sobre la base de estas
+estimaciones, deberemos decidir en qu\'e lugar y en qu\'e momento tenemos que
+producir las explosiones de nuestras bombas defensivas, con el objetivo de
+destruir la mayor cantidad de misiles enemigos. La supervivencia de nuestro
+planeta est\'a en sus manos.
+
+\textbf{Enunciado}
+
+El objetivo del trabajo pr\'actico es implementar un programa que lea las
+mediciones de las posiciones de los misiles desde un archivo de texto, y que
+deje en otro archivo el momento y la posici\'on en la que deber\'a detonarse
+cada bomba defensiva, con el objetivo de maximizar la cantidad de misiles
+enemigos destruidos. Debido a la urgencia que tenemos para activar nuestras
+defensas, el programa no deber\'a utilizar m\'as de 20 sg.~de procesamiento
+total.
+
+El archivo de entrada contiene las posiciones de los
+misiles enemigos a intervalos de tiempo constantes de 1 sg. Para estimar
+la trayectoria futura de cada misil se deber\'an interpolar las
+mediciones de las posiciones enemigas con splines param\'etricos naturales,
+utilizando la extrapolaci\'on de cada spline hacia el futuro como una
+estimaci\'on de la trayectoria correspondiente.
+
+El programa debe tomar por l\'\i nea de comandos los nombres del archivo
+de entrada y del archivo de salida, de la siguiente forma:
+
+\begin{verbatim}
+   tp4.exe misiles.txt bombas.txt
+\end{verbatim}
+
+El archivo con los datos de entrada (llamado \texttt{misiles.txt} en el
+ejemplo) tiene en la primera l\'\i nea la cantidad $n$ de misiles y la
+cantidad $m$ de mediciones para cada uno. A continuaci\'on, se incluyen $m$
+filas correspondientes al primer misil, cada una de las cuales contiene
+las coordenadas $x$ e $y$ de la posici\'on del misil en los instantes
+$t=1,2,\dots,m$ sg.~(simplificamos el an\'alisis considerando un espacio
+bidimensional). Luego de las $m$ l\'\i neas correspondientes al primer misil,
+el archivo contiene $m$ l\'\i neas con el mismo formato correspondientes al
+segundo misil, etc. Por \'ultimo, el archivo contiene una l\'\i nea con la
+cantidad $b$ de bombas defensivas, el radio $r$ de la onda expansiva de cada
+una y el radio $R$ de nuestro planeta, cuyo centro suponemos ubicado en el
+origen de coordenadas. Por ejemplo, el siguiente archivo es un ejemplo de
+datos de entrada v\'alidos:
+
+\begin{verbatim}
+   3 4
+
+   1.0    2.5
+   1.1    2.4
+   1.23   2.3
+   1.27   2.15
+
+   1.9    3.5
+   1.8    3.4
+   1.7    3.2
+   1.75   2.9
+
+   -2.2   2.3
+   -2.15  2.23
+   -2.12  2.17
+   -2.08  2.11
+
+   2 0.7 1.0
+\end{verbatim}
+
+Por su parte, el archivo de salida (llamado \texttt{bombas.txt} en el
+ejemplo) debe tener una l\'\i nea por cada bomba, que contenga el instante
+de la explosi\'on y las coordenadas $x$ e $y$ del centro de la
+explosi\'on. Es importante notar que el punto central de cada explosi\'on
+debe tener una distancia al origen de coordenadas de al menos $R+r$, para
+evitar que parte del planeta sea destruido por nuestras mismas bombas
+defensivas. Por ejemplo, si $b=2$ el siguiente es un ejemplo de archivo
+de salida:
+
+\begin{verbatim}
+   2.4   2.15 2.80
+   1.6   -2.04 2.50
+\end{verbatim}
+
+El informe debe contener todas las opciones que el grupo haya considerado
+para determinar los instantes y posiciones en los que se deben detonar las
+bombas defensivas.
+
+\vskip 15pt
+
+\hrule
+
+\vskip 11pt
+
+Fecha de entrega: Lunes 19 de Noviembre
+
+\medskip
+\medskip
+\medskip
+
+\leftline{{\LARGE{\bf Apendice B:}}}
+\medskip
+\medskip
+
+
+
+\pagebreak
+\begin{thebibliography}{6}
+
+\bibitem{grifhig} http://es.wikipedia.org/wiki/Spline
+Definición de interpolación mediante splines.
+
+\bibitem{grifhig} http://www.mismates.net/descargas/ejerbasicos.pdf
+Inscribir tirangulo en circulo
+
+\bibitem{grifhig} http://pcm.dis.ulpgc.es/tutor/splines.pdf
+Condiciones para el spline
+
+\bibitem{grifhig} http://www.ugr.es/~ossanche/docencia05\_06/metnumericos/splines
+Alguna implementación
+
+\bibitem{grifhif} http://docentes.uacj.mx/gtapia/AN/Unidad6/Contenido4.htm
+explicacion teorica
+
+\bibitem{grifhig} http://www.cplusplus.com/
+Referencia y consulta para C++
+
+\bibitem{grifhig} http://148.204.224.249/esimetic/seminario2007/mod\_01/graficasconmatlab933.pdf 
+Graficos con Matlab.
+
+\bibitem{grifhig} pcmap.unizar.es/~pilar/latex.pdf .
+Introduccion a latex.
+
+\bibitem{grifhig} http://oc.wikipedia.org/wiki/Ajuda:Formulas\_TeX\_e\_LaTeX
+Formulas Latex.
+
+\bibitem{grifhig} webs.uvigo.es/mat.avanzadas/PracME\_1.pdf
+Introducción a MatLab.
+
+\end{thebibliography}
+
+\end{document}
