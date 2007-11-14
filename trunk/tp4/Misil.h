@@ -12,8 +12,10 @@ public:
     // Constructor por copia viola el invariante de los identificadores, usar con precaucion
     Misil(const Misil&);
 
+    void operator= (const Misil& m2);
     char id (void) const;
     bool estaDestruido (void) const;
+    void destruir (void);
     long double posicionX (long double tiempo) const;
     long double posicionY (long double tiempo) const;
 
