@@ -26,6 +26,11 @@ Misil :: Misil(char id, const long double* medicionesX, const long double* medic
 
 Misil :: Misil(const Misil& m)
 {
+    *this = m;
+}
+
+void Misil :: operator= (const Misil& m)
+{
     for (int i = 0; i < 4; i++){
         x[i] = m.x[i];
         y[i] = m.y[i];
@@ -44,6 +49,11 @@ char Misil :: id (void) const
 bool Misil :: estaDestruido (void) const
 {
     return destruido;
+}
+
+void Misil :: destruir (void)
+{
+    destruido = true;
 }
 
 long double Misil :: posicionX (long double tiempo) const
@@ -119,8 +129,6 @@ void Misil :: spline (const long double* muestra, long double* res)
         }
     }
 
-    cout << diag;
-
     res[1] = vectorB/diag;
     //ya tengo el c(n-1), ahora necesito a(n-1), b(n-1) y d(n-1)
     //a(j) = f(j) (sale de evaluar la ecuacion del spline en x(n-1))
@@ -141,9 +149,16 @@ void Misil :: spline (const long double* muestra, long double* res)
 
 ostream& operator<<(ostream& os, const Misil& misil)
 {
-    os << "hold on" << endl;
+/*    os << "hold on" << endl;
     for(double i = misil.cantMediciones - 1; i <= 8; i+= 0.05){
         os << "plot([" << misil.posicionX(i) << "],[" << misil.posicionY(i) << "], '*');\n";
     }
+    */
+    os << endl;
+    os << "ID del misil: " << (int)misil.identificador << endl;
+    os << "Cantidad de mediciones: " << misil.cantMediciones << endl;
+    (misil.destruido) ? (os << "Destruido: TRUE" << endl) : (os << "Destruido: FALSE" << endl);
+    os << "Coeficientes del spline en x: " << misil.x[0] << " " << misil.x[1] << " " << misil.x[2] << " " << misil.x[3] << " " << misil.x[4] << endl;
+    os << "Coeficientes del spline en y: " << misil.y[0] << " " << misil.y[1] << " " << misil.y[2] << " " << misil.y[3] << " " << misil.x[4] << endl;
     return os;
 }
