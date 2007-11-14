@@ -1,4 +1,5 @@
-#include "Matriz.h"
+#include <iostream>
+using namespace std;
 
 #ifndef _MISIL_H
 #define _MISIL_H

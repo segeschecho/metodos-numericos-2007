@@ -1,5 +1,6 @@
 #include "Misil.h"
 #include <math.h>
+#include <assert.h>
 #include <iostream>
 #include <fstream>
 #include <list>
@@ -47,7 +48,7 @@ short int destruidos(list<Misil*>& misiles) {
     short int res = 0;
     list<Misil*>::iterator it;
     for (it = misiles.begin() ; it != misiles.end() ; it++) {
-        if (!(*it)->destruido) {
+        if ((*it)->destruido) {
             res++;
         }
     }
@@ -172,7 +173,7 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                 m1.y = misiles[i].posicionY(instante);
                 //si el misil no impacto el planeta
                 if (distancia(m1, centroCoord) > radioPlaneta) {
-                    nuevoGrupo.grupoMisiles.push_front(&misiles[i]);
+                    nuevoGrupo.grupoMisiles.push_back(&misiles[i]);
                     for (unsigned int j = i + 1; (j < cantMisiles) ; j++) {
                         if (!impactoMisil[j]) {
                             //todos contra todos de a pares
@@ -183,12 +184,12 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                                 long double distanciaij = distancia(m1, m2);
 
                                 if (distanciaij <= 2*radioBomba) {
-                                    nuevoGrupo.grupoMisiles.push_front(&misiles[j]);
+                                    nuevoGrupo.grupoMisiles.push_back(&misiles[j]);
                                     //Si no encontro tres y va a crear un grupo de 2, no puede haber otro dentro del radio
                                     //pues sino lo hubiesemos encontrado como grupo de 3
-                                    nuevoGrupo.bombaX = (misiles[i].posicionX(instante) + misiles[i].posicionX(instante)) / 2;
-                                    nuevoGrupo.bombaY = (misiles[i].posicionY(instante) + misiles[i].posicionY(instante)) / 2;
-                                    cout << "plot["<<nuevoGrupo.bombaX << " " << nuevoGrupo.bombaY << "]" << endl;
+                                    nuevoGrupo.bombaX = (misiles[i].posicionX(instante) + misiles[j].posicionX(instante)) / 2;
+                                    nuevoGrupo.bombaY = (misiles[i].posicionY(instante) + misiles[j].posicionY(instante)) / 2;
+//                                    salida << "plot(["<< nuevoGrupo.bombaX << "],[" << nuevoGrupo.bombaY << "], '*')" << endl;
                                     //si la distancia del misil1 con respecto al misil2 es menor o igual al diametro
                                     //agrego el grupito de 2 a la lista
                                     //cada candidato representa un misil susceptible de ser agregado al grupo
@@ -256,7 +257,7 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                                                             misil.x = misiles[indice].posicionX(instante);
                                                             misil.y = misiles[indice].posicionY(instante);
                                                             if (distancia(misil, bomba) < radioBomba)
-                                                                nuevoGrupo.grupoMisiles.push_front(&misiles[indice]);
+                                                                nuevoGrupo.grupoMisiles.push_back(&misiles[indice]);
                                                         }
                                                     }
                                                 }
@@ -267,7 +268,7 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                                             }
                                         }
                                     }
-                                    listaGrupos.push_front(nuevoGrupo);
+                                    listaGrupos.push_back(nuevoGrupo);
                                 }
                             }
                             else {
@@ -297,6 +298,10 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                     mejorCaso = &(*it);
                 }
             }
+
+            //caso en el que todos los grupos encontrados contienen misiles destruidos
+            if ((mejorCaso->grupoMisiles.size() - destruidos(mejorCaso->grupoMisiles)) <= 0)
+                break;
 
             //Ahora que tengo el mejor caso, quiero explotar la bomba y destruir los misiles
             list<Misil*>::iterator it2;
@@ -333,7 +338,7 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
 int main(int argc, char* argv[]) {
     ifstream entrada;
     ofstream salida;
-    entrada.open("H:\\Simulador TP 4\\2misilitos.txt", ios_base::in);
+    entrada.open("H:\\Simulador TP 4\\3misilitos.txt", ios_base::in);
     assert(entrada.is_open());
     salida.open("H:\\Simulador TP 4\\bombitas.txt", ios_base::out);
     assert(salida.is_open());
@@ -378,5 +383,6 @@ int main(int argc, char* argv[]) {
     delete muestraX;
     delete muestraY;
 */
+    system("PAUSE");
     return 0;
 }
