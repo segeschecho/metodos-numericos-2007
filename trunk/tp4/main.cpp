@@ -156,6 +156,8 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
     for (unsigned int i = 0; i < cantMisiles; i++) {
         impactoMisil[i] = false;
     }
+    //cantImpactados representa la cantidad de misiles que hayan hecho impacto
+    //con el planeta, hasta un instante dado
     unsigned int cantImpactados = 0;
 
     list<Grupo> listaGrupos;
@@ -164,7 +166,7 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
     centroCoord.y = 0;
     float instante = cantMuestras + paso;
     while (cantImpactados < cantMisiles) {
-        for (unsigned int i = 0; (i < cantMisiles) ; i++) {
+        for (unsigned int i = 0; i < cantMisiles ; i++) {
             if (!impactoMisil[i]) {
                 Par m1;
                 m1.x = misiles[i].posicionX(instante);
@@ -179,6 +181,13 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                             m2.x = misiles[j].posicionX(instante);
                             m2.y = misiles[j].posicionY(instante);
                             if (distancia(m2, centroCoord) > radioPlaneta) {
+                                //ya defino donde va a ser el lugar hipotetico que explotara la bomba
+                                //posiblemente cuando encuentre un 3er misil en rango, este lugar sera modificado
+                                //para que la bomba le pegue a los 3
+                                Par bomba;
+                                bomba.x = (misiles[i].posicionX(instante) + misiles[j].posicionX(instante)) / 2;
+                                bomba.y = (misiles[i].posicionY(instante) + misiles[j].posicionY(instante)) / 2;
+
                                 long double distanciaij = distancia(m1, m2);
 
                                 //si la distancia del misil1 con respecto al misil2 es menor o igual al diametro
@@ -205,7 +214,6 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                                                     Par iM;
                                                     Misil* grupoMisiles[3] = {&misiles[i], &misiles[j], &misiles[k]};
                                                     encontroTres = true;
-                                                    Par bomba;
 
                                                     if (interseccionDeMediatrices(grupoMisiles, instante, radioBomba, iM)){
                                                         bomba.x = iM.x;
@@ -236,80 +244,83 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                                                             }
                                                         }
                                                     }
-
-                                                    //como el chequeo de la distancia se termina con 3 misiles, puede suceder
-                                                    //que dentro del rango de explosion se encuentren otros misiles aun no detectados
-                                                    Par misil;
-                                                    Grupo nuevoGrupo;
-                                                    nuevoGrupo.instante = instante;
-                                                    nuevoGrupo.bombaX = bomba.x;
-                                                    nuevoGrupo.bombaY = bomba.y;
-                                                    
-                                                    for (unsigned int indice = 0; indice < cantMisiles; indice++) {
-                                                        misil.x = misiles[indice].posicionX(instante);
-                                                        misil.y = misiles[indice].posicionY(instante);
-                                                        if (distancia(misil, bomba) <= radioBomba) {
-                                                            nuevoGrupo.grupoMisiles.push_back(&misiles[indice]);
+                                                    //si la bomba no le pega al planeta entonces agrego el grupo
+                                                    if (distancia(bomba, centroCoord) > radioBomba + radioPlaneta) {
+                                                        //como el chequeo de la distancia se termina con 3 misiles, puede suceder
+                                                        //que dentro del rango de explosion se encuentren otros misiles aun no detectados
+                                                        Par misil;
+                                                        Grupo nuevoGrupo;
+                                                        nuevoGrupo.instante = instante;
+                                                        nuevoGrupo.bombaX = bomba.x;
+                                                        nuevoGrupo.bombaY = bomba.y;
+                                                        
+                                                        for (unsigned int indice = 0; indice < cantMisiles; indice++) {
+                                                            misil.x = misiles[indice].posicionX(instante);
+                                                            misil.y = misiles[indice].posicionY(instante);
+                                                            if (distancia(misil, bomba) <= radioBomba) {
+                                                                nuevoGrupo.grupoMisiles.push_back(&misiles[indice]);
+                                                            }
                                                         }
-                                                    }
-                                                    
-                                                    listaGrupos.push_back(nuevoGrupo);
-                                                }
-                                            }
+                                                        
+                                                        listaGrupos.push_back(nuevoGrupo);
+                                                    }//end if (distancia(bomba, centroCoord) > radioBomba + radioPlaneta)
+                                                }//end if ((distanciaik <= 2*radioBomba) && (distanciajk <= 2*radioBomba))
+                                            }//end if (distancia(m3, centroCoord) > radioPlaneta)
                                             else {
                                                 impactoMisil[k] = true;
                                                 cantImpactados++;
                                             }
-                                        }
+                                        }//end if (!impactoMisil[k]
+                                    }//end for (unsigned int k = j + 1; k < cantMisiles; k++)
+
+                                    if((!encontroTres) && (distancia(bomba, centroCoord) > radioBomba + radioPlaneta)) {
+                                        //Si no encontro tres y va a crear un grupo de 2, no puede haber otro dentro del radio
+                                        //pues sino lo hubiesemos encontrado como grupo de 3
+                                        Grupo nuevoGrupo;
+                                        nuevoGrupo.instante = instante;
+                                        nuevoGrupo.grupoMisiles.push_back(&misiles[i]);
+                                        nuevoGrupo.grupoMisiles.push_back(&misiles[j]);
+                                        nuevoGrupo.bombaX = bomba.x;
+                                        nuevoGrupo.bombaY = bomba.y;
+                                        //agrego el grupo a la lista
+                                        listaGrupos.push_back(nuevoGrupo);
                                     }
-                                }
-                            }
+                                }//end if(distanciaij <= 2*radioBomba)
+                            }//end if (distancia(m2, centroCoord) > radioPlaneta)
                             else {
                                 impactoMisil[j] = true;
                                 cantImpactados++;
                             }
-                        }
-
-                        if(!encontroTres) {
-                            //Si no encontro tres y va a crear un grupo de 2, no puede haber otro dentro del radio
-                            //pues sino lo hubiesemos encontrado como grupo de 3
-                            Grupo nuevoGrupo;
-                            nuevoGrupo.instante = instante;
-                            nuevoGrupo.grupoMisiles.push_back(&misiles[i]);
-                            nuevoGrupo.grupoMisiles.push_back(&misiles[j]);
-                            nuevoGrupo.bombaX = (misiles[i].posicionX(instante) + misiles[j].posicionX(instante)) / 2;
-                            nuevoGrupo.bombaY = (misiles[i].posicionY(instante) + misiles[j].posicionY(instante)) / 2;
-                            //agrego el grupo a la lista
-                            listaGrupos.push_back(nuevoGrupo);
-                        }
-                    }
-                }
+                        }//end if (!impactoMisil[j])
+                    }//fin del ciclo de busqueda de 2do misil
+                }//end if (distancia(m1, centroCoord) > radioPlaneta)
                 else {
                     impactoMisil[i] = true;
                     cantImpactados++;
                 }
-            }
-        }
+            }//end if (!impactoMisil[i])
+        }//end for (unsigned int i = 0; i < cantMisiles; i++)
         instante += paso;
-    }
+    }//end while (cantImpactados < cantMisiles)
 
+    unsigned int misilesDestruidos = 0;
     if (!(listaGrupos.empty())) {
-        while (cantBombas > 0) {
+        while ((cantBombas > 0) && (misilesDestruidos < cantMisiles)) {
             //De los grupos que tengo, quiero aprovechar los mejores casos
             Grupo* mejorCaso = &(listaGrupos.front());
             list<Grupo>::iterator it;
-            for (it = listaGrupos.begin() ; it != listaGrupos.end() ; it++) {
-                if ( ((mejorCaso->grupoMisiles.size() - destruidos(mejorCaso->grupoMisiles)) < (it->grupoMisiles.size() - destruidos(it->grupoMisiles))) &&
-                    ((it->bombaX > (radioBomba + radioPlaneta)) || (it->bombaY > (radioBomba + radioPlaneta))) ){
+            for (it = listaGrupos.begin() ; it != listaGrupos.end(); it++) {
+                if ( ((mejorCaso->grupoMisiles.size() - destruidos(mejorCaso->grupoMisiles)) < (it->grupoMisiles.size() - destruidos(it->grupoMisiles)))){
                     mejorCaso = &(*it);
                 }
             }
 
             //caso en el que todos los grupos encontrados contienen misiles destruidos
-            if ((mejorCaso->grupoMisiles.size() - destruidos(mejorCaso->grupoMisiles)) <= 0)
+            if ((mejorCaso->grupoMisiles.size() - destruidos(mejorCaso->grupoMisiles)) <= 1)
                 break;
 
             //Ahora que tengo el mejor caso, quiero explotar la bomba y destruir los misiles
+            misilesDestruidos += (unsigned int)mejorCaso->grupoMisiles.size() - destruidos(mejorCaso->grupoMisiles);
             list<Misil*>::iterator it2;
             for (it2 = mejorCaso->grupoMisiles.begin() ; it2 != mejorCaso->grupoMisiles.end() ; it2++) {
                 (*it2)->destruir();
@@ -321,7 +332,7 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
     }
 
     //caso en el que rompo misiles al azar porque termine de verificar grupos
-    while (cantBombas > 0) {
+    while ((cantBombas > 0) && (misilesDestruidos < cantMisiles)) {
         Par misilito;
         for (unsigned int m = 0 ; m < cantMisiles ; m++) {
             if (!misiles[m].estaDestruido()) {
@@ -331,10 +342,27 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                 if (distancia(misilito, centroCoord) > (radioPlaneta + radioBomba)) {
                     misiles[m].destruir();
                     salida << cantMuestras + paso << " " << misilito.x << " " << misilito.y << endl;
+                    misilesDestruidos += 1;
                 }
             }
         }
         cantBombas--;
+    }
+
+    //si rompiendo todos los misiles aun quedan bombas, entonces exploto bombas en
+    //(0, (radioPlaneta + 2*radioBomba)) para que los seres vivientes de ese planeta
+    //disfruten los fuegos artificiales
+    while (cantBombas > 0) {
+        salida << cantMuestras + paso << " " << 0 << " " << (radioPlaneta + 2*radioBomba) << endl;
+        cantBombas--;
+    }
+
+    if (misilesDestruidos == 0) {
+        cout << "Coronel! No logramos destruir ningun misil :'(" << endl;
+    }
+    else {
+        cout << "Coronel! Destruimos " << misilesDestruidos;
+        (misilesDestruidos > 1) ? (cout << " misiles!" << endl) : (cout << " misil!" << endl);
     }
 
     delete [] impactoMisil;
@@ -344,9 +372,9 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
 int main(int argc, char* argv[]) {
     ifstream entrada;
     ofstream salida;
-    entrada.open("D:\\Facultad\\Metodos Numericos\\Simulador TP 4\\3misilitosCasoBordisimo.txt", ios_base::in);
+    entrada.open("H:\\Simulador TP 4\\misiles8.txt", ios_base::in);
     assert(entrada.is_open());
-    salida.open("D:\\Facultad\\Metodos Numericos\\Simulador TP 4\\bombitas.txt", ios_base::out);
+    salida.open("H:\\Simulador TP 4\\bombitas.txt", ios_base::out);
     assert(salida.is_open());
     Armageddon(entrada, salida, 0.05);
 /*    unsigned int cantMisiles, cantMediciones, cantBombas;
