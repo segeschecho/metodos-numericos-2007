@@ -94,7 +94,67 @@ Cabe destacar que el anterior sistema de ecuaciones es tridiagonal y además diag
 
 Una vez obtenidos los valores de $c_j$, se procede a calcular los $d_j$ y $b_j$ correspondientes (los valores de $a_j$ son conocidos ya que se obtienen de la ecuación 1 y 2). Para esto se utilizan las ecuaciones 8 para $d_j$ y una combinación de las ecuaciones 4 y 5 para los valores de $b_j$.
 
-Con los polinomios obtenidos, se puede calcular cualquier valor dentro del intervalo que definen los datos evualuando la función correspondiente al punto  (interpolación), o bien calcularlos fuera de dicho rango evaluando el último spline más alla de los limites de las mediciones (extrapolación). Obviamente, esta metodología supone que la función que se esta analizando continúa tal y como el último polinomio, y no va a tener comportamientos diferentes a éste a partir de cierto punto.
+Con los polinomios obtenidos, se puede calcular cualquier valor dentro del intervalo que definen los datos evualuando la función correspondiente al punto (interpolación), o bien calcularlos fuera de dicho rango evaluando el último spline más alla de los limites de las mediciones (extrapolación). Obviamente, esta metodología supone que la función que se esta analizando continúa tal y como el último polinomio, y no va a tener comportamientos diferentes a éste a partir de cierto punto.
+
+\pagebreak
+
+\medskip
+\medskip
+\leftline{\LARGE{\bf Desarrollo:}}
+\medskip
+\medskip
+
+El problema que abordamos durante este trabajo consiste en implementar un programa que lea las mediciones de las posiciones de los misiles desde un archivo de texto, y que deje en otro archivo el momento y la posición en la que debería detonarse cada bomba defensiva, con el objetivo de maximizar la cantidad de misiles enemigos destruidos. 
+
+Para lograr el objetivo planteado, se evaluaron distintas estrategias que progresaban sobre la cantidad de misiles destruidos. Así, comenzamos con métodos para contrarrestar el ataque de dos misiles. La primera opción consistía en calcular el promedio de las distancias en ambos ejes cartesianos. Esta forma de situar el punto de explosión de la bomba resultaba efectiva, además demostró ser fácilmente escalable a una mayor cantidad de objetivos. Por desgracia, así como era muy adaptable, no garantizaba precisión para más de dos misiles, ya que de existir un proyectil alejado de los otros, éste desplazaría el punto donde detonar la bomba. Otro inconveniente, resulta cuando un cúmulo de objetivos acerca demasiado el punto promedio a si mismo, dejando fuera de la explosión misiles individuales alejados.
+
+\centerline{
+\includegraphics[scale=0.5]{casoPatologicoPromedio1.JPG}
+}
+\centerline{
+{\small Aqui se puede apreciar un caso patológico para el promedio, bien resuelto por el método de la mayor distancia}
+}
+
+Teniendo esto en cuenta, buscamos una nueva estrategia que nos asegurase un mejor rendimiento para tres o más misiles. Así surgió la idea de tomar tan solo las distancias más largas  (entre los misiles) en cada eje (la distancia en cada eje para la coordenada correspondiente),  dividiéndolas por dos, para obtener un punto medio. De esta forma, siempre quedan atrapados en el radio de la explosión los proyectiles más extremos, que son los más susceptibles de ser excluidos ante el mínimo cambio en el punto a detonar. También, por ser los más alejados, de haber otros misiles cerca (siempre y cuando sea posible detonar una bomba sobre todos), éstos caen en el radio de la explosión.
+
+A pesar de las bondades de este método, hubo que pensar un poco más, ya que para casos en los que las posiciones de alguno de los  misiles no son simétricas, la figura se descompensa, y como sucedía con el caso de los promedios, se pierde el punto óptimo para la explosión. En el gráfico siguiente se muestra uno de estos casos.
+
+\centerline{
+\includegraphics[scale=0.5]{casoSuperPatologico2.JPG}
+}
+\centerline{
+{\small En este caso, la mayor distancia no funciona, pero el centro es capturado por la tecnica de las mediatrices}
+}
+
+
+Al notar que los métodos elaborados fallaban para varios casos, tratamos de idear uno que sea generalizable. Esta búsqueda no resultó tan efectiva como nos hubiera gustado, aún así, obtuvimos una técnica que se adapta a varios entornos y numerosas configuraciones de misiles. Aquello que inspiró este modo de buscar el mejor punto a detonar fue la inscripción de figuras geométricas en una circunferencia. De allí que se utilizan las mediatrices de los lados de un triangulo formado por tres misiles, para, de su intersección obtener el punto deseado. Solo se utilizan tres proyectiles para formar la figura, ya que de emplear más, podría darse un trazado no regular, lo que torna imposible la inscripción en la circunferencia de la bomba de ese polígono.  
+
+\centerline{
+\includegraphics[scale=0.5]{casoParalelogramo.JPG}
+}
+\centerline{
+{\small Este es uno de los casos en los que el sistema de mediatrices no funciona}
+}
+
+
+Otro caso patológico para este método radica en que cuando los misiles se encuentran alineados (o tienden a estarlo) el punto buscado se aleja, mientras menor es la distancia sobre uno de los ejes del trío de misiles, más distancia los separa del punto a detonar. Este es un comportamiento esperable, ya que la técnica trata de encontrar el centro de un circulo, del cual los proyectiles serían parte de su perímetro. 
+
+\centerline{
+\includegraphics[scale=0.5]{casoPatologicoMediatrices1.JPG}
+}
+\centerline{
+{\small Este es otro caso patológico para las mediatrices, el método de la mayor distancia lo tratría correctamente }
+}
+
+
+Como ninguna técnica resultó óptima para una mayoría abrumadora de casos, durante la implementación se optó por una combinación de las mismas, de forma tal, que cada método se desempeñe sobre las situaciones que mejor maneja. De esta forma, los casos de dos misiles se resuelven calculando el promedio de la distancia y los casos de tres se resuelven calculando la mitad de la distancia más larga entre los puntos, en el caso en que la formación de misiles tiende a estar alineada, y en el resto, a través del empleo de mediatrices. 
+
+Entre otras decisiones de implementación se optó por manejar la variable tiempo en una discretización de intervalos de 0,05 segundos, considerando que cada medición de "radar" de las posiciones de los misiles llega cada segundo. Consideramos como un "instante", dichos intervalos de tiempo, en ellos se calcula la posición extrapolada de cada misil.
+
+Cabe aclarar que para calcular las posiciones de los proyectiles, tanto extrapolando como intrapolando utilizamos dos splines, uno para cada coordenada de los ejes cartesianos, ambos en función del tiempo. De esta forma tenemos una evaluación del progreso sobre los ejes en cada intervalo de tiempo. Combinando y evaluando los polinomios obtenidos en cada instante, llegamos a la posición exacta del misil.
+
+Como consideración final, podemos mencionar otra visión completamente distinta a la adoptada, sin discretizar el tiempo, tomando funciones continuas, y analizando geométricamente si es posible destruir los misiles según su trayectoria. Esta alternativa no fue adoptada, ya que nos resulto inherente al problema discretizar de alguna forma el tiempo para manejar de forma simplificada los casos y las variables.
+
 
 \pagebreak
 
@@ -104,21 +164,27 @@ Con los polinomios obtenidos, se puede calcular cualquier valor dentro del inter
 \medskip
 \medskip
 
-%esta bien que solemos poner mas detalles que desarrollo pero aca falta bastante, por ejemplo que discretizamos el tiempo, que tenemos 2 splines por misil, la forma rara de triangular, describir mas las funciones de misil, yo hice algo pero no esta todo, separar metodos y miembros.
+%separar metodos y miembros.
 
 Para este trabajo se implementó una nueva clase que se encarga que de describir a los objetos que vamos a interceptar, los misiles. A estos se les dio un comportamiento adecuado al problema. La clase se llama Misil y tiene las siguientes características:
 
-Cada misil tiene el número de mediciones, correspondientes a la muestra que define su trayectoria. Este dato se utiliza para calcular el spline que permite extrapolar el camino que recorre el misil en los siguientes intervalos de tiempo.
+\begin{itemize}
 
-Cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de explotar la mayor cantidad de misiles posibles, dicho método se explicará en detalle algunos párrafos más adelante.
+\item CantMediciones(Int): cada misil tiene el número de mediciones, correspondientes a la muestra que define su trayectoria. Este dato se utiliza para calcular el spline que permite extrapolar el camino que recorre el misil en los siguientes intervalos de tiempo.
 
-Una variable de tipo bool indica si el misil fue destruido. Este dato es necesario por la forma en la que se decide cuales serán los misiles a explotar. Se utiliza mayormente a fin de no solapar grupos de misiles candidatos en el espacio ni en el tiempo. Por ejemplo, si tengo un conjunto de cuatro misiles en el tiempo $t$, y decidí destruirlo, otra hipotética formación de tres proyectiles, en la cual se encuentre alguno de los ya destruidos (en el instante $t$ o posterior) será tenida en cuenta con solo dos misiles.
+\item Identificador(Char): cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de destruir la mayor cantidad de misiles posibles, dicho método se explicará en detalle algunos párrafos más adelante.
 
-Luego se tiene un arreglo con los coeficientes correspondientes a los polinomios calculados con el método de splines. Estos se utilizan con un par de funciones llamadas posicionX y posicionY, que evaluan las funciones recíprocas para un instnate determinado por el llamador, obteniendo asi las coordenadas con respecto al tiempo sobre el eje de las absisas y el de las ordenadas. Un uso conjunto de estos métodos permite conocer la posición del misil en cualquier intervalo de nuestra discretización del tiempo.
+\item Destruido(bool): éste indica si el misil fue destruido. Este dato es necesario por la forma en la que se decide cuales serán los misiles a explotar. Se utiliza mayormente a fin de no solapar grupos de misiles candidatos en el espacio ni en el tiempo. Por ejemplo, si tengo un conjunto de cuatro misiles en el tiempo $t$, y decidí destruirlo, otra hipotética formación de tres proyectiles, la cual contenga alguno de los ya destruidos (en el instante $t$ o posterior) será tenida en cuenta con solo dos misiles.
+
+\item PosicionX/PosicionY(long double[4]): estos arreglos contienen los coeficientes correspondientes a los polinomios calculados con el método de splines. Estos se utilizan con un par de funciones llamadas posicionX y posicionY,  obteniendo asi las coordenadas con respecto al tiempo sobre el eje de las absisas y el de las ordenadas. 
 
 Por último se tiene el método llamado spline  que dada una muestra de pares $(x,y)$ calcula los coeficientes del polinomio del ultimo intervalo de la muestra, y por lo tanto, los que sirven para hacer la extrapolación de la trayectoria del misil.
 
+\end{itemize}
+
 Para calcular los coeficientes utilizamos las características de la matriz que se genera usando el método explicado en la sección Introducción.
+
+que evaluan las funciones recíprocas para un instante determinado por el llamador, Un uso conjunto de estos métodos permite conocer la posición del misil en cualquier intervalo de nuestra discretización del tiempo.
 
 \pagebreak
 \medskip
