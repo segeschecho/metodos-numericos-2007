@@ -15,7 +15,7 @@
 \date{19 de noviembre, 2007}
 \maketitle
 \begin{abstract} % comienzo del resumen. Opcional
-\textit{En este trabajo abordaremos un problema particular que requiere la utilización del método de interpolación con splines cúbicos normales. Dicho problema trata sobre un supuesto bombardeo de misiles intergalácticos hacia la tierra, estos misiles tienen que ser destruidos de antes de llegar al planeta. Los splines se utilizan para calcular las trayectorias de los misiles haciendo extrapolación en el último polinomio, correspondiente al último intervalo de tiempo donde se hicieron las mediciones. Uno de los problemas además del anterior mencionado, radica en neutralizar la mayor cantidad de misiles teniendo un número acotado (y probablemente menor) de bombas. Para resolver esto se requiere implementar una estrategia adecuada tratando de maximizar la cantidad de misiles neutralizados.
+\textit{En este trabajo abordaremos un problema particular que requiere la utilización del método de interpolación con splines cúbicos normales. Dicho problema trata sobre un supuesto bombardeo de misiles intergalácticos hacia un planeta desconocido, éstos tienen que ser destruidos antes de llegar a destino. Se cuenta con cierta cantidad conocida de mediciones experimentales provistas por un "radar" de las posiciones de los misiles. Los splines se utilizan para calcular las trayectorias de los misiles haciendo extrapolación en el último polinomio, correspondiente al intervalo de tiempo donde se realizaron las dos mediciones finales. De esta forma se pretende tener información sobre la posición de cada proyectil durante el tiempo que transcurre entre la última medición y su hipotético impacto. Otra de las exigencias que conlleva el problema mencionado, radica en neutralizar la mayor cantidad de misiles teniendo un número acotado (y menor) de bombas. Para resolver esto se requiere implementar una estrategia adecuada tratando de maximizar la cantidad de misiles neutralizados y evitando destruir el propio planeta con las bombas defensivas.
 }
 \end{abstract}
 \medskip
@@ -47,6 +47,8 @@ Esta función, se denomina función interpolante en los puntos $x_1..x_n$. Existen
 
 Para este trabajo, se utilizara el método de interpolación mediante splines. Un spline es una curva que unirá dos mediciones del muestreo de la función incógnita. Esta técnica define un conjunto de valores de a trozos mediante polinomios de grado menor o igual a al atribuido al spline. Esta característica, implica que al tener expresiones de bajo grado en cada intervalo, no se generen oscilaciones, que en la mayoría de las aplicaciones resultan indeseables. Es por esta razón que los splines utilizados casi con exclusividad son aquellos que minimizan su grado, impidiendo la aparición de dichas oscilaciones evitando interpolar mediante polinomios de grado elevado. Además esta característica apareja una cantidad de cálculos menor que los demás métodos. Esto se vuelve apreciable al momento de obtener resultados con un número grande de datos.
 
+\pagebreak
+
 A continuación se detallan las condiciones que debe cumplir un spline cúbico para ser tratado como tal. Los valores $x_j$ son los correspondientes a la muestra de la función que se desea interpolar, mientras que $S_j$ es la candidata para unir los puntos $(x_j, x_{j+1})$  :
  
 \begin{enumerate}
@@ -67,9 +69,7 @@ De las condiciones anteriores, cumplidas por el polinomio se desprende que:
 \item $a_j = f(x_j)$ $\forall j = 0..n-1$
 \item $a_n = S_{n-1}(x_n)$
 \item $b_j = \frac{a_{j+1} - a_j }{h_j } - h_j (\frac{2}{3}c_j + \frac{c_{j+1}}{3})$
-
 \item $b_{j+1} = b_j + 2c_j(x_{j+1} - x_j) + 3d_j(x_{j+1} - x_j)^2$ $\forall j = 0..n-2$
-
 \item $b_{n} = S'_{n-1}(x_n)$
 \item $S''_{j}(x_{j+1}) = S''_{j+1}(x_{j+1})$ $\forall j = 0...n-2$
 \item $2c_n = S''_{n-1}(x_n)$
@@ -86,12 +86,17 @@ $$\frac{1}{3}c_{j-1}h_{j-1} + c_j(\frac{2(h_j + h_{j-1})}{3}) + c_{j+1}\frac{h_j
 
 $$\forall j=0...n-1$$
 
-Con esta ultima ecuación se obtienen los valores $c_j$ de los polinomios de cada uno de los intervalos. Para ello se genera un sistema de ecuaciones, que se resuelve aplicando el método de gauss para realizar la triangulación, este sistema no esta completo, ya que faltan ecuaciones, para esto se igualan las derivadas segundas de los polinomios de cada extremo a cero (definiendo un spline cubico natural),  teniendo la misma cantidad de ecuaciones que de incognitas, dados estos datos se pueden hallar los valores correspondientes. Cabe destacar que el anterior sistema de ecuaciones es tridiagonal, por lo cual al momento de resolverlo se pueden aprovechar las características propias de este para hacer mas optima la solución en cuanto a tiempo o espacio requerido.
+\pagebreak
 
-Una vez obtenidos los valores de $c_j$, se procede a calcular los $d_j$ y $b_j$ correspondientes (los valores de $a_j$ son conocidos ya que se obtienen de la ecuación 1 y 2). Para esto se utilizan las ecuaciones 8 para $d_j$ y una combinación de las ecuaciones 4 y 5 para los valores de $c_j$.
+Con esta ultima ecuación se obtienen las expresiones de $c_j$ para los polinomios de cada uno de los intervalos, en función de los $h$ y los $a$, todos conocidos. Para calcualar los valores reales se genera un sistema de ecuaciones, que se resuelve aplicando un método cualquiera de resolución (en nuestro caso se uso uno propio, basado en la eliminación gaussiana y la sustitución hacia atras, se lo explicará en la sección Detalles de la Implementación), este sistema no esta completo, ya que faltan dos ecuaciones para que sea cuadrado. Para esto se igualan las derivadas segundas de los polinomios de cada extremo a cero (definiendo un spline cubico natural), teniendo la misma cantidad de ecuaciones que de incognitas, dados estos datos se pueden hallar los valores exactos correspondientes a los coeficientes $c_j$ de cada polinomio. 
+%lo que esta entre parentesis podria ser una nota al pie
+Cabe destacar que el anterior sistema de ecuaciones es tridiagonal y además diagonal dominante, por lo cual al momento de resolverlo se pueden aprovechar, tanto desde el punto de vista analítico como computacional, las características propias de éste para hacer más óptima la solución en cuanto a tiempo y/o espacio requerido.
 
-Con los polinomios obtenidos, se puede calcular cualquier valor dentro intervalo que definen los datos haciendo interpolación o bien calcular valores fuera de dicho rango haciendo extrapolación sobre el último polinomio del intervalo según el caso.
+Una vez obtenidos los valores de $c_j$, se procede a calcular los $d_j$ y $b_j$ correspondientes (los valores de $a_j$ son conocidos ya que se obtienen de la ecuación 1 y 2). Para esto se utilizan las ecuaciones 8 para $d_j$ y una combinación de las ecuaciones 4 y 5 para los valores de $b_j$.
 
+Con los polinomios obtenidos, se puede calcular cualquier valor dentro del intervalo que definen los datos evualuando la función correspondiente al punto  (interpolación), o bien calcularlos fuera de dicho rango evaluando el último spline más alla de los limites de las mediciones (extrapolación). Obviamente, esta metodología supone que la función que se esta analizando continúa tal y como el último polinomio, y no va a tener comportamientos diferentes a éste a partir de cierto punto.
+
+\pagebreak
 
 \medskip
 \medskip
@@ -99,20 +104,23 @@ Con los polinomios obtenidos, se puede calcular cualquier valor dentro intervalo
 \medskip
 \medskip
 
-Para este trabajo se implemento una nueva clase que se encarga que de describir a los objetos que vamos a interceptar, los misiles. A estos se les dio un comportamiento adecuado al problema. La clase se llama Misil y tiene las siguientes características:
+%esta bien que solemos poner mas detalles que desarrollo pero aca falta bastante, por ejemplo que discretizamos el tiempo, que tenemos 2 splines por misil, la forma rara de triangular, describir mas las funciones de misil, yo hice algo pero no esta todo, separar metodos y miembros.
+
+Para este trabajo se implementó una nueva clase que se encarga que de describir a los objetos que vamos a interceptar, los misiles. A estos se les dio un comportamiento adecuado al problema. La clase se llama Misil y tiene las siguientes características:
 
 Cada misil tiene el número de mediciones, correspondientes a la muestra que define su trayectoria. Este dato se utiliza para calcular el spline que permite extrapolar el camino que recorre el misil en los siguientes intervalos de tiempo.
 
-Cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de explotar la mayor cantidad de misiles posibles, dicho método se explicara con mas detalle en párrafos mas adelante.
+Cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de explotar la mayor cantidad de misiles posibles, dicho método se explicará en detalle algunos párrafos más adelante.
 
-Una variable de tipo bool indica si el misil fue destruido. Este dato se utiliza para evitar que dos misiles iguales estén al mismo tiempo en dos grupos diferentes. Puede pasar lo  anterior mencionado por ejemplo si en un intervalo de tiempo, un misil esta contenido dentro de un grupo que es el mejor para detonar una bomba, entonces por esta razón, dicho misil ya no existe para intervalos de tiempo posteriores, por lo tanto a la hora de detectar nuevos grupos para detonar bombas no se tenga en cuenta.
+Una variable de tipo bool indica si el misil fue destruido. Este dato es necesario por la forma en la que se decide cuales serán los misiles a explotar. Se utiliza mayormente a fin de no solapar grupos de misiles candidatos en el espacio ni en el tiempo. Por ejemplo, si tengo un conjunto de cuatro misiles en el tiempo $t$, y decidí destruirlo, otra hipotética formación de tres proyectiles, en la cual se encuentre alguno de los ya destruidos (en el instante $t$ o posterior) será tenida en cuenta con solo dos misiles.
 
-Luego se tienen los coeficientes correspondientes a los polinomios calculados con el método de splines, para cada coordenada con respecto al tiempo y calcular la trayectoria del misil para cualquier intervalo de tiempo.
+Luego se tiene un arreglo con los coeficientes correspondientes a los polinomios calculados con el método de splines. Estos se utilizan con un par de funciones llamadas posicionX y posicionY, que evaluan las funciones recíprocas para un instnate determinado por el llamador, obteniendo asi las coordenadas con respecto al tiempo sobre el eje de las absisas y el de las ordenadas. Un uso conjunto de estos métodos permite conocer la posición del misil en cualquier intervalo de nuestra discretización del tiempo.
 
 Por último se tiene el método llamado spline  que dada una muestra de pares $(x,y)$ calcula los coeficientes del polinomio del ultimo intervalo de la muestra, y por lo tanto, los que sirven para hacer la extrapolación de la trayectoria del misil.
 
 Para calcular los coeficientes utilizamos las características de la matriz que se genera usando el método explicado en la sección Introducción.
 
+\pagebreak
 \medskip
 \medskip
 \leftline{\LARGE{\bf Resultados:}}
@@ -120,13 +128,14 @@ Para calcular los coeficientes utilizamos las características de la matriz que s
 \medskip
 
 
-
+\pagebreak
 \medskip
 \medskip
 \leftline{\LARGE{\bf Discusiones:}}
 \medskip
 \medskip
 
+\pagebreak
 \medskip
 \leftline{\LARGE{\bf Conclusiones:}}
 \medskip
@@ -134,7 +143,6 @@ Para calcular los coeficientes utilizamos las características de la matriz que s
 
 \pagebreak
 \leftline{{\LARGE{\bf Apendice A:}}}
-\medskip
 \medskip
 \leftline{{\bf Enunciado:}}
 
@@ -261,6 +269,7 @@ Fecha de entrega: Lunes 19 de Noviembre
 \medskip
 \medskip
 
+\pagebreak
 \leftline{{\LARGE{\bf Apendice B:}}}
 \medskip
 \medskip
