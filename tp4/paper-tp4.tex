@@ -108,43 +108,49 @@ El problema que abordamos durante este trabajo consiste en implementar un progra
 
 Para lograr el objetivo planteado, se evaluaron distintas estrategias que progresaban sobre la cantidad de misiles destruidos. Así, comenzamos con métodos para contrarrestar el ataque de dos misiles. La primera opción consistía en calcular el promedio de las distancias en ambos ejes cartesianos. Esta forma de situar el punto de explosión de la bomba resultaba efectiva, además demostró ser fácilmente escalable a una mayor cantidad de objetivos. Por desgracia, así como era muy adaptable, no garantizaba precisión para más de dos misiles, ya que de existir un proyectil alejado de los otros, éste desplazaría el punto donde detonar la bomba. Otro inconveniente, resulta cuando un cúmulo de objetivos acerca demasiado el punto promedio a si mismo, dejando fuera de la explosión misiles individuales alejados.
 
-\centerline{
-\includegraphics[scale=0.5]{casoPatologicoPromedio1.JPG}
-}
-\centerline{
-{\small Aqui se puede apreciar un caso patológico para el promedio, bien resuelto por el método de la mayor distancia}
-}
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.5]{casoPatologicoPromedio1.JPG}
+\caption{ Aqui se puede apreciar un caso patológico para el promedio, bien resuelto por el método de la mayor distancia}
+\end{figure}
+
 
 Teniendo esto en cuenta, buscamos una nueva estrategia que nos asegurase un mejor rendimiento para tres o más misiles. Así surgió la idea de tomar tan solo las distancias más largas  (entre los misiles) en cada eje (la distancia en cada eje para la coordenada correspondiente),  dividiéndolas por dos, para obtener un punto medio. De esta forma, siempre quedan atrapados en el radio de la explosión los proyectiles más extremos, que son los más susceptibles de ser excluidos ante el mínimo cambio en el punto a detonar. También, por ser los más alejados, de haber otros misiles cerca (siempre y cuando sea posible detonar una bomba sobre todos), éstos caen en el radio de la explosión.
 
 A pesar de las bondades de este método, hubo que pensar un poco más, ya que para casos en los que las posiciones de alguno de los  misiles no son simétricas, la figura se descompensa, y como sucedía con el caso de los promedios, se pierde el punto óptimo para la explosión. En el gráfico siguiente se muestra uno de estos casos.
 
-\centerline{
-\includegraphics[scale=0.5]{casoSuperPatologico2.JPG}
-}
-\centerline{
-{\small En este caso, la mayor distancia no funciona, pero el centro es capturado por la tecnica de las mediatrices}
-}
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.5]{casoSuperPatologico2.JPG}
+\caption{ En este caso, la mayor distancia no funciona, pero el centro es capturado por la tecnica de las mediatrices}
+\end{figure}
 
 
-Al notar que los métodos elaborados fallaban para varios casos, tratamos de idear uno que sea generalizable. Esta búsqueda no resultó tan efectiva como nos hubiera gustado, aún así, obtuvimos una técnica que se adapta a varios entornos y numerosas configuraciones de misiles. Aquello que inspiró este modo de buscar el mejor punto a detonar fue la inscripción de figuras geométricas en una circunferencia. De allí que se utilizan las mediatrices de los lados de un triangulo formado por tres misiles, para, de su intersección obtener el punto deseado. Solo se utilizan tres proyectiles para formar la figura, ya que de emplear más, podría darse un trazado no regular, lo que torna imposible la inscripción en la circunferencia de la bomba de ese polígono.  
-
-\centerline{
-\includegraphics[scale=0.5]{casoParalelogramo.JPG}
-}
-\centerline{
-{\small Este es uno de los casos en los que el sistema de mediatrices no funciona}
-}
+Al notar que los métodos elaborados fallaban para varios casos, tratamos de idear uno que sea generalizable. Esta búsqueda no resultó tan efectiva como nos hubiera gustado, aún así, obtuvimos una técnica que se adapta a varios entornos y numerosas configuraciones de misiles. Aquello que inspiró este modo de buscar el mejor punto a detonar fue la inscripción de figuras geométricas en una circunferencia. De allí que se utilizan las mediatrices de los lados de un triangulo formado por tres misiles, para, de su intersección obtener el punto deseado. Solo se utilizan tres proyectiles para formar la figura, ya que de emplear más, podría darse un trazado no regular, lo que torna imposible la inscripción en la circunferencia de la bomba de ese polígono(Figura 3).  
 
 
-Otro caso patológico para este método radica en que cuando los misiles se encuentran alineados (o tienden a estarlo) el punto buscado se aleja, mientras menor es la distancia sobre uno de los ejes del trío de misiles, más distancia los separa del punto a detonar. Este es un comportamiento esperable, ya que la técnica trata de encontrar el centro de un circulo, del cual los proyectiles serían parte de su perímetro. 
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.5]{casoParalelogramo.JPG}
+\caption{ Este es uno de los casos en los que el sistema de mediatrices no funciona}
+\end{figure}
 
-\centerline{
-\includegraphics[scale=0.5]{casoPatologicoMediatrices1.JPG}
-}
-\centerline{
-{\small Este es otro caso patológico para las mediatrices, el método de la mayor distancia lo tratría correctamente }
-}
+
+Otro caso patológico para este método radica en que cuando los misiles se encuentran alineados (o tienden a estarlo) el punto buscado se aleja (Figura 3), mientras menor es la distancia sobre uno de los ejes del trío de misiles, más distancia los separa del punto a detonar. Este es un comportamiento esperable, ya que la técnica trata de encontrar el centro de un circulo, del cual los proyectiles serían parte de su perímetro. 
+
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.5]{casoPatologicoMediatrices1.JPG}
+\caption{ Este es otro caso patológico para las mediatrices, el método de la mayor distancia lo tratría correctamente}
+\end{figure}
 
 
 Como ninguna técnica resultó óptima para una mayoría abrumadora de casos, durante la implementación se optó por una combinación de las mismas, de forma tal, que cada método se desempeñe sobre las situaciones que mejor maneja. De esta forma, los casos de dos misiles se resuelven calculando el promedio de la distancia y los casos de tres se resuelven calculando la mitad de la distancia más larga entre los puntos, en el caso en que la formación de misiles tiende a estar alineada, y en el resto, a través del empleo de mediatrices. 
@@ -166,7 +172,7 @@ Como consideración final, podemos mencionar otra visión completamente distinta a
 
 %separar metodos y miembros.
 
-Para este trabajo se implementó una nueva clase que se encarga que de describir a los objetos que vamos a interceptar, los misiles. A estos se les dio un comportamiento adecuado al problema. La clase se llama Misil y tiene las siguientes características:
+Para este trabajo se implementó una nueva clase que se encarga que de describir a los objetos que vamos a interceptar, los misiles. A estos se les dio un comportamiento adecuado al problema. La clase se llama Misil y a continuación se detallan sus miembros y métodos:
 
 \begin{itemize}
 
@@ -177,6 +183,18 @@ Para este trabajo se implementó una nueva clase que se encarga que de describir 
 \item Destruido(bool): éste indica si el misil fue destruido. Este dato es necesario por la forma en la que se decide cuales serán los misiles a explotar. Se utiliza mayormente a fin de no solapar grupos de misiles candidatos en el espacio ni en el tiempo. Por ejemplo, si tengo un conjunto de cuatro misiles en el tiempo $t$, y decidí destruirlo, otra hipotética formación de tres proyectiles, la cual contenga alguno de los ya destruidos (en el instante $t$ o posterior) será tenida en cuenta con solo dos misiles.
 
 \item PosicionX/PosicionY(long double[4]): estos arreglos contienen los coeficientes correspondientes a los polinomios calculados con el método de splines. Estos se utilizan con un par de funciones llamadas posicionX y posicionY,  obteniendo asi las coordenadas con respecto al tiempo sobre el eje de las absisas y el de las ordenadas. 
+
+
+Ahora se detallarán las funciones métodos, tanto públicas como privadas, que tengan cierta relevancia desde el punto de vista númerico, las que sean concernientes solo al campo de la implementación, podrán ser encontradas en el código con sus debidos comentarios.
+
+\begin{itemize}
+\item Misil(): la clase cuenta con constructor por defecto, por copia, paramétrico, y un operador '=', como métodos de generación de instancias. En particular, el constructor paramétrico recibe un identificador, dos arreglos de long double que contienen las mediciones en los ejes X e Y y la cantidad de dichas mediciones. Es en éste donde se llama a la función splines para que generé los polinomios interpoladores que emularán la trayectoria de los misiles
+
+\item posicionX()/posicionY(): métodos mencionados más arriba, son los encargados de evaluar los polinomios formulados mediante la función spline. Simplemente realizan las multiplicaciones pertinentes, valiéndose de los arreglos miembros de la clase, y de un instante elegido por el usuario donde efectuar la evaluación.
+
+\item spline(): este algoritmo es sin duda el más importante de la clase, ya que es el encargado de generar el polinomio interpolador entre cada punto de las mediciones recibidas en un arreglo. Recordar que como elaboramos un spline para el eje X y otro para el eje Y (ambos en función del tiempo transcurrido) solo necesitamos una coordenada por cada dato.
+
+\end{itemize}
 
 Por último se tiene el método llamado spline  que dada una muestra de pares $(x,y)$ calcula los coeficientes del polinomio del ultimo intervalo de la muestra, y por lo tanto, los que sirven para hacer la extrapolación de la trayectoria del misil.
 
