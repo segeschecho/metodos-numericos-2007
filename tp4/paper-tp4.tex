@@ -234,6 +234,26 @@ Finalmente, cuando se han seleccionado los grupos más convenientes a fin de prot
 \medskip
 \medskip
 
+El algoritmo programado funciona correctamente al momento de ubicar grupos de dos o tres misiles, y se decide por el mejor caso posible en cualquier instante. Esto se puede observar en los gráficos siguientes. De la discusión con otros grupos, obtuvimos un caso patológico en que el algoritmo no toma la decisión que salvaría el planeta. Esto se ejemplificará más adelante, ya que no es un caso
+particular sino una configuración de las trayectorias de los misiles, lo que confunde al programa.
+
+Sin embargo, gracias a las tres estrategias implementadas, se logra abarcar una gran cantidad de casos posibles, con lo que los resultados obtenidos son sumamente satisfactorios en efectividad y tiempo. 
+
+Respecto a los tiempos de ejecución, y haciendo referencia al gráfico que muestra su evolución, podemos observar que se incrementan muy rápidamente a medida que se agregan misiles. Esto se debe al funcionamiento del algoritmo que determina las soluciones, ya que con más proyectiles, en general se obtienen más grupos, y por lo tanto el trabajo a momento de encontrar un mejor punto a detonar es mayor, lo que se refleja en el tiempo total que lleva correr el programa.
+
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.5]{SegundosEnFuncionMisiles.jpg}
+\caption{\small Segundos en función de los misiles atacantes}
+\end{figure}
+
+Este gráfico es solo estimativo, y para dar una idea de cuanto tardará el algoritmo en resolver el problema. Los tiempos de ejecución dependen además de la cantidad de misiles, de la distribución que tienen éstos. Por ejemplo el procedimiento implementado tiene una rápida respuesta para aquellos misiles cuya distribución sea espaciada, de manera que no se encuentren muchos grupos de proyectiles. Cuanto más conjuntos se encuentren, por ende cuanto más dispareja sea la distribución de los misiles, más tiempo conlleva generar los grupos, y por lo tanto más tiempo lleva escoger los mejores al momento de detonar las bombas.
+
+En base a lo explicado anteriormente, el peor caso que puede registrarse es que se den las condiciones para que una gran cantidad de misiles estén juntos durante un largo intervalo de tiempo. Esto hará que el algoritmo genere demasiados grupos, con muchos proyectiles cada uno, que luego deberá comparar entre si para obtener la mejor configuración posible de bombas.
+
+En contraposición, el mejor de los casos será cuando además de haber pocos misiles sus trayectorias nunca se acerquen. De esta manera se obtendrá una reducida cantidad de grupos de pocos integrantes.
 
 \pagebreak
 \medskip
@@ -242,11 +262,58 @@ Finalmente, cuando se han seleccionado los grupos más convenientes a fin de prot
 \medskip
 \medskip
 
+Pudimos encontrar un caso en el que nuestro algoritmo tendrá un mal desempeño. Se trata de aquel en el que la estrategia es vital a la hora de explotar las bombas. Se junta una gran cantidad de misiles en cierto lugar,  formando una cantidad de grupos mayor a las bombas disponibles, y luego vuelven a separarse y agruparse con otros misiles en conjuntos más chicos, pero menor o igual a la cantidad de bombas. Este caso hace que nuestro algoritmo elija la opción de lanzar las bombas en el momento que encuentra el mayor grupo, que si bien destruye una gran parte de los misiles, no los destruye todos. Sin embargo se podrían haber detonado las bombas en el ultimo instante nombrado.
+
+A forma de ejemplo, uno de estos casos podría ser como el siguiente gráfico:
+
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.25]{caso_patologico_reproduccionSB.jpg}
+\caption{\small Este es el caso que nuestro algoritmo no puede resolver}
+\end{figure}
+
+
+Como podemos ver, se cruzan en el medio cuatro misiles, dos se aíslan, formando tres grupos. Luego los proyectiles del medio se van acercando a los del exterior, para formar dos grupos de tres cada uno.
+
+Ante este ejemplo, con dos bombas disponibles nuestro algoritmo se comporta de la siguiente manera:
+
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.25]{caso_patologico_reproduccion.jpg}
+\caption{\small Asi trata de superarlo nuestro programa}
+\end{figure}
+
+Lo sucedido muestra que el programa optó por lanzar las bombas en el medio, cuando encontró el grupo de cuatro misiles (el mas numeroso de todas las instancias), y la bomba restante la dejo caer sobre uno de los misiles que estaba solo. Esto nos deja un misil sin destruir, que luego impacta contra el planeta.
+
+El mejor desempeño que uno podría esperar seria de la siguiente forma:
+
+[GRAFICO DE CASO PATOLOGICO ARREGLADO]
+\medskip
+\begin{figure}[!htb]
+\centering
+\includegraphics
+[scale=0.25]{caso_patologico_reproduccion_arreglado.jpg}
+\caption{\small Asi debería superarlo un algoritmo que lo contemple}
+\end{figure}
+
+En este caso se lanzaron bombas sobre los dos grupos de tres misiles, y se logro un mejor resultado.
+
+Una de las maneras de hacer un algoritmo que repare en estos casos podría ser cambiar la estrategia de elección del mejor grupo, probando todas las combinatorias posibles entre las bombas y los casos, y luego elegir la mejor combinación. Por supuesto, esto puede llegar a tener un orden de complejidad muy alto como para cumplir con los requisitos del trabajo, por lo que sumado a la falta de tiempo, optamos por no hacerlo.
+
 \pagebreak
 \medskip
 \leftline{\LARGE{\bf Conclusiones:}}
 \medskip
 
+Resta buscar aún más casos para los que el algoritmo no funcione y buscar un procedimiento que los resuelva de la mejor manera. El rendimiento de nuestro trabajo nos resulto satisfactorio, en cuanto al tiempo que emplea y a la eficiencia al maximizar las cantidades de misiles destruidos, sin embargo, resta explorar muchas otras aproximaciones para este problema. Por ejemplo, encararlo desde el punto de vista geométrico, tomando las funciones continuas y analizando todo a la vez, o buscar la eficiencia por instantes en lugar de casos. 
+
+Todo esto nos lleva a la conclusion obvia, este es un problema muy abierto, y muy dificil de automatizar. No importa por donde se lo aborde, siempre nos enfrentamos a "la manta corta", si nos ocupamos de cierto grupo de casos, descuidamos otros, y no parece haber una solución combinatoria que sea capaz de resolver este conflicto entre cantidad y posición de misiles y bombas.
+
+De todas formas creemos que para el contexto en el que se nos encargo realizar el trabajo, nuestros algoritmos se desempeñarán de la forma esperada. Esta será, cumpliendo con nuestras expectativas, por lo menos en un ambiente acotado. Nos queda claro que para generalizarlo harán falta muchas más horas de trabajo y diseño.
 
 \pagebreak
 \leftline{{\LARGE{\bf Apendice A:}}}
