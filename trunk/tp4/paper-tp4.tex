@@ -215,6 +215,18 @@ También se implementó una función que calcula la distancia entre dos pares, y ot
 
 Todos estos algoritmos fueron implementados con el objetivo de servir de funciones auxiliares al motor de este trabajo el procedimiento que dimos en llamar Armageddon. Debido a las dimensiones de éste, y a la cantidad de decisiones que toma, convenimos que lo mejor para comprender su funcionamiento era separarlo en varias secciones, según se suceden los ciclos.
 
+Es por esto que consideramos mejor no comentar cada parte del código, ya que resultaría demasiado extenso y no es ese el objetivo del trabajo. Por ello explicaremos conceptualmente el código en lugar de hacer una revisión completa del mismo. 
+
+Para empezar, esta función recibe como parámetros un archivo de entrada, uno de salida, y un long double que representa en cuantas partes se discretizará un segundo. Con los streams, llama al parser encargado de levantar los datos, y al terminar, coloca en el resultado los tiempos y coordenadas de explosión de cada bomba.
+
+Una vez reunida toda la información necesaria y disponible, se procede a ejercitar la siguiente metodología: se recorren todos los intervalos de tiempo, y en cada uno se observa exhaustivamente el estado de  los misiles, de esta forma se buscan grupos de proyectiles que sean susceptibles de ser neutralizados con una sola acción defensiva, el procedimiento empareja primero (si los hay) grupos de dos misiles cuya distancia sea menor al diametro de las bombas de las que se dispone. Tras realizar esto se trata de encontrar un tercer misil que cumpla con las mismas condiciones simultaneamente respecto de los  dos antes mencionados. Para comprobar la viabilidad de detonar  el trio de proyectiles se utiliza el método de mediatrices primero, si éste no ofrece un punto óptimo, acude en su auxilio el algoritmo que calcula el máximo de las distancias en cada eje.
+
+Es importante aclarar que como se busca comprobar condiciones simultaneas sobre los misiles, los sucesivos for's no recorren varias veces el arreglo de punteros a misil, sino que lo hace en forma secuencial, añadiendo clausula a cada ciclo. Esta forma de proceder es lo que "entorpece" el código, ya que es necesario  tomar una gran cantidad de decisiones para manejar los casos bordes, y los pasos de grupos de dos a tres misiles etc.
+
+Este algoritmo deja por resultado una lista de grupos de misiles (varios grupos, por cada instante según sea el caso), entre los cuales se selecciona los mejores casos para maximizar las amenazas neutralizadas. Este algoritmo de decisión, no solo tiene en cuenta los posibles tres misiles que cumplan con las condiciones necesarias y suficientes para ser agregados a la lista, sino que también considera los misiles que serían destruidos y no se utilizaron para calcular el punto de detonación.
+
+Finalmente, cuando se han seleccionado los grupos más convenientes a fin de proteger el planeta, y se han dispuesto puntos de explosión para todas las bombas en existencia; se colocan estos puntos y sus respectivos instantes en el stream de salida y se da por concluido el algoritmo. 
+
 \pagebreak
 \medskip
 \medskip
