@@ -335,7 +335,7 @@ unsigned int Armageddon(ifstream& entrada, ofstream& salida, float paso) {
     //caso en el que rompo misiles al azar porque termine de verificar grupos
     for(int i = cantBombas; (i > 0) && (cantBombas > 0) && (misilesDestruidos < cantMisiles) ; i--) {
         Par misilito;
-        for (unsigned int m = 0 ; m < cantMisiles ; m++) {
+        for (unsigned int m = 0 ; (m < cantMisiles) && (cantBombas > 0); m++) {
             if (!misiles[m].estaDestruido()) {
                 //destruyo el misil en el primer instante posible
                 misilito.x = misiles[m].posicionX(cantMuestras + paso);
@@ -430,54 +430,3 @@ int main(int argc, char* argv[]) {
     }
 	return 0;
 }
-/*    ifstream entrada;
-    ofstream salida;
-    entrada.open("D:\\Facultad\\Metodos Numericos\\Simulador TP 4\\misilesFede.txt", ios_base::in);
-    assert(entrada.is_open());
-    salida.open("D:\\Facultad\\Metodos Numericos\\Simulador TP 4\\bombitas.txt", ios_base::out);
-    assert(salida.is_open());
-    Armageddon(entrada, salida, 0.05);
-/*    unsigned int cantMisiles, cantMediciones, cantBombas;
-    long double radioBomba, radioPlaneta;
-
-    entrada >> cantMisiles;
-    entrada >> cantMediciones;
-
-    long double* muestraX;
-    long double* muestraY;
-
-    muestraX = new long double [cantMediciones];
-    muestraY = new long double [cantMediciones];
-
-    for (unsigned int i = 0 ; i < cantMediciones ; i++){
-        entrada >> muestraX[i];
-        entrada >> muestraY[i];
-    }
-
-    entrada >> cantBombas;
-    entrada >> radioBomba;
-    entrada >> radioPlaneta;
-
-
-    entrada.close();
-    ofstream salida;
-    Misil test(0, muestraX, muestraY, cantMediciones);
-
-    salida.open("bombita.txt", ios_base::out);
-
-    if(!salida.is_open()){
-        cout << "no abrio el archivo" << endl;
-        return 0;
-    }
-
-    long double instante = cantMediciones + 0.5;
-    salida << instante << " " << test.posicionX(instante) << " " << test.posicionY(instante);
-    salida.close();
-
-    delete muestraX;
-    delete muestraY;
-
-    system("PAUSE");
-    return 0;
-}
-*/
