@@ -113,7 +113,7 @@ Para lograr el objetivo planteado, se evaluaron distintas estrategias que progre
 \centering
 \includegraphics
 [scale=0.5]{casoPatologicoPromedio1.JPG}
-\caption{ Aqui se puede apreciar un caso patológico para el promedio, bien resuelto por el método de la mayor distancia}
+\caption{\small Aqui se puede apreciar un caso patológico para el promedio, bien resuelto por el método de la mayor distancia}
 \end{figure}
 
 
@@ -126,7 +126,7 @@ A pesar de las bondades de este método, hubo que pensar un poco más, ya que para
 \centering
 \includegraphics
 [scale=0.5]{casoSuperPatologico2.JPG}
-\caption{ En este caso, la mayor distancia no funciona, pero el centro es capturado por la tecnica de las mediatrices}
+\caption{\small En este caso, la mayor distancia no funciona, pero el centro es capturado por la tecnica de las mediatrices}
 \end{figure}
 
 
@@ -138,24 +138,24 @@ Al notar que los métodos elaborados fallaban para varios casos, tratamos de idea
 \centering
 \includegraphics
 [scale=0.5]{casoParalelogramo.JPG}
-\caption{ Este es uno de los casos en los que el sistema de mediatrices no funciona}
+\caption{\small Este es uno de los casos en los que el sistema de mediatrices no funciona}
 \end{figure}
 
 
-Otro caso patológico para este método radica en que cuando los misiles se encuentran alineados (o tienden a estarlo) el punto buscado se aleja (Figura 3), mientras menor es la distancia sobre uno de los ejes del trío de misiles, más distancia los separa del punto a detonar. Este es un comportamiento esperable, ya que la técnica trata de encontrar el centro de un circulo, del cual los proyectiles serían parte de su perímetro. 
+Otro caso patológico para este método radica en que cuando los misiles se encuentran alineados (o tienden a estarlo) el punto buscado se aleja (Figura 4), mientras menor es la distancia sobre uno de los ejes del trío de misiles, más distancia los separa del punto a detonar. Este es un comportamiento esperable, ya que la técnica trata de encontrar el centro de un circulo, del cual los proyectiles serían parte de su perímetro. 
 
 \medskip
 \begin{figure}[!htb]
 \centering
 \includegraphics
 [scale=0.5]{casoPatologicoMediatrices1.JPG}
-\caption{ Este es otro caso patológico para las mediatrices, el método de la mayor distancia lo tratría correctamente}
+\caption{\small Este es otro caso patológico para las mediatrices, el método de la mayor distancia lo tratría correctamente}
 \end{figure}
 
 
 Como ninguna técnica resultó óptima para una mayoría abrumadora de casos, durante la implementación se optó por una combinación de las mismas, de forma tal, que cada método se desempeñe sobre las situaciones que mejor maneja. De esta forma, los casos de dos misiles se resuelven calculando el promedio de la distancia y los casos de tres se resuelven calculando la mitad de la distancia más larga entre los puntos, en el caso en que la formación de misiles tiende a estar alineada, y en el resto, a través del empleo de mediatrices. 
 
-Entre otras decisiones de implementación se optó por manejar la variable tiempo en una discretización de intervalos de 0,05 segundos, considerando que cada medición de "radar" de las posiciones de los misiles llega cada segundo. Consideramos como un "instante", dichos intervalos de tiempo, en ellos se calcula la posición extrapolada de cada misil.
+Entre otras decisiones de implementación se optó por manejar la variable tiempo en una discretización de intervalos de 0,05 segundos, considerando que cada medición de 'radar' de las posiciones de los misiles llega cada segundo. Consideramos como un "instante", dichos intervalos de tiempo, en ellos se calcula la posición extrapolada de cada misil.
 
 Cabe aclarar que para calcular las posiciones de los proyectiles, tanto extrapolando como intrapolando utilizamos dos splines, uno para cada coordenada de los ejes cartesianos, ambos en función del tiempo. De esta forma tenemos una evaluación del progreso sobre los ejes en cada intervalo de tiempo. Combinando y evaluando los polinomios obtenidos en cada instante, llegamos a la posición exacta del misil.
 
@@ -178,7 +178,7 @@ Para este trabajo se implementó una nueva clase que se encarga que de describir 
 
 \item CantMediciones(Int): cada misil tiene el número de mediciones, correspondientes a la muestra que define su trayectoria. Este dato se utiliza para calcular el spline que permite extrapolar el camino que recorre el misil en los siguientes intervalos de tiempo.
 
-\item Identificador(Char): cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de destruir la mayor cantidad de misiles posibles, dicho método se explicará en detalle algunos párrafos más adelante.
+%\item Identificador(Char): cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de destruir la mayor cantidad de misiles posibles, dicho método se explicará en detalle algunos párrafos más adelante.
 
 \item Destruido(bool): éste indica si el misil fue destruido. Este dato es necesario por la forma en la que se decide cuales serán los misiles a explotar. Se utiliza mayormente a fin de no solapar grupos de misiles candidatos en el espacio ni en el tiempo. Por ejemplo, si tengo un conjunto de cuatro misiles en el tiempo $t$, y decidí destruirlo, otra hipotética formación de tres proyectiles, la cual contenga alguno de los ya destruidos (en el instante $t$ o posterior) será tenida en cuenta con solo dos misiles.
 
@@ -187,22 +187,13 @@ Para este trabajo se implementó una nueva clase que se encarga que de describir 
 
 Ahora se detallarán las funciones métodos, tanto públicas como privadas, que tengan cierta relevancia desde el punto de vista númerico, las que sean concernientes solo al campo de la implementación, podrán ser encontradas en el código con sus debidos comentarios.
 
-\begin{itemize}
 \item Misil(): la clase cuenta con constructor por defecto, por copia, paramétrico, y un operador '=', como métodos de generación de instancias. En particular, el constructor paramétrico recibe un identificador, dos arreglos de long double que contienen las mediciones en los ejes X e Y y la cantidad de dichas mediciones. Es en éste donde se llama a la función splines para que generé los polinomios interpoladores que emularán la trayectoria de los misiles
 
 \item posicionX()/posicionY(): métodos mencionados más arriba, son los encargados de evaluar los polinomios formulados mediante la función spline. Simplemente realizan las multiplicaciones pertinentes, valiéndose de los arreglos miembros de la clase, y de un instante elegido por el usuario donde efectuar la evaluación.
 
-\item spline(): este algoritmo es sin duda el más importante de la clase, ya que es el encargado de generar el polinomio interpolador entre cada punto de las mediciones recibidas en un arreglo. Recordar que como elaboramos un spline para el eje X y otro para el eje Y (ambos en función del tiempo transcurrido) solo necesitamos una coordenada por cada dato.
+\item spline(): este algoritmo es sin duda el más importante de la clase, ya que es el encargado de generar el polinomio interpolador entre cada punto de las mediciones recibidas en un arreglo. Recordar que como elaboramos un spline para el eje X y otro para el eje Y (ambos en función del tiempo transcurrido) solo necesitamos una coordenada por cada dato. Para calcular los coeficientes utilizamos las características de la matriz que se genera usando el método explicado en la sección Introducción. Además se implemento una optimización para esta matriz en particular, el algoritmo utiliza el método de gauss pero solo lo hace temporalmente sobre los datos que se necesitan. Como dicha matriz es tridiagonal, si se la observa con detenimiento al triangularla se descubre un patrón con respecto a los valores que tiene los elementos que van en la diagonal. Este patrón corresponde al siguiente, al triangular desde la 2da fila hacia la anteúltima, el coeficiente para anular los elementos debajo de la diagonal es siempre es $coeficiente = 1/diagonal$, y luego el valor final del casillero que corresponde a la diagonal es $diagonal = 4 - 1*coeficiente$. Como solo es necesario el valor de la diagonal en la anteúltima fila, los valores antes mencionados se van acumulando, sin hacer gauss totalmente, ahorrando varias cuentas, lo que ayuda al rendimiento total del algoritmo.
 
 \end{itemize}
-
-Por último se tiene el método llamado spline  que dada una muestra de pares $(x,y)$ calcula los coeficientes del polinomio del ultimo intervalo de la muestra, y por lo tanto, los que sirven para hacer la extrapolación de la trayectoria del misil.
-
-\end{itemize}
-
-Para calcular los coeficientes utilizamos las características de la matriz que se genera usando el método explicado en la sección Introducción.
-
-que evaluan las funciones recíprocas para un instante determinado por el llamador, Un uso conjunto de estos métodos permite conocer la posición del misil en cualquier intervalo de nuestra discretización del tiempo.
 
 \pagebreak
 \medskip
@@ -357,6 +348,232 @@ Fecha de entrega: Lunes 19 de Noviembre
 \leftline{{\LARGE{\bf Apendice B:}}}
 \medskip
 \medskip
+
+\begin{enumerate}
+
+\item
+\bf{Misil.h}
+{\small
+\begin{verbatim}
+#include <iostream>
+using namespace std;
+
+#ifndef _MISIL_H
+#define _MISIL_H
+
+class Misil{
+   	friend ostream& operator<<(ostream& os, const Misil& misil);
+public:
+    Misil();
+    Misil(const long double* medicionesX, const long double* medicionesY,
+          int numMuestras);
+    Misil(const Misil&);
+
+    void operator= (const Misil& m2);
+    bool estaDestruido (void) const;
+    void destruir (void);
+    long double posicionX (long double tiempo) const;
+    long double posicionY (long double tiempo) const;
+
+    ~Misil();
+//private:
+    int cantMediciones;
+    bool destruido;
+    long double x[4];
+    long double y[4];
+
+    void spline (const long double* muestra, long double* res);
+};
+
+#endif /* _MISIL_H */
+\end{verbatim}
+}
+
+\item
+\bf Misil.cpp
+{\small
+\begin{verbatim}
+#include "Misil.h"
+#include <math.h>
+
+Misil :: Misil()
+{
+    for (int i = 0; i < 3; i++){
+        x[i] = 0;
+        y[i] = 0;
+    }
+
+    x[3] = 1;
+    y[3] = 0;
+    destruido = false;
+    cantMediciones = 2;
+}
+
+Misil :: Misil(const long double* medicionesX, const long double* medicionesY,
+               int numMuestras)
+{
+    destruido = false;
+    cantMediciones = numMuestras;
+    spline(medicionesX, x);
+    spline(medicionesY, y);
+}
+
+Misil :: Misil(const Misil& m)
+{
+    *this = m;
+}
+
+void Misil :: operator= (const Misil& m)
+{
+    for (int i = 0; i < 4; i++){
+        x[i] = m.x[i];
+        y[i] = m.y[i];
+    }
+
+    destruido = m.destruido;
+    cantMediciones = m.cantMediciones;
+}
+
+bool Misil :: estaDestruido (void) const
+{
+    return destruido;
+}
+
+void Misil :: destruir (void)
+{
+    destruido = true;
+}
+
+long double Misil :: posicionX (long double tiempo) const
+{
+    return (x[0]*pow(tiempo - cantMediciones + 1, 3) + x[1]*pow(tiempo -
+            cantMediciones + 1, 2) + x[2]*(tiempo - cantMediciones + 1) + x[3]);
+}
+
+long double Misil :: posicionY (long double tiempo) const
+{
+    return (y[0]*pow(tiempo - cantMediciones + 1, 3) + y[1]*pow(tiempo -
+            cantMediciones + 1, 2) + y[2]*(tiempo - cantMediciones + 1) + y[3]);
+}
+
+Misil :: ~Misil(){}
+
+void Misil :: spline (const long double* muestra, long double* res)
+{
+    /*
+        La matriz para spline cubicos naturales es:
+        3 0 0 0 ... 0 0 0 | 0
+        1 4 1 0 ... 0 0 0 | 3*(a(2) - 2*a(1) + a(0))
+        0 1 4 1 ... 0 0 0 | 3*(a(3) - 2*a(2) + a(1))
+        .           .
+        .           .
+        .           .
+        0 0 0 0 ... 1 4 1 | 3*(a(n) - 2*a(n-1) + a(n-2))
+        0 0 0 0 ... 0 0 3 | 0
+
+        siendo a(i) el coeficiente 'a' del spline 'i' y n = cantMediciones
+
+        Al triangular desde la 2da fila hacia la anteultima mediante el metodo
+        de gauss,
+        el coeficiente siempre es 1/diagonal. Luego
+        diagonal = 4 - 1*coeficiente.
+        Solo necesitamos c(n-1), por lo que me interesa solamente el anteultimo
+        valor de la diagonal.
+    */
+
+    long double diag;       //diag = resultado de la diagonal correspondiente a
+                            //c(n-1)
+    long double vectorB;    //el resultado correspondiente (del vector b)
+
+    //CASO PARTICULAR: la matriz es de 2x2
+    if (cantMediciones == 2){
+        diag = 3;
+        vectorB = 0;
+    }
+    else{
+        diag = 4;
+        vectorB = 3*(muestra[2] - 2*muestra[1] + muestra[0]);
+        long double coef;    //auxiliar, para "restar fila1 - coef*fila2"
+
+        for (int i = 2; i < cantMediciones - 1; i++) {
+            coef = 1/diag;
+            diag = 4 - coef;
+            vectorB = 3*(muestra[i + 1] - 2*muestra[i] + muestra[i - 1]) -
+                      coef*vectorB;
+        }
+    }
+
+    res[1] = vectorB/diag;
+    //ya tengo el c(n-1), ahora necesito a(n-1), b(n-1) y d(n-1)
+    //a(j) = f(j) (sale de evaluar la ecuacion del spline en x(n-1))
+    res[3] = muestra[cantMediciones - 2];
+
+    //Ahora que tengo a(n-1) y c(n-1) puedo sacar b(n-1)
+    //uso que: b(j) = a(j+1)-a(j) -(2/3*c(j) + c(j+1)/3)
+    //con j = n - 1 => b(n-1) = a(n) - a(n-1) - (2/3*c(n-1) + c(n)/3)
+    //pero c(n) = 0 => b(n-1) = a(n) - a(n-1) - 2/3*c(n-1)
+    res[2] = muestra[cantMediciones - 1] - muestra[cantMediciones - 2] -
+                     2*res[1]/3;
+
+    //Ahora solo me falta d(n-1)
+    //d(j) = (c(j+1) - c(j))/3
+    //d(n-1) = (c(n) - c(n-1))/3
+    //pero c(n) = 0 => d(n-1) = c(n-1)/3
+    res[0] = -res[1]/3;
+}
+
+ostream& operator<<(ostream& os, const Misil& misil)
+{
+    os << endl;
+    os << "Cantidad de mediciones: " << misil.cantMediciones << endl;
+    (misil.destruido) ? (os << "Destruido: TRUE" << endl) : (os << "Destruido:
+                                                              FALSE" << endl);
+    os << "Coeficientes del spline en x: " << misil.x[0] << " " << misil.x[1]
+       << " " << misil.x[2] << " " << misil.x[3] << " " << misil.x[4] << endl;
+    os << "Coeficientes del spline en y: " << misil.y[0] << " " << misil.y[1]
+       << " " << misil.y[2] << " " << misil.y[3] << " " << misil.x[4] << endl;
+    return os;
+}
+
+\end{verbatim}
+}
+
+\item
+\bf main.cpp (Aqui se incluiran las aridades de las funciones y estructuras principales por motivos de tamaño)
+
+{\small
+\begin{verbatim}
+struct Grupo {
+    list<Misil*> grupoMisiles;
+    long double instante;
+    long double bombaX;
+    long double bombaY;
+};
+
+struct Par {
+    long double x;
+    long double y;
+};
+
+void parser(ifstream &in, Misil **misiles, unsigned int &cantMisiles,
+           unsigned int &cantMediciones, unsigned int &cantBombas,
+           long double &radioPlaneta, long double &radioBomba);
+
+short int destruidos(list<Misil*>& misiles);
+
+inline long double distancia (const Par& p1, const Par& p2);
+
+bool interseccionDeMediatrices(Misil** grupoMisiles, float instante,
+                               long double radioBomba, Par& res);
+
+unsigned int Armageddon(ifstream& entrada, ofstream& salida, float paso);
+
+int main(int argc, char* argv[]);
+\end{verbatim}
+}
+
+\end{enumerate}
+
 
 
 
