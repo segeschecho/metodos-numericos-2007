@@ -10,14 +10,12 @@ Misil :: Misil()
 
     x[3] = 1;
     y[3] = 0;
-    identificador = 0;
     destruido = false;
     cantMediciones = 2;
 }
 
-Misil :: Misil(char id, const long double* medicionesX, const long double* medicionesY, int numMuestras)
+Misil :: Misil(const long double* medicionesX, const long double* medicionesY, int numMuestras)
 {
-    identificador = id;
     destruido = false;
     cantMediciones = numMuestras;
     spline(medicionesX, x);
@@ -36,14 +34,8 @@ void Misil :: operator= (const Misil& m)
         y[i] = m.y[i];
     }
 
-    identificador = m.identificador;
     destruido = m.destruido;
     cantMediciones = m.cantMediciones;
-}
-
-char Misil :: id (void) const
-{
-    return identificador;
 }
 
 bool Misil :: estaDestruido (void) const
@@ -70,27 +62,6 @@ Misil :: ~Misil(){}
 
 void Misil :: spline (const long double* muestra, long double* res)
 {
-/*    Matriz coeficientesC(cantMediciones, cantMediciones);
-    Matriz b(cantMediciones, 1);
-
-    coeficientesC.asignar(0, 0, 3);
-    coeficientesC.asignar(cantMediciones - 1, cantMediciones - 1, 3);
-    for (int i = 1; i < cantMediciones - 1; i++) {
-        b.asignar(i, 0, 3*(muestra[i + 1] - 2*muestra[i] + muestra[i - 1]));
-        coeficientesC.asignar(i, i-1, (long double)1);
-        coeficientesC.asignar(i, i, (long double)4);
-        coeficientesC.asignar(i, i+1, (long double)1);
-    }
-
-    for(int i = 0; i < cantMediciones; i++)
-        cout << muestra[i] << endl;
-
-    cout << coeficientesC << endl;
-    cout << b << endl;
-    coeficientesC.triangular(&b);
-    cout << coeficientesC << endl;
-    cout << b << endl;
-
     /*
         La matriz para spline cubicos naturales es:
         3 0 0 0 ... 0 0 0 | 0
@@ -149,13 +120,7 @@ void Misil :: spline (const long double* muestra, long double* res)
 
 ostream& operator<<(ostream& os, const Misil& misil)
 {
-/*    os << "hold on" << endl;
-    for(double i = misil.cantMediciones - 1; i <= 8; i+= 0.05){
-        os << "plot([" << misil.posicionX(i) << "],[" << misil.posicionY(i) << "], '*');\n";
-    }
-    */
     os << endl;
-    os << "ID del misil: " << (int)misil.identificador << endl;
     os << "Cantidad de mediciones: " << misil.cantMediciones << endl;
     (misil.destruido) ? (os << "Destruido: TRUE" << endl) : (os << "Destruido: FALSE" << endl);
     os << "Coeficientes del spline en x: " << misil.x[0] << " " << misil.x[1] << " " << misil.x[2] << " " << misil.x[3] << " " << misil.x[4] << endl;

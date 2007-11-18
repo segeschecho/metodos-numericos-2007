@@ -8,13 +8,10 @@ class Misil{
    	friend ostream& operator<<(ostream& os, const Misil& misil);
 public:
     Misil();
-    // Asegurar que los identificadores van a ser distintos
-    Misil(char id, const long double* medicionesX, const long double* medicionesY, int numMuestras);
-    // Constructor por copia viola el invariante de los identificadores, usar con precaucion
+    Misil(const long double* medicionesX, const long double* medicionesY, int numMuestras);
     Misil(const Misil&);
 
     void operator= (const Misil& m2);
-    char id (void) const;
     bool estaDestruido (void) const;
     void destruir (void);
     long double posicionX (long double tiempo) const;
@@ -23,7 +20,6 @@ public:
     ~Misil();
 //private:
     int cantMediciones;
-    char identificador;
     bool destruido;
     long double x[4];
     long double y[4];
