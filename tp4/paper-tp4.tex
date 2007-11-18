@@ -178,8 +178,6 @@ Para este trabajo se implementó una nueva clase que se encarga que de describir 
 
 \item CantMediciones(Int): cada misil tiene el número de mediciones, correspondientes a la muestra que define su trayectoria. Este dato se utiliza para calcular el spline que permite extrapolar el camino que recorre el misil en los siguientes intervalos de tiempo.
 
-\item Identificador(Char): cada uno de los misiles tiene un identificador, este número se utiliza para identificar conjuntos de misiles para calcular las coordenadas en donde explotar la bomba. Estos conjuntos son determinados de acuerdo a un algoritmo que se encarga de destruir la mayor cantidad de misiles posibles, dicho método se explicará en detalle algunos párrafos más adelante.
-
 \item Destruido(bool): éste indica si el misil fue destruido. Este dato es necesario por la forma en la que se decide cuales serán los misiles a explotar. Se utiliza mayormente a fin de no solapar grupos de misiles candidatos en el espacio ni en el tiempo. Por ejemplo, si tengo un conjunto de cuatro misiles en el tiempo $t$, y decidí destruirlo, otra hipotética formación de tres proyectiles, la cual contenga alguno de los ya destruidos (en el instante $t$ o posterior) será tenida en cuenta con solo dos misiles.
 
 \item PosicionX/PosicionY(long double[4]): estos arreglos contienen los coeficientes correspondientes a los polinomios calculados con el método de splines. Estos se utilizan con un par de funciones llamadas posicionX y posicionY,  obteniendo asi las coordenadas con respecto al tiempo sobre el eje de las absisas y el de las ordenadas. 
@@ -217,15 +215,15 @@ Todos estos algoritmos fueron implementados con el objetivo de servir de funcion
 
 Es por esto que consideramos mejor no comentar cada parte del código, ya que resultaría demasiado extenso y no es ese el objetivo del trabajo. Por ello explicaremos conceptualmente el código en lugar de hacer una revisión completa del mismo. 
 
-Para empezar, esta función recibe como parámetros un archivo de entrada, uno de salida, y un long double que representa en cuantas partes se discretizará un segundo. Con los streams, llama al parser encargado de levantar los datos, y al terminar, coloca en el resultado los tiempos y coordenadas de explosión de cada bomba.
+Para empezar, esta función recibe como parámetros un archivo de entrada, uno de salida, y un long double que representa la magnitud en la que aumentara el tiempo para analizar los misiles. Con los streams, llama al parser encargado de levantar los datos, y al terminar, coloca en el resultado los tiempos y coordenadas de explosión de cada bomba.
 
-Una vez reunida toda la información necesaria y disponible, se procede a ejercitar la siguiente metodología: se recorren todos los intervalos de tiempo, y en cada uno se observa exhaustivamente el estado de  los misiles, de esta forma se buscan grupos de proyectiles que sean susceptibles de ser neutralizados con una sola acción defensiva, el procedimiento empareja primero (si los hay) grupos de dos misiles cuya distancia sea menor al diametro de las bombas de las que se dispone. Tras realizar esto se trata de encontrar un tercer misil que cumpla con las mismas condiciones simultaneamente respecto de los  dos antes mencionados. Para comprobar la viabilidad de detonar  el trio de proyectiles se utiliza el método de mediatrices primero, si éste no ofrece un punto óptimo, acude en su auxilio el algoritmo que calcula el máximo de las distancias en cada eje.
+Una vez reunida toda la información necesaria y disponible, se procede a ejercitar la siguiente metodología: se recorren todos los intervalos de tiempo, y en cada uno se observa exhaustivamente el estado de los misiles, de esta forma se buscan grupos de proyectiles que sean susceptibles de ser neutralizados con una sola acción defensiva, el procedimiento empareja primero (si los hay) grupos de dos misiles cuya distancia sea menor al diametro de las bombas de las que se dispone. Tras realizar esto se trata de encontrar un tercer misil que cumpla con las mismas condiciones simultaneamente respecto de los dos antes mencionados. Para comprobar la viabilidad de detonar el trio de proyectiles se utiliza el método de mediatrices primero, si éste no ofrece un punto óptimo, acude en su auxilio el algoritmo que calcula el máximo de las distancias en cada eje.
 
-Es importante aclarar que como se busca comprobar condiciones simultaneas sobre los misiles, los sucesivos for's no recorren varias veces el arreglo de punteros a misil, sino que lo hace en forma secuencial, añadiendo clausula a cada ciclo. Esta forma de proceder es lo que "entorpece" el código, ya que es necesario  tomar una gran cantidad de decisiones para manejar los casos bordes, y los pasos de grupos de dos a tres misiles etc.
+Es importante aclarar que como se busca comprobar condiciones simult/'aneas sobre los misiles, los sucesivos for's no recorren varias veces el arreglo de punteros a misil, sino que lo hace en forma secuencial, añadiendo clausula a cada ciclo. Esta forma de proceder es lo que "entorpece" el código, ya que es necesario tomar una gran cantidad de decisiones para manejar los casos bordes, y los pasos de grupos de dos a tres misiles etc.
 
 Este algoritmo deja por resultado una lista de grupos de misiles (varios grupos, por cada instante según sea el caso), entre los cuales se selecciona los mejores casos para maximizar las amenazas neutralizadas. Este algoritmo de decisión, no solo tiene en cuenta los posibles tres misiles que cumplan con las condiciones necesarias y suficientes para ser agregados a la lista, sino que también considera los misiles que serían destruidos y no se utilizaron para calcular el punto de detonación.
 
-Finalmente, cuando se han seleccionado los grupos más convenientes a fin de proteger el planeta, y se han dispuesto puntos de explosión para todas las bombas en existencia; se colocan estos puntos y sus respectivos instantes en el stream de salida y se da por concluido el algoritmo. 
+Finalmente, cuando se han seleccionado los grupos más convenientes a fin de proteger el planeta, y se han dispuesto puntos de explosión para todas las bombas en existencia, se colocan estos puntos y sus respectivos instantes en el stream de salida y se da por concluido el algoritmo.
 
 \pagebreak
 \medskip
@@ -475,7 +473,7 @@ public:
     long double posicionY (long double tiempo) const;
 
     ~Misil();
-//private:
+private:
     int cantMediciones;
     bool destruido;
     long double x[4];

@@ -18,7 +18,7 @@ public:
     long double posicionY (long double tiempo) const;
 
     ~Misil();
-//private:
+private:
     int cantMediciones;
     bool destruido;
     long double x[4];
