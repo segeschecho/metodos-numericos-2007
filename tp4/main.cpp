@@ -1,5 +1,6 @@
 #include "Misil.h"
 #include <math.h>
+#include <time.h>
 #include <assert.h>
 #include <iostream>
 #include <fstream>
@@ -33,7 +34,7 @@ void parser(ifstream &in, Misil **misiles, unsigned int &cantMisiles, unsigned i
             in >> muestraX[j];
             in >> muestraY[j];
         }
-        (*misiles)[i] = Misil((char)i, muestraX, muestraY, cantMediciones);
+        (*misiles)[i] = Misil(muestraX, muestraY, cantMediciones);
     }
     in >> cantBombas;
     in >> radioBomba;
@@ -144,7 +145,7 @@ bool interseccionDeMediatrices(Misil** grupoMisiles, float instante,
     return (distancia(res, m) <= radioBomba);
 }
 
-void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
+unsigned int Armageddon(ifstream& entrada, ofstream& salida, float paso) {
     Misil* misiles = NULL;
     unsigned int cantMisiles;
     unsigned int cantMuestras;
@@ -332,7 +333,7 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
     }
 
     //caso en el que rompo misiles al azar porque termine de verificar grupos
-    while ((cantBombas > 0) && (misilesDestruidos < cantMisiles)) {
+    for(int i = cantBombas; (i > 0) && (cantBombas > 0) && (misilesDestruidos < cantMisiles) ; i--) {
         Par misilito;
         for (unsigned int m = 0 ; m < cantMisiles ; m++) {
             if (!misiles[m].estaDestruido()) {
@@ -343,10 +344,10 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
                     misiles[m].destruir();
                     salida << cantMuestras + paso << " " << misilito.x << " " << misilito.y << endl;
                     misilesDestruidos += 1;
+                    cantBombas--;
                 }
             }
         }
-        cantBombas--;
     }
 
     //si rompiendo todos los misiles aun quedan bombas, entonces exploto bombas en
@@ -357,24 +358,83 @@ void Armageddon(ifstream& entrada, ofstream& salida, float paso) {
         cantBombas--;
     }
 
-    if (misilesDestruidos == 0) {
-        cout << "Coronel! No logramos destruir ningun misil :'(" << endl;
-    }
-    else {
-        cout << "Coronel! Destruimos " << misilesDestruidos;
-        (misilesDestruidos > 1) ? (cout << " misiles!" << endl) : (cout << " misil!" << endl);
-    }
-
     delete [] impactoMisil;
     delete [] misiles;
+
+    return misilesDestruidos;
 }
 
 int main(int argc, char* argv[]) {
-    ifstream entrada;
+    bool ayuda = false;
+    if(argc >= 3){
+        float paso = (float)0.05;
+
+        //veo si se selecciono la opcion para setear el paso
+        int parametro = 3;
+        while (parametro < argc){
+            if (strcmp(argv[parametro], "-p") == 0){
+                paso = (float)atof(argv[parametro + 1]);
+            }
+
+            if (strcmp(argv[parametro], "-h") == 0){
+                ayuda = true;
+            }
+
+            parametro++;
+        }
+
+
+        ofstream salida;
+        salida.open(argv[2], ios_base::out);
+        assert(salida.is_open());
+
+        cout << "Levantando archivo " << argv[1] << " ... ";
+        ifstream entrada;
+        entrada.open(argv[1], ios_base::in);
+        assert(entrada.is_open());
+        cout << "OK!" << endl << endl;
+
+        cout << "Operando ... ";
+        int inicio = (int)time(NULL);
+        unsigned int misilesDestruidos;
+        misilesDestruidos = Armageddon(entrada, salida, paso);
+        int fin = (int)time(NULL);
+        cout << "OK!" << endl << endl;
+        cout << "El algoritmo termino en " << fin - inicio << " segundo/s.\n" << endl;
+
+        if (misilesDestruidos == 0) {
+            cout << "Coronel! No logramos destruir ningun misil :'(";
+        }
+        else {
+            cout << "Coronel! Destruimos " << misilesDestruidos;
+            (misilesDestruidos > 1) ? (cout << " misiles!") : (cout << " misil!");
+        }
+
+        cout << endl << endl;
+
+        cout << "Archivo " << argv[2] << " guardado" << endl << endl;
+    }
+    else
+        ayuda = true;
+
+    //muestro la ayuda
+    if (ayuda){
+        cout << "\nSalvando el planeta: \n\n";
+        cout << argv[0] << " <Input_file_txt> <Output_file_txt> [Opciones...]" << endl << endl;
+        cout << "Input_file_txt:       Archivo de entrada en formato txt.\n";
+        cout << "Output_file_txt:      Archivo de salida en formato txt.\n";
+        cout << "\nOpciones:\n" << endl;
+        cout << "-h                    Imprime esta ayuda" << endl;
+        cout << "-p <paso>             Setea el paso (en segundos) de tiempo." << endl;
+        cout << "Por defecto el paso es de a 0.05 segundos.\n" << endl;
+    }
+	return 0;
+}
+/*    ifstream entrada;
     ofstream salida;
-    entrada.open("H:\\Simulador TP 4\\misiles8.txt", ios_base::in);
+    entrada.open("D:\\Facultad\\Metodos Numericos\\Simulador TP 4\\misilesFede.txt", ios_base::in);
     assert(entrada.is_open());
-    salida.open("H:\\Simulador TP 4\\bombitas.txt", ios_base::out);
+    salida.open("D:\\Facultad\\Metodos Numericos\\Simulador TP 4\\bombitas.txt", ios_base::out);
     assert(salida.is_open());
     Armageddon(entrada, salida, 0.05);
 /*    unsigned int cantMisiles, cantMediciones, cantBombas;
@@ -416,7 +476,8 @@ int main(int argc, char* argv[]) {
 
     delete muestraX;
     delete muestraY;
-*/
+
     system("PAUSE");
     return 0;
 }
+*/
