@@ -262,11 +262,11 @@ En contraposición, el mejor de los casos será cuando además de haber pocos misil
 
 Pudimos encontrar un caso en el que nuestro algoritmo tendrá un mal desempeño. Se trata de aquel en el que la estrategia es vital a la hora de explotar las bombas. Se junta una gran cantidad de misiles en cierto lugar,  formando una cantidad de grupos mayor a las bombas disponibles, y luego vuelven a separarse y agruparse con otros misiles en conjuntos más chicos, pero menor o igual a la cantidad de bombas. Este caso hace que nuestro algoritmo elija la opción de lanzar las bombas en el momento que encuentra el mayor grupo, que si bien destruye una gran parte de los misiles, no los destruye todos. Sin embargo se podrían haber detonado las bombas en el ultimo instante nombrado.
 
-A forma de ejemplo, uno de estos casos podría ser como el siguiente gráfico:
+A forma de ejemplo, uno de estos casos podría ser como el siguiente gráfico (ver figura 6):
 
 \medskip
 \begin{figure}[!htb]
-\centering
+%\centering
 \includegraphics
 [scale=0.25]{caso_patologico_reproduccionSB.jpg}
 \caption{\small Este es el caso que nuestro algoritmo no puede resolver}
@@ -275,28 +275,37 @@ A forma de ejemplo, uno de estos casos podría ser como el siguiente gráfico:
 
 Como podemos ver, se cruzan en el medio cuatro misiles, dos se aíslan, formando tres grupos. Luego los proyectiles del medio se van acercando a los del exterior, para formar dos grupos de tres cada uno.
 
-Ante este ejemplo, con dos bombas disponibles nuestro algoritmo se comporta de la siguiente manera:
+Ante este ejemplo, con dos bombas disponibles nuestro algoritmo se comporta de la siguiente manera (ver figura 7):
 
 \medskip
-\begin{figure}[!htb]
-\centering
-\includegraphics
-[scale=0.25]{caso_patologico_reproduccion.jpg}
-\caption{\small Asi trata de superarlo nuestro programa}
-\end{figure}
+%\begin{figure}[!htb]
+%\centering
+\centerline{
+\includegraphics[scale=0.25]{caso_patologico_reproduccion.jpg}
+}
+
+\centerline{Figura 7: {\small Asi trata de superarlo nuestro programa}}
+
+\medskip
+\medskip
+%\caption{\small Asi trata de superarlo nuestro programa}
+%\end{figure}
 
 Lo sucedido muestra que el programa optó por lanzar las bombas en el medio, cuando encontró el grupo de cuatro misiles (el mas numeroso de todas las instancias), y la bomba restante la dejo caer sobre uno de los misiles que estaba solo. Esto nos deja un misil sin destruir, que luego impacta contra el planeta.
 
-El mejor desempeño que uno podría esperar seria de la siguiente forma:
+El mejor desempeño que uno podría esperar seria de la siguiente forma (ver figura 8):
 
-[GRAFICO DE CASO PATOLOGICO ARREGLADO]
 \medskip
-\begin{figure}[!htb]
-\centering
-\includegraphics
-[scale=0.25]{caso_patologico_reproduccion_arreglado.jpg}
-\caption{\small Asi debería superarlo un algoritmo que lo contemple}
-\end{figure}
+%\begin{figure}[!htb]
+\centerline{
+\includegraphics[scale=0.25]{caso_patologico_reproduccion_arreglado.jpg}
+}
+
+\centerline{Figura 8: {\small Asi debería superarlo un algoritmo que lo contemple}}
+\medskip
+\medskip
+%\caption{\small Asi debería superarlo un algoritmo que lo contemple}
+%\end{figure}
 
 En este caso se lanzaron bombas sobre los dos grupos de tres misiles, y se logro un mejor resultado.
 
