@@ -1,0 +1,1 @@
+Aqui se alojan, los trabajos practicos vistos en la materia Metodos Numericos de la carrera Ciencias de la Computacion de la UBA (Universidad de Buenos Aires)
